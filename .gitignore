@@ -106,3 +106,4 @@ junit*.xml
 *.orig
 *.rej
 
+push.sh
