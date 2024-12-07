@@ -1,0 +1,108 @@
+# Byte-compiled / optimized / compiled Python files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environments
+env/
+venv/
+ENV/
+.venv/
+.virtualenv/
+
+# Pipenv
+Pipfile
+Pipfile.lock
+
+# Poetry
+poetry.lock
+
+# Pyenv
+.python-version
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# pytest
+.cache/
+pytest_cache/
+
+# Logs and database files
+*.log
+*.sqlite3
+
+# Local development files
+*.local
+*.env
+.env.*
+*.swp
+.env
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+*.manifest
+*.spec
+MANIFEST
+
+# Wheels
+*.whl
+
+# PyInstaller
+*.spec
+
+# Sphinx documentation
+docs/_build/
+
+# Jupyter Notebook outputs
+*.ipynb_checkpoints
+
+# Test results
+junit*.xml
+
+# Docker
+*.pid
+*.sock
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.~*
+*.orig
+*.rej
+
