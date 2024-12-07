@@ -108,3 +108,5 @@ junit*.xml
 
 push.sh
 sree/
+# Explicitly include .env.example
+!.env.example
