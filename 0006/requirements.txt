@@ -1,0 +1,6 @@
+streamlit
+openai
+pydantic_ai
+python-dotenv
+nest_asyncio
+rich

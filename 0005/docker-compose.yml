@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  chatbot:
+    build: .
+    ports:
+      - "8502:8501"
+    env_file:
+      - .env  # Load environment variables from .env file
+    volumes:
+      - ./:/app  # Map current directory to container's /app

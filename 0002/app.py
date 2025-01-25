@@ -1,0 +1,67 @@
+import streamlit as st
+from pydantic import BaseModel
+from pydantic_ai import Agent
+from pydantic_ai.models.openai import OpenAIModel
+import os
+from dotenv import load_dotenv
+import asyncio
+
+# Load environment variables
+load_dotenv()
+
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
+if not DEEPSEEK_API_KEY:
+    st.error("DEEPSEEK_API_KEY is not set in the environment or .env file.")
+    st.stop()
+
+model = OpenAIModel(
+    model_name='deepseek-chat',  # DeepSeek model name
+    base_url='https://api.deepseek.com/v1',  # DeepSeek API endpoint
+    api_key=DEEPSEEK_API_KEY,  # Use DeepSeek API key
+)
+
+# Create agent with proper response model
+class AIResponse(BaseModel):
+    content: str
+    category: str = "general"
+
+agent = Agent(
+    model=model,
+    result_type=AIResponse,
+    system_prompt=("You're a helpful assistant. Respond conversationally and keep answers concise."),
+)
+
+# Streamlit UI setup
+st.title("💬 Smart Chat Assistant")
+st.caption("Powered by DeepSeek + Pydantic_AI")
+
+# Initialize chat history
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# Display chat history
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# User input handling
+if prompt := st.chat_input("How can I help you today?"):
+    # Add user message to history
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    
+    # Display user message
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    # Generate response with error handling
+    try:
+        with st.spinner("Analyzing your question..."):
+            result = asyncio.run(agent.run(prompt))
+            
+        # Display assistant response
+        with st.chat_message("assistant"):
+            st.markdown(result.data.content)
+        
+    except Exception as e:
+        st.error(f"Error generating response: {str(e)}")
+        st.session_state.messages.append({"role": "assistant", "content": f"Error: {str(e)}"})

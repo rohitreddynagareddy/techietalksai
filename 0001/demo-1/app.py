@@ -47,19 +47,32 @@ load_dotenv()
 }
 
 """
+
+# i = 1
 def pretty_print_completion(completion):
+    # global i
+    # i = 1
     def serialize(obj):
+        global i
         # If the object has a __dict__ attribute, convert it to a dictionary
         if hasattr(obj, "__dict__"):
+            # print("DICT")
+
             return {key: serialize(value) for key, value in obj.__dict__.items()}
         # If the object is a list, serialize each item
         elif isinstance(obj, list):
+            # print("LIST")
             return [serialize(item) for item in obj]
         # If the object is a dictionary, serialize its keys and values
         elif isinstance(obj, dict):
+            # print("INSTANCE DICT")
             return {key: serialize(value) for key, value in obj.items()}
         # For other objects, return their string representation
         else:
+            # print("OBJ")
+		    # Recursively serialize the ChatCompletion object
+            # print(f"STRINGS: {i}: " + str(obj))
+            # i = i + 1 
             return str(obj)
 
     # Recursively serialize the ChatCompletion object
@@ -104,6 +117,7 @@ def generate_chat_response(conversation_history, api_key):
       #   {"role": "system", "content": "You are a helpful assistant."},
       #   {"role": "user", "content": "Hello!"}
       # ]
+      temperature = 0.7
     )
     pretty_print_completion(completion)
     # print(json.dumps(completion, indent=4))
@@ -130,6 +144,11 @@ if __name__ == "__main__":
         # Pretty-print JSON response
         # print(json.dumps(response, indent=4))
         # pprint(response.content)
+        # print("RESPONSE")
+        # print(response)       
+        print("RESPONSE-1")
+        pretty_print_completion(response)
+        print("RESPONSE.CONTENT")
         print(response.content)
         print(response.tool_calls)
         print(response.function_call)
