@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Website with AI Chat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <!-- Your page content -->
+  <main class="container mx-auto p-8">
+    <h1 class="text-4xl font-bold mb-8">Welcome to My Site</h1>
+    <!-- Content... -->
+  </main>
+
+  <!-- Chat Integration -->
+  <div class="fixed bottom-6 right-6 z-50">
+    <button id="chatToggle" class="p-4 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-all">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+      </svg>
+    </button>
+  </div>
+
+  <div id="chatContainer" class="fixed bottom-20 right-6 w-96 h-[600px] bg-white shadow-xl rounded-lg hidden">
+    <iframe 
+      src="http://localhost:8502?embed=true" 
+      class="w-full h-full rounded-lg"
+      frameborder="0"
+    ></iframe>
+  </div>
+
+  <script>
+    document.getElementById('chatToggle').addEventListener('click', function() {
+      const chatContainer = document.getElementById('chatContainer');
+      chatContainer.classList.toggle('hidden');
+      
+      // Optional: Reset iframe on close
+      if (chatContainer.classList.contains('hidden')) {
+        chatContainer.querySelector('iframe').src = chatContainer.querySelector('iframe').src;
+      }
+    });
+  </script>
+</body>
+</html>
