@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  chatbot:
+    build: .
+    ports:
+      - "8502:8501"  # Streamlit default port
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+    networks:
+      - app-network
+
+  webserver:
+    image: nginx:alpine
+    ports:
+      - "8503:80"  # Web server port
+    volumes:
+      - ./web/static:/usr/share/nginx/html  # Directory containing index.html
+    networks:
+      - app-network
+    depends_on:
+      - chatbot
+
+networks:
+  app-network:
+    driver: bridge
