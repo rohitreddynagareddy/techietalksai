@@ -1,6 +1,6 @@
-# Techietalks AI - Multi-Model Chat Assistant with Web Server
+# Techietalks AI - Multi-Model Chat Assistant with RAG, Website Integration, and Booking Tool
 
-Welcome to the **Techietalks AI** repository! This project is a **multi-model AI-powered chat assistant** built using **Streamlit**, **Pydantic_AI**, and multiple AI models like **OpenAI**, **DeepSeek**, and **Gemini**. It allows users to interact with different AI models, switch between them, and enjoy a conversational experience. Additionally, this version includes a **web server** (using **NGINX**) to serve static content alongside the chat assistant.
+Welcome to the **Techietalks AI** repository! This project is a **multi-model AI-powered chat assistant** built using **Streamlit**, **Pydantic_AI**, and multiple AI models like **OpenAI**, **DeepSeek**, and **Gemini**. It allows users to interact with different AI models, switch between them, and enjoy a conversational experience. Additionally, this version includes **Retrieval-Augmented Generation (RAG)** functionality for processing PDF documents, **website content integration**, and a **booking tool** for generating booking reference numbers.
 
 This repository contains all the necessary files to set up and run the chat assistant locally or in a Docker container. Below, you'll find a detailed explanation of the project and instructions to get started.
 
@@ -15,11 +15,14 @@ Here’s a breakdown of the files in this repository:
 3. **`.gitignore`**: Specifies files and folders that Git should ignore (e.g., `.env` to avoid exposing sensitive information).
 4. **`Dockerfile`**: Contains instructions to build a Docker image for the Streamlit application. It sets up a Python environment, installs dependencies, and runs the Streamlit app.
 5. **`README.md`**: This file! It provides an overview of the project and instructions for setup.
-6. **`app.py`**: The main application file. It contains the code for the Streamlit-based chat interface and integrates with multiple AI models (OpenAI, DeepSeek, and Gemini). It also includes a **"New Chat"** button to reset the conversation.
+6. **`app.py`**: The main application file. It contains the code for the Streamlit-based chat interface, integrates with multiple AI models (OpenAI, DeepSeek, and Gemini), includes **RAG functionality** for processing PDF documents, supports **website content integration**, and features a **booking tool** for generating booking reference numbers.
 7. **`docker-compose.yml`**: A configuration file to run the application using Docker Compose. It sets up two services: the **chatbot** (Streamlit app) and the **webserver** (NGINX for serving static content).
 8. **`requirements.txt`**: Lists all Python dependencies required to run the application.
 9. **`sree.txt`**: A placeholder text file (likely for personal notes or testing).
-10. **`web/static/index.html`**: A static HTML file served by the NGINX web server. You can customize this file to add additional content or documentation.
+10. **`data/`**: A directory containing:
+    - **`pdfs/`**: Stores uploaded PDF documents.
+    - **`vector_store/`**: Stores vector embeddings of the PDF documents and website content for RAG functionality.
+11. **`web/static/index.html`**: A static HTML file served by the NGINX web server. You can customize this file to add additional content or documentation.
 
 ---
 
@@ -32,12 +35,16 @@ This project uses the following technologies:
 - **OpenAI API**: A powerful AI model for generating conversational responses.
 - **DeepSeek API**: An AI model that provides conversational responses.
 - **Gemini API**: Another AI model for generating responses.
+- **Retrieval-Augmented Generation (RAG)**: A technique that combines retrieval of relevant information from documents (e.g., PDFs) and website content with generative AI to provide context-aware answers.
+- **Tool Integration**: Allows the AI to use custom tools (e.g., document retrieval, booking reference generation) to enhance its responses.
 - **NGINX**: A web server used to serve static content (e.g., HTML files).
 - **Rich**: A library used for pretty-printing debug information (e.g., conversation history).
 
 When you type a question into the chat interface, the app sends it to the selected AI model (OpenAI, DeepSeek, or Gemini), processes the response, and displays it in a conversational format. It also maintains a history of the conversation, allowing the AI to provide more context-aware answers. The **"New Chat"** button resets the conversation, clearing the history and starting fresh.
 
-The **NGINX web server** serves static content (e.g., `index.html`) alongside the chat assistant, making it easy to provide additional information or documentation.
+The **RAG functionality** allows users to upload PDF documents or add website URLs, which are processed and used to provide context-aware answers. The app uses **ChromaDB** to store vector embeddings of the documents and website content and retrieve relevant information when answering questions.
+
+The **booking tool** generates random booking reference numbers, which can be used for confirmation purposes in various scenarios.
 
 ---
 
@@ -54,7 +61,7 @@ Follow these steps to set up and run the project:
 1. **Clone the Repository**:
    ```bash
    git clone https://github.com/schogini/techietalksai.git
-   cd techietalksai/0006
+   cd techietalksai/0010
    ```
 
 2. **Set Up Environment Variables**:
@@ -74,6 +81,12 @@ Follow these steps to set up and run the project:
    - Once the containers are running:
      - Access the **Chat Assistant** at `http://localhost:8502`.
      - Access the **Web Server** (static content) at `http://localhost:8503`.
+
+4. **Upload PDFs or Add Website URLs**:
+   - Use the sidebar in the chat interface to upload PDF documents or add website URLs. The app will process them and use their content to provide context-aware answers.
+
+5. **Use the Booking Tool**:
+   - The AI can generate booking reference numbers for confirmation purposes. Simply ask the assistant to book something, and it will provide a booking reference.
 
 ---
 
@@ -97,4 +110,4 @@ For **AI consultancy, training, and development**, contact **Schogini Systems Pr
 
 ---
 
-Enjoy using the **Techietalks AI Multi-Model Chat Assistant with Web Server**! If you have any questions or feedback, feel free to reach out. 😊
+Enjoy using the **Techietalks AI Multi-Model Chat Assistant with RAG, Website Integration, and Booking Tool**! If you have any questions or feedback, feel free to reach out. 😊
