@@ -1,316 +1,106 @@
-Here’s the complete `README.md` for your project, including the `docker-compose.yml` setup:
+# Techietalks AI - Multi-Model Chat Assistant
 
-```markdown
-# Multi-Model AI Chat Assistant 🤖
+Welcome to the **Techietalks AI** repository! This project is a **multi-model AI-powered chat assistant** built using **Streamlit**, **Pydantic_AI**, and multiple AI models like **OpenAI**, **DeepSeek**, and **Gemini**. It allows users to interact with different AI models, switch between them, and enjoy a conversational experience. The app also includes a **"New Chat"** button to reset the conversation and start fresh.
 
-A versatile conversational AI assistant that supports multiple AI models (OpenAI, DeepSeek, and Gemini). Built with Streamlit, Pydantic, and Rich, this application provides a user-friendly chat interface with structured response validation, conversation history, and rich debugging logs.
-
-![Chat Interface Demo](https://via.placeholder.com/800x400.png?text=Chat+Assistant+Demo)
-
-## Features ✨
-- **Multi-Model Support**: Switch between OpenAI, DeepSeek, and Gemini models.
-- **Conversation History**: Track and display chat history with model-specific avatars.
-- **Rich Debugging**: Detailed console logs for debugging and analysis.
-- **Error Handling**: Graceful error handling and user feedback.
-- **Custom UI**: Enhanced Streamlit UI with custom styles and buttons.
-- **Docker Support**: Easy deployment using Docker.
+This repository contains all the necessary files to set up and run the chat assistant locally or in a Docker container. Below, you'll find a detailed explanation of the project and instructions to get started.
 
 ---
 
-## Installation 🛠️
+## 📁 Repository Structure
 
-### Local Setup
+Here’s a breakdown of the files in this repository:
 
-1. **Clone repository**:
-```bash
-git clone https://github.com/yourusername/multi-model-chat-assistant.git
-cd multi-model-chat-assistant
-```
+1. **`.DS_Store`**: A macOS-specific file that stores folder attributes (e.g., icon positions). You can ignore this file.
+2. **`.env`**: A file to store environment variables, such as API keys. **Important**: Add your `OPENAI_API_KEY`, `DEEPSEEK_API_KEY`, and `GEMINI_API_KEY` here to authenticate with the respective APIs.
+3. **`.gitignore`**: Specifies files and folders that Git should ignore (e.g., `.env` to avoid exposing sensitive information).
+4. **`Dockerfile`**: Contains instructions to build a Docker image for the application. It sets up a Python environment, installs dependencies, and runs the Streamlit app.
+5. **`README.md`**: This file! It provides an overview of the project and instructions for setup.
+6. **`app.py`**: The main application file. It contains the code for the Streamlit-based chat interface and integrates with multiple AI models (OpenAI, DeepSeek, and Gemini). It also includes a **"New Chat"** button to reset the conversation.
+7. **`docker-compose.yml`**: A configuration file to run the application using Docker Compose. It maps ports, loads environment variables, and sets up volumes.
+8. **`requirements.txt`**: Lists all Python dependencies required to run the application.
+9. **`sree.txt`**: A placeholder text file (likely for personal notes or testing).
 
-2. **Create virtual environment**:
-```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate  # Windows
-```
+---
 
-3. **Install dependencies**:
-```bash
-pip install -r requirements.txt
-```
+## 🚀 How It Works
 
-4. **Set up environment variables**:
-   - Create a `.env` file:
-   ```env
-   OPENAI_API_KEY=your_openai_api_key
-   DEEPSEEK_API_KEY=your_deepseek_api_key
-   GEMINI_API_KEY=your_gemini_api_key
+This project uses the following technologies:
+
+- **Streamlit**: A framework for building interactive web applications with Python. It powers the chat interface.
+- **Pydantic_AI**: A library that helps structure and validate AI responses.
+- **OpenAI API**: A powerful AI model for generating conversational responses.
+- **DeepSeek API**: An AI model that provides conversational responses.
+- **Gemini API**: Another AI model for generating responses.
+- **Rich**: A library used for pretty-printing debug information (e.g., conversation history).
+
+When you type a question into the chat interface, the app sends it to the selected AI model (OpenAI, DeepSeek, or Gemini), processes the response, and displays it in a conversational format. It also maintains a history of the conversation, allowing the AI to provide more context-aware answers. The **"New Chat"** button resets the conversation, clearing the history and starting fresh.
+
+---
+
+## 🛠️ Setup Instructions
+
+Follow these steps to set up and run the project:
+
+### Prerequisites
+1. **Python 3.11**: Ensure Python is installed on your system.
+2. **Docker** (optional): If you want to run the app in a container.
+3. **API Keys**: Obtain API keys for **OpenAI**, **DeepSeek**, and **Gemini** from their respective websites.
+
+### Steps
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/schogini/techietalksai.git
+   cd techietalksai/0005
    ```
 
-5. **Run the application**:
-```bash
-streamlit run app.py
-```
+2. **Set Up Environment Variables**:
+   - Create a `.env` file in the project directory.
+   - Add your API keys:
+     ```plaintext
+     OPENAI_API_KEY=your_openai_api_key_here
+     DEEPSEEK_API_KEY=your_deepseek_api_key_here
+     GEMINI_API_KEY=your_gemini_api_key_here
+     ```
+
+3. **Install Dependencies**:
+   - If running locally:
+     ```bash
+     pip install -r requirements.txt
+     ```
+   - If using Docker, skip this step.
+
+4. **Run the Application**:
+   - **Locally**:
+     ```bash
+     streamlit run app.py
+     ```
+     Open your browser and navigate to `http://localhost:8501`.
+   - **Using Docker**:
+     ```bash
+     docker-compose up --build
+     ```
+     Open your browser and navigate to `http://localhost:8502`.
 
 ---
 
-### Docker Setup
+## 📄 License
 
-1. **Build and run the Docker container**:
-```bash
-docker-compose up --build
-```
-
-2. **Access the application**:
-   - Open your browser and navigate to `http://localhost:8502`.
+This project is open-source and available under the MIT License. Feel free to use, modify, and distribute it as needed.
 
 ---
 
-## Configuration ⚙️
+## 📧 Contact
 
-1. **API Keys**:
-   - Obtain API keys from:
-     - [OpenAI Platform](https://platform.openai.com/)
-     - [DeepSeek Platform](https://platform.deepseek.com/)
-     - [Gemini Platform](https://ai.google.dev/)
-   - Add them to the `.env` file:
-   ```env
-   OPENAI_API_KEY=your_openai_api_key
-   DEEPSEEK_API_KEY=your_deepseek_api_key
-   GEMINI_API_KEY=your_gemini_api_key
-   ```
-
-2. **Docker Configuration**:
-   - The `docker-compose.yml` file maps port `8502` on your host to port `8501` in the container.
-   - Environment variables are loaded from the `.env` file.
+For **AI consultancy, training, and development**, contact **Schogini Systems Private Limited** at [https://www.schogini.com](https://www.schogini.com).
 
 ---
 
-## Code Structure 📁
+## 👨‍💻 Author
 
-### `app.py`
-```python
-import streamlit as st
-from pydantic import BaseModel
-from pydantic_ai import Agent
-from pydantic_ai.models.openai import OpenAIModel
-from pydantic_ai.models.gemini import GeminiModel
-from pydantic_ai.messages import ModelMessage
-from rich import print
-import os
-from dotenv import load_dotenv
-import asyncio
-import nest_asyncio
-
-# Apply nest_asyncio to handle event loops
-nest_asyncio.apply()
-
-# Streamlit page configuration
-st.set_page_config(
-    page_title="AI Chat Assistant",
-    page_icon="🤖",
-    layout="centered"
-)
-
-# Custom CSS for UI enhancements
-st.markdown("""
-<style>
-    .stButton>button {
-        background-color: #f0f2f6;
-        color: #2c3e50;
-        border: 1px solid #ced4da;
-        transition: all 0.3s ease;
-    }
-    .stButton>button:hover {
-        background-color: #e2e6ea;
-        border-color: #adb5bd;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# Model selection and new chat button
-MODEL_CHOICE = st.selectbox("Choose AI Model", ["OpenAI", "DeepSeek", "Gemini"])
-
-if st.button("🔄 New Chat", help="Start a new conversation", use_container_width=True):
-    st.session_state.messages = []
-    st.session_state.message_history = []
-    st.rerun()
-
-# Load environment variables
-load_dotenv()
-
-# Validate API keys
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
-if not OPENAI_API_KEY:
-    st.error("OPENAI_API_KEY is not set in the environment or .env file.")
-    st.stop()
-if not DEEPSEEK_API_KEY:
-    st.error("DEEPSEEK_API_KEY is not set in the environment or .env file.")
-    st.stop()
-if not GEMINI_API_KEY:
-    st.error("GEMINI_API_KEY is not set in the environment or .env file.")
-    st.stop()
-
-# Initialize selected model
-if MODEL_CHOICE == "OpenAI":
-    model = OpenAIModel(
-        model_name='gpt-3.5-turbo',
-        base_url='https://api.openai.com/v1',
-        api_key=OPENAI_API_KEY,
-    )
-elif MODEL_CHOICE == "DeepSeek":
-    model = OpenAIModel(
-        model_name='deepseek-chat',
-        base_url='https://api.deepseek.com/v1',
-        api_key=DEEPSEEK_API_KEY,
-    )
-elif MODEL_CHOICE == "Gemini":
-    model = GeminiModel(
-        model_name='gemini-1.5-flash',
-        api_key=GEMINI_API_KEY,
-    )
-
-# Pydantic response model
-class AIResponse(BaseModel):
-    content: str
-    category: str = "general"
-
-# Initialize session states
-if "message_history" not in st.session_state:
-    st.session_state.message_history = []
-
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# Initialize AI agent
-agent = Agent(
-    model=model,
-    result_type=AIResponse,
-    system_prompt="You're a helpful assistant. Respond conversationally and keep answers concise.",
-)
-
-# Model-specific avatars
-MODEL_AVATARS = {
-    "OpenAI": "🦾",  # Robot arm emoji
-    "DeepSeek": "🚀",  # Rocket emoji
-    "Gemini": "🤖"   # Robot face emoji
-}
-
-# UI Setup
-st.title("💬 Multi-Model Chat Assistant")
-st.caption(f"Currently using: {MODEL_CHOICE} {MODEL_AVATARS[MODEL_CHOICE]}")
-
-# Display chat history
-for message in st.session_state.messages:
-    avatar = MODEL_AVATARS[message.get("model")] if message["role"] == "assistant" else None
-    with st.chat_message(message["role"], avatar=avatar):
-        st.markdown(message["content"])
-
-# Handle user input
-if prompt := st.chat_input("How can I help you today?"):
-    # Add user message to history
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    
-    # Display user message
-    with st.chat_message("user"):
-        st.markdown(prompt)
-
-    try:
-        with st.spinner("Generating response..."):
-            # Event loop management
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            
-            # Execute async operation
-            result = loop.run_until_complete(
-                agent.run(
-                    prompt,
-                    message_history=st.session_state.message_history
-                )
-            )
-            
-            # Update message history
-            new_messages = result.new_messages()
-            if MODEL_CHOICE == "OpenAI":
-                for msg in new_messages:
-                    if hasattr(msg, 'tool_calls') and msg.tool_calls:
-                        for tool_call in msg.tool_calls:
-                            if len(tool_call.id) > 40:
-                                tool_call.id = tool_call.id[:40]
-            
-            st.session_state.message_history.extend(new_messages)
-
-            print("\n[bold]Message History:[/bold]")
-            for i, msg in enumerate(st.session_state["message_history"]):
-                print(f"\n[yellow]--- Message {i+1} ---[/yellow]")
-                print(msg)
-
-        # Display assistant response
-        with st.chat_message("assistant", avatar=MODEL_AVATARS[MODEL_CHOICE]):
-            st.markdown(result.data.content)        
-
-        st.session_state.messages.append({
-            "role": "assistant",
-            "content": result.data.content,
-            "model": MODEL_CHOICE  # Store model info with the message
-        })
-    except Exception as e:
-        st.error(f"Error generating response: {str(e)}")
-        st.session_state.messages.append({
-            "role": "assistant",
-            "content": f"Error: {str(e)}"
-        })
-```
-
-### `docker-compose.yml`
-```yaml
-version: '3.8'
-
-services:
-  chatbot:
-    build: .
-    ports:
-      - "8502:8501"
-    env_file:
-      - .env  # Load environment variables from .env file
-    volumes:
-      - ./:/app  # Map current directory to container's /app
-```
+**Sreeprakash Neelakantan**  
+- Website: [https://www.schogini.com](https://www.schogini.com)  
+- GitHub: [https://github.com/schogini/techietalksai.git](https://github.com/schogini/techietalksai.git)
 
 ---
 
-## Contributing 🤝
-
-Contributions are welcome! Please follow these steps:
-1. Fork the repository.
-2. Create a new branch for your feature.
-3. Commit your changes.
-4. Push to the branch.
-5. Open a Pull Request.
-
----
-
-## License 📄
-
-MIT License - See [LICENSE](LICENSE) for details.
-
----
-
-**Acknowledgments**  
-- [OpenAI](https://platform.openai.com/) for GPT models.
-- [DeepSeek](https://platform.deepseek.com/) for DeepSeek models.
-- [Gemini](https://ai.google.dev/) for Gemini models.
-- [Streamlit](https://streamlit.io/) for intuitive UI framework.
-- [Pydantic](https://pydantic-docs.helpmanual.io/) for data validation.
-- [Rich](https://github.com/Textualize/rich) for beautiful console logging.
-```
-
----
-
-### Notes:
-1. Replace `your_openai_api_key`, `your_deepseek_api_key`, and `your_gemini_api_key` with your actual API keys.
-2. Ensure the `.env` file is added to `.gitignore` to avoid exposing sensitive information.
-3. The Docker setup assumes you have Docker and Docker Compose installed.
+Enjoy using the **Techietalks AI Multi-Model Chat Assistant**! If you have any questions or feedback, feel free to reach out. 😊
