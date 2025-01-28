@@ -64,12 +64,14 @@ if prompt := st.chat_input("How can I help you today?"):
     try:
         with st.spinner("Analyzing your question..."):
             # print(st.session_state["message_history"])
+
+            result = asyncio.run(agent.run(prompt, message_history=st.session_state["message_history"]))
+            st.session_state["message_history"].extend(result.new_messages())
+
             print("\n[bold]Message History:[/bold]")
             for i, msg in enumerate(st.session_state["message_history"]):
                 print(f"\n[yellow]--- Message {i+1} ---[/yellow]")
-                print(msg)
-            result = asyncio.run(agent.run(prompt, message_history=st.session_state["message_history"]))
-            st.session_state["message_history"].extend(result.new_messages())
+                print(msg)            
             
         # Display assistant response
         with st.chat_message("assistant"):
