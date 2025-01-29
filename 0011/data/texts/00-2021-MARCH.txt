@@ -1,0 +1,362 @@
+root@a551d1cc1d40:/etc/ansible# for f in `ls -lt *.yml|awk '{print $9}'|tac`;do echo "==========================";echo $f;echo "==========================";cat $f;done
+==========================
+web2.yml
+==========================
+- hosts: deb
+  tasks:
+  - name: Install web server on ubuntu
+    apt: name=apache2 update_cache=yes state=present
+
+  - name:  update page
+    copy:
+      content:  'New Page {{ ansible_os_family }}'
+      dest:  /var/www/html/index.html 
+
+  - name:  restart apache
+    service: name=apache2 state=restarted
+
+==========================
+web.yml
+==========================
+- hosts: rpm
+  tasks:
+  - name: Install web server on centos
+    yum: name=httpd state=present
+
+  - name:  update page
+    copy:
+      content:  'I am {{ ansible_os_family }}'
+      dest:  /var/www/html/index.html 
+
+  - name:  restart apache
+    service: name=httpd state=restarted
+==========================
+day1-ex1.yml
+==========================
+- hosts:
+  - all
+  tasks:
+  - action: ping
+==========================
+day1-ex2.yml
+==========================
+- hosts:
+  - rpm
+  tasks:
+  - file:
+      path: /sree2.txt
+      state: touch
+
+==========================
+day1-ex3.yml
+==========================
+- name: For Debian Servers
+  hosts:
+  - deb
+  tasks:
+  - name: Creating Sree3.txt file on Debian
+    copy:
+      content: 'This is Sree'
+      dest: /sree3.txt
+
+- name: For Centos Servers
+  hosts:
+  - rpm
+  tasks:
+  - name: Creating Sree3.txt file on Centos
+    copy:
+      content: 'This is Sree'
+      dest: /sree3.txt
+
+==========================
+day1-ex4.yml
+==========================
+---
+- name: Ubuntu Servers
+  hosts: 
+  - deb
+
+  tasks:
+  - name: Installing Apache Web Server
+    apt: name=apache2 update_cache=yes state=present
+
+  - name: Creating Web Application
+    copy:
+      content: 'This is Sree from {{ ansible_os_family }}'
+      dest: /var/www/html/index.html
+    notify:
+    - Restart Apache Web Server
+
+  handlers:
+  - name: Restart Apache Web Server
+    service: name=apache2 state=restarted
+
+
+  
+==========================
+day1-ex5.yml
+==========================
+- hosts:
+  - rpm
+  vars:
+   aaa: 1234
+  tasks:
+  - debug:
+     msg: "Hello {{ ansible_os_family }} {{ aaa }} DISK TYPE: {{ disk_type }}"
+     #var: aaa
+==========================
+day1-ex6.yml
+==========================
+- hosts:
+   - ubuntu1
+  gather_facts: no
+   
+  tasks:
+   - name: Task A
+     debug: msg="Task A"
+     notify: Handler123
+     changed_when: true
+
+   - name: Task B
+     debug: msg="Task B"
+     notify: Handler123
+     changed_when: true
+   
+  handlers:
+   - name: Handler123
+     debug: msg="Handling.."
+ 
+==========================
+day1-ex7.yml
+==========================
+- hosts:
+  - ubuntu1
+  tasks:
+#  - shell: abcd.sh
+#    register: aa
+
+#  - shell: date > /test.txt
+  - command: date > /test2.txt
+    register: aa
+
+  - debug:
+     var: aa
+==========================
+day1-ex8.yml
+==========================
+- hosts:
+  - deb
+  - rpm
+  tasks:
+  - name: Install Webserver
+    apt: pkg=apache2 state=latest
+    when: ansible_os_family == "Debian"
+    notify:
+    - HandlerDebian
+    changed_when: true
+
+  - name: Install Webserver
+    yum: name=httpd state=latest
+    when: ansible_os_family == "RedHat"
+    notify:
+    - HandlerRH
+    changed_when: true
+
+  handlers:
+  - name: HandlerDebian
+    service: name=apache2 state=restarted
+  - name: HandlerRH
+    service: name=httpd state=restarted
+==========================
+day2-ex01.yml
+==========================
+- hosts: win
+  name: Creating a File on Windows
+  tasks:
+  - name: File creation
+    win_copy:
+      content: "Hi from Sree"
+      dest: c:\sree.txt
+
+==========================
+day2-ex02.yml
+==========================
+- hosts: win
+  name: Install IIS
+  tasks:
+  -  win_feature:
+       name: Web-Server
+       state: present
+
+  - name: Web Page
+    win_copy:
+     dest: c:\Inetpub\wwwroot\sree.htm
+     content: '<h1>Hello from Sree'
+==========================
+day2-ex03.yml
+==========================
+- name: Pinging Linux Servers
+  hosts:
+  - rpm
+  - deb
+  tasks:
+  - action: ping
+
+- name: Pinging Windows Servers
+  hosts:
+  - win
+  tasks:
+  - action: win_ping
+==========================
+day2-ex04.yml
+==========================
+---
+- hosts: win
+  tasks:
+  - name: Win Shell
+    win_shell: C:\somescript.ps1 >> c:\somelog.txt
+==========================
+day2-ex05.yml
+==========================
+- hosts: ubuntu1
+  vars:
+    who: Sree123
+    title: Cloud Architect
+    colors:
+    - Red
+    - Green
+    - Yellow
+    - Blue
+
+  tasks:
+    - name: install apache2
+      apt: name=apache2 update_cache=yes state=latest
+
+    - name: Index 
+      template:
+       src: index.html.j2
+       dest: /var/www/html/index.html
+==========================
+day2-ex06.yml
+==========================
+- hosts: ubuntu1
+  vars:
+    who: Sree123
+    title: Cloud Architect
+    colors:
+    - Red
+    - Green
+    - Yellow
+    - Blue
+
+  tasks:
+    - name: install apache2
+      apt: name=apache2 update_cache=yes state=latest
+
+    - name: Index 
+      template:
+       src: index.html.j2
+       dest: /var/www/html/index.html
+      notify:
+      - Restart Apache 1234 
+
+  handlers:
+  - name: Restart Apache 1234
+    service: name=apache2 state=restarted
+==========================
+day2-ex07.yml
+==========================
+- hosts: ubuntu1
+  roles:
+  - sreeweb
+  - geerlingguy.git
+==========================
+day2-ex08.yml
+==========================
+- name: Play with tags
+  hosts: localhost
+  gather_facts: false
+  connection: local
+
+  tasks:
+    - name: Going to play
+      debug: msg="Playing.."
+      tags: play
+
+    - name: Going to study
+      debug: msg="Studying.."
+      tags: study
+==========================
+day2-ex09.yml
+==========================
+- hosts: ubuntu1
+  post_tasks:
+     - debug: msg="I am a post task"
+  pre_tasks:
+     - debug: msg="I am a pre task"
+  tasks:
+    - debug: msg="I am a task"
+
+==========================
+day2-ex11.yml
+==========================
+- hosts: ubuntu1
+  gather_facts: no
+  tasks:
+    - name: File command
+      file:
+       state: touch
+       dest: /file2.txt
+
+    - name: Shell command
+      shell: ls /
+      register: a
+
+    - name: Test
+      assert:
+       that:
+        - "'file2.txt' in a.stdout_lines"
+==========================
+day2-ex10.yml
+==========================
+- hosts: all
+  #gather_facts: false
+  serial: "20%"
+
+  tasks:
+  - name: copy some text
+    copy:
+       content: 'Hello world'
+       dest: /demo.txt
+  
+
+==========================
+day2-ex12.yml
+==========================
+- hosts: ubuntu1
+  gather_facts: no
+  tasks:
+  - name: Custom Module
+    action: simple.sh
+    register: abcd
+
+  - name: 
+    debug:
+     var: abcd
+==========================
+day2-ex13.yml
+==========================
+- hosts: localhost
+  gather_facts: false
+  connection: local
+  vars:
+    aaa: ABCD
+    bbb: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          65636264306661353933313735303434346330313837643632646630643764613966343131623565
+          6338346130373334393731353461366234663932656133650a656635666664316138623830323863
+          62646435376166623432383830333133333863303932353266313961623764303735666662323333
+          3839643966386361360a363939383161383439383661356636643530663338323862396534386636
+          3036
+  tasks:
+  - debug: msg="My Var A is {{ aaa }} and B is {{ bbb }}"
