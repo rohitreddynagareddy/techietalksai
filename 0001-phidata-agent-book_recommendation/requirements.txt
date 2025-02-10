@@ -1,0 +1,4 @@
+openai
+exa_py
+agno
+python-dotenv
