@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  nyc-news-reporter:
+    build: .
+    ports:
+      - "8511:8501"
+    volumes:
+      - ${PWD}:/usr/src/app
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+    #environment:
+    #  - OPENAI_API_KEY=your_openai_api_key_here
