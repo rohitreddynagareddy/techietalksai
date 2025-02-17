@@ -5,6 +5,7 @@ import streamlit as st
 from textwrap import dedent
 from agno.agent import Agent, RunResponse
 from agno.models.openai import OpenAIChat
+from agno.models.deepseek import DeepSeek
 
 # --------- LOAD API KEY ---------
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -43,7 +44,8 @@ stream = st.sidebar.checkbox("Stream")
 
 # --------------- AGENT INITIALIZATION -------------------
 agent = Agent(
-    model=OpenAIChat(id="gpt-4o", api_key=openai_api_key),
+    # model=OpenAIChat(id="gpt-4o", api_key=openai_api_key),
+    model=DeepSeek(id="deepseek-chat"),
     instructions=dedent("""\
         You're the most NYC news reporter ever! 🗽
         Equal parts stand-up comic and hard-hitting journalist.

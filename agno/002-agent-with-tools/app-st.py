@@ -1,10 +1,10 @@
-# app/main.py
 import os
 from typing import Iterator
 import streamlit as st
 from textwrap import dedent
 from agno.agent import Agent, RunResponse
 from agno.models.openai import OpenAIChat
+from agno.tools.duckduckgo import DuckDuckGoTools
 
 # --------- LOAD API KEY ---------
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -13,71 +13,76 @@ if not openai_api_key:
     st.stop()
 
 # --------------- TITLE AND INFO SECTION -------------------
-st.title("🗽 NYC News Reporter Bot")
-st.write("Your sassy AI news buddy with that authentic New York attitude!")
+st.title("🗽 NYC Web-Savvy News Reporter")
+st.write("Your street-smart AI news buddy that hunts down fresh stories with authentic NYC attitude!")
 
 # --------------- SIDEBAR CONTROLS -------------------
 with st.sidebar:
-    st.subheader("Try These NYC Prompts:")
+    st.subheader("Try These NYC Scoops:")
     st.markdown("""
-    - Central Park latest scoop
     - Wall Street breaking story
-    - Yankees game update
+    - Central Park latest incident
+    - Yankees Stadium updates
     - New Broadway show buzz
-    - Brooklyn food trend
-    - Subway peculiar incident
+    - Manhattan restaurant opening
+    - Subway system developments
     """)
     st.markdown("---")
-    # st.caption(f"Queries processed: {st.session_state.get('counter', 0)}")
-
-# Initialize session state for query counter
-with st.sidebar:
+    
+    # Query counter
     counter_placeholder = st.empty()
-if "counter" not in st.session_state:
-    st.session_state["counter"] = 0
-st.session_state["counter"] += 1
-with st.sidebar:
-    counter_placeholder.caption(f"Queries processed: {st.session_state['counter']}")
+    if "counter" not in st.session_state:
+        st.session_state["counter"] = 0
+    counter_placeholder.caption(f"Stories investigated: {st.session_state['counter']}")
 
-stream = st.sidebar.checkbox("Stream")
+stream = st.sidebar.checkbox("Live Reporting Mode")
 
 # --------------- AGENT INITIALIZATION -------------------
 agent = Agent(
-    model=OpenAIChat(id="gpt-4o", api_key=openai_api_key),
+    model=OpenAIChat(id="gpt-4o-mini", api_key=openai_api_key),
+    tools=[DuckDuckGoTools()],
+    show_tool_calls=True,
     instructions=dedent("""\
-        You're the most NYC news reporter ever! 🗽
-        Equal parts stand-up comic and hard-hitting journalist.
+        You're the most connected news reporter in NYC! 🗽
+        Equal parts digital sleuth and sidewalk poet. Always verify facts through web searches!
 
-        **Your style rules:**
+        **Reporting Protocol:**
         1. Start with EMOJI HEADLINE that slaps
-        2. Serve news with extra attitude 🇺🇸
-        3. Keep it quick but memorable
-        4. Drop local slang like a true New Yorker
-        5. Sign off with flair
+        2. Hit the web for fresh intel 🔍
+        3. Structure your scoop:
+           - Breaking news summary
+           - Key details from sources
+           - Local impact analysis
+        4. Season with NYC slang and attitude
+        5. Sign off with reporter flair
 
-        **Required NYC elements:**
+        **Required NYC Elements:**
         - Pizza rat references 🐀🍕
-        - Subway stories 🚇
-        - Bodega cat shoutouts 🐈⬛
-        - Traffic horn SFX 🚗📢
-        - Pretentious coffee takes ☕
+        - Bodega cat sightings 🐈⬛
+        - Subway drama updates 🚇
+        - Traffic horn soundtrack 🚗📢
+        - Brooklyn vs Manhattan rivalry
 
-        **Sign-off examples:**
+        **Sign-off Examples:**
         - 'Back to you in the studio, suckers!'
         - 'Reporting from the concrete jungle!'
-        - 'This is Tony PizzaRat, LIVE from a fire escape!'\
+        - 'This is Tony PizzaRat, LIVE from a fire escape!'
+
+        **Fact-Check Rules:**
+        - Always verify through web search
+        - Cite latest updates
+        - Flag unconfirmed rumors\
     """),
     markdown=True,
 )
 
 # --------------- USER INPUT HANDLING -------------------
-prompt = st.text_input("What's your NYC news question? (e.g., 'Times Square breaking news')")
+prompt = st.text_input("What NYC story should we chase? (e.g., 'Times Square breaking news')")
 
 if prompt:
-    st.session_state["counter"] = 1
+    st.session_state["counter"] += 1
     
-    with st.spinner("🕵️♂️ Sniffing out the story..."):
-        # stream = True
+    with st.spinner("🕵️♂️ Sniffing out the story through back alleys and search engines..."):
         if stream:
             response_stream: Iterator[RunResponse] = agent.run(prompt, stream=True)
             response_text = ""
@@ -86,23 +91,25 @@ if prompt:
             for chunk in response_stream:
                 response_text += chunk.content
                 placeholder.markdown(response_text + "▌")
-                st.session_state["counter"] += 1
-                with st.sidebar:
-                    counter_placeholder.caption(f"Queries processed: {st.session_state['counter']}")
             
             placeholder.markdown(response_text)
         else:
             response = agent.run(prompt, stream=False)
             st.markdown(response.content)
-            st.session_state["counter"] += 1
-            with st.sidebar:
-                counter_placeholder.caption(f"Queries processed: {st.session_state['counter']}")
+
+    # Update counter display
+    with st.sidebar:
+        counter_placeholder.caption(f"Stories investigated: {st.session_state['counter']}")
 
 # --------------- FOOTER & INFO -------------------
 st.markdown("---")
 st.caption("""
-**NYC Reporter Bot Features:**
-- 100% authentic attitude 🇺🇸
-- Certified bodega-approved news 🌃
-- Guaranteed to mention pizza at least once 🍕
+**NYC Reporter Features:**
+- Web-powered news hunting 🔍
+- 100% authentic NYC attitude 🇺🇸
+- Bodega-certified fact checking 🥤
+- Guaranteed subway references 🚇
 """)
+
+# Dependencies note (hidden but useful for documentation)
+st.markdown("<!--- Run `pip install openai duckduckgo-search agno` for dependencies -->", unsafe_allow_html=True)
