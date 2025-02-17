@@ -15,7 +15,7 @@ The AI Thai Cooking Assistant is an interactive web application developed with S
 
    ```bash
    git clone https://github.com/techietalksai
-   cd 003-thai-cooking-assistant-rag-stream.git
+   cd 003-thai-cooking-assistant-rag-web-stream.git
    ```
 
 2. **Set Up Environment Variables:**
