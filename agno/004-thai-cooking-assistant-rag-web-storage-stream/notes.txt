@@ -2,7 +2,8 @@
 
 TO RUN THE COMMAND LINE APPLICATION
 
-docker compose up app --build
+docker-compose build
+docker-compose run --rm app 
 
 TO RUN THE COMMAND STREAMLIT APPLICATION
 
