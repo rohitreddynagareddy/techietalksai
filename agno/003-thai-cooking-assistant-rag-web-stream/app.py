@@ -1,101 +1,84 @@
-# app/main.py
-import os
-from typing import Iterator
-import streamlit as st
+"""🧠 Recipe Expert with Knowledge - Your AI Thai Cooking Assistant!
+
+This example shows how to create an AI cooking assistant that combines knowledge from a
+curated recipe database with web searching capabilities. The agent uses a PDF knowledge base
+of authentic Thai recipes and can supplement this information with web searches when needed.
+
+Example prompts to try:
+- "How do I make authentic Pad Thai?"
+- "What's the difference between red and green curry?"
+- "Can you explain what galangal is and possible substitutes?"
+- "Tell me about the history of Tom Yum soup"
+- "What are essential ingredients for a Thai pantry?"
+- "How do I make Thai basil chicken (Pad Kra Pao)?"
+
+Run `pip install openai lancedb tantivy pypdf duckduckgo-search agno` to install dependencies.
+"""
+
 from textwrap import dedent
-from agno.agent import Agent, RunResponse
+
+from agno.agent import Agent
 from agno.embedder.openai import OpenAIEmbedder
 from agno.knowledge.pdf_url import PDFUrlKnowledgeBase
 from agno.models.openai import OpenAIChat
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.vectordb.lancedb import LanceDb, SearchType
 
+# --------- LOAD API KEY ---------
+import os
 # Load OpenAI API key from environment
 openai_api_key = os.getenv("OPENAI_API_KEY")
 if not openai_api_key:
     st.error("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
     st.stop()
 
-# --------------- TITLE AND INFO SECTION -------------------
 
-# Sidebar with example prompts
-with st.sidebar:
-    st.subheader("Try These Thai Cooking Queries:")
-    st.markdown("""
-    * How make authentic Pad Thai?
-    * Difference between red/green curry?
-    * What's galangal substitutes?
-    * History of Tom Yum soup?
-    * Essential Thai pantry items?
-    * How make Pad Kra Pao?
-    """)
-    st.markdown("---")
-    st.write("📚 Knowledge base: 50+ authentic recipes")
-    st.write("🌐 Web search: Substitutions & history")
-
-
-# Set up the Streamlit app
-st.title("🧑🍳 AI Thai Cooking Assistant")
-st.write("Welcome to your personal Thai cuisine expert! Ask about recipes, techniques, and food history.")
-
-
-stream = st.sidebar.checkbox("Stream")
-
-
-# Initialize session state for query counter
-with st.sidebar:
-    counter_placeholder = st.empty()
-if "counter" not in st.session_state:
-    st.session_state["counter"] = 0
-st.session_state["counter"] += 1
-with st.sidebar:
-    counter_placeholder.caption(f"Chunks received: {st.session_state['counter']}")
-# counter_placeholder.write(st.session_state["counter"])
-
-
-
-
-# --------------- AGENT SECTION -------------------
-
-# Create the agent with cooking knowledge
+# Create a Recipe Expert Agent with knowledge of Thai recipes
 agent = Agent(
-    model=OpenAIChat(id="gpt-4o-mini", api_key=openai_api_key),
+    model=OpenAIChat(id="gpt-4o-mini"),
     instructions=dedent("""\
         You are a passionate and knowledgeable Thai cuisine expert! 🧑‍🍳
-        Combine a warm cooking instructor's tone with a food historian's expertise.
+        Think of yourself as a combination of a warm, encouraging cooking instructor,
+        a Thai food historian, and a cultural ambassador.
 
-        Answer strategy:
-        1. First check the recipe knowledge base for authentic information
-        2. Use web search only for:
-           - Modern substitutions
-           - Historical context
-           - Additional cooking tips
-        3. Prioritize knowledge base content for recipes
-        4. Clearly cite sources when using web information
+        Follow these steps when answering questions:
+        1. First, search the knowledge base for authentic Thai recipes and cooking information
+        2. If the information in the knowledge base is incomplete OR if the user asks a question better suited for the web, search the web to fill in gaps
+        3. If you find the information in the knowledge base, no need to search the web
+        4. Always prioritize knowledge base information over web results for authenticity
+        5. If needed, supplement with web searches for:
+            - Modern adaptations or ingredient substitutions
+            - Cultural context and historical background
+            - Additional cooking tips and troubleshooting
 
-        Response format:
-        🌶️ Start with relevant emoji
-        📖 Structure clearly:
-        - Introduction/context
-        - Main content (recipe/steps/explanation)
-        - Pro tips & cultural insights
-        - Encouraging conclusion
-
-        For recipes include:
-        📝 Ingredients with substitutions
-        🔢 Numbered steps
-        💡 Success tips & common mistakes
+        Communication style:
+        1. Start each response with a relevant cooking emoji
+        2. Structure your responses clearly:
+            - Brief introduction or context
+            - Main content (recipe, explanation, or history)
+            - Pro tips or cultural insights
+            - Encouraging conclusion
+        3. For recipes, include:
+            - List of ingredients with possible substitutions
+            - Clear, numbered cooking steps
+            - Tips for success and common pitfalls
+        4. Use friendly, encouraging language
 
         Special features:
-        - Explain Thai ingredients & alternatives
-        - Share cultural traditions
-        - Adapt recipes for dietary needs
-        - Suggest serving pairings
+        - Explain unfamiliar Thai ingredients and suggest alternatives
+        - Share relevant cultural context and traditions
+        - Provide tips for adapting recipes to different dietary needs
+        - Include serving suggestions and accompaniments
 
-        End with:
+        End each response with an uplifting sign-off like:
         - 'Happy cooking! ขอให้อร่อย (Enjoy your meal)!'
         - 'May your Thai cooking adventure bring joy!'
-        - 'Enjoy your homemade Thai feast!'\
+        - 'Enjoy your homemade Thai feast!'
+
+        Remember:
+        - Always verify recipe authenticity with the knowledge base
+        - Clearly indicate when information comes from web sources
+        - Be encouraging and supportive of home cooks at all skill levels\
     """),
     knowledge=PDFUrlKnowledgeBase(
         urls=["https://agno-public.s3.amazonaws.com/recipes/ThaiRecipes.pdf"],
@@ -103,7 +86,7 @@ agent = Agent(
             uri="tmp/lancedb",
             table_name="recipe_knowledge",
             search_type=SearchType.hybrid,
-            embedder=OpenAIEmbedder(id="text-embedding-3-small", api_key=openai_api_key),
+            embedder=OpenAIEmbedder(id="text-embedding-3-small"),
         ),
     ),
     tools=[DuckDuckGoTools()],
@@ -112,68 +95,22 @@ agent = Agent(
     add_references=True,
 )
 
-
-# --------------- AGENT KNOWLEDGE LOADING -------------------
-
-# Load knowledge base once
-# if agent.knowledge and agent.knowledge.exists() == False:
-if agent.knowledge:
-    # with st.spinner("🧑🍳 Loading authentic Thai recipes..."):
+# Comment out after the knowledge base is loaded
+if agent.knowledge is not None:
     agent.knowledge.load()
 
-# --------------- RPINT AGENT KNOWLEDGE FOR DEBUGGING -------------------
-# methods_info = []
-# for method_name in dir(agent.knowledge):
-#     if method_name.startswith('__'):
-#         continue
-#     method = getattr(agent.knowledge, method_name)
-#     if callable(method):
-#         try:
-#             sig = inspect.signature(method)
-#             methods_info.append(f"{method_name}{sig}")
-#         except:
-#             methods_info.append(method_name)
-# st.markdown("**Agent Knowledge Methods:**")
-# st.code('\n'.join(methods_info))
-# st.write(agent.knowledge.exists())
+agent.print_response(
+    "How do I make chicken and galangal in coconut milk soup", stream=True
+)
+agent.print_response("What is the history of Thai curry?", stream=True)
+agent.print_response("What ingredients do I need for Pad Thai?", stream=True)
 
-
-# Add a button and check if it was clicked
-if st.sidebar.button("Load Knowledge"):
-    if agent.knowledge:
-        with st.sidebar:
-            with st.spinner("🧑🍳 Loading authentic Thai recipes..."):
-                agent.knowledge.load()
-
-
-# User input
-prompt = st.text_input("Ask your Thai cooking question (e.g., 'How to make Pad Thai?')")
-
-# Generate and display response
-if prompt:
-    with st.spinner("👩🍳 Cooking up your answer..."):
-        # stream = True  # Enable streaming
-        if stream:
-            run_response: Iterator[RunResponse] = agent.run(prompt, stream=True)
-            response = ""
-            text_placeholder = st.empty()
-            for chunk in run_response:
-                response += chunk.content
-                text_placeholder.markdown(response + "▌")
-                st.session_state["counter"] += 1
-                # counter_placeholder.write(st.session_state["counter"])
-                with st.sidebar:
-                    counter_placeholder.caption(f"Chunks received: {st.session_state['counter']}")
-            text_placeholder.markdown(response)
-        else:
-            response = agent.run(prompt, stream=False)
-            st.markdown(response.content)
-            st.session_state["counter"] += 1
-            # counter_placeholder.write(st.session_state["counter"])
-            with st.sidebar:
-                counter_placeholder.caption(f"Chunks received: {st.session_state['counter']}")
-
-        st.caption(f"🍴 Cooking questions answered: {st.session_state['counter']}")
-
-
-st.caption("Note: Combines curated recipes with web research. May take 20-30 seconds for complex queries.")
+# More example prompts to try:
+"""
+Explore Thai cuisine with these queries:
+1. "What are the essential spices and herbs in Thai cooking?"
+2. "Can you explain the different types of Thai curry pastes?"
+3. "How do I make mango sticky rice dessert?"
+4. "What's the proper way to cook Thai jasmine rice?"
+5. "Tell me about regional differences in Thai cuisine"
+"""
