@@ -1,11 +1,18 @@
 import streamlit as st
+from typing import Iterator
 import os
 from textwrap import dedent
-from agno.agent import Agent
+from agno.agent import Agent, RunResponse
 from agno.models.openai import OpenAIChat
 from agno.models.deepseek import DeepSeek
 from openai import OpenAI
 import asyncio
+
+# Streamlit app
+st.title("NYC News Reporter")
+
+counter_placeholder = st.empty()
+
 
 # Load OpenAI API key from .env
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -14,34 +21,42 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 if "openai_model" not in st.session_state:
     st.session_state["model"] = "gpt-4o-mini"
 
+if "counter" not in st.session_state:
+    st.session_state["counter"] = 0
+
+st.session_state["counter"] += 1
+counter_placeholder.write(st.session_state["counter"])
+
+
+
 # Set OpenAI API key from Streamlit secrets
 # client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 client = OpenAI(api_key=openai_api_key)
 
-class AsyncGeneratorWrapper:
-    def __init__(self, gen):
-        self.gen = gen
+# class AsyncGeneratorWrapper:
+#     def __init__(self, gen):
+#         self.gen = gen
 
-    def __aiter__(self):
-        return self
+#     def __aiter__(self):
+#         return self
 
-    async def __anext__(self):
-        try:
-            return next(self.gen)
-        except StopIteration:
-            raise StopAsyncIteration
+#     async def __anext__(self):
+#         try:
+#             return next(self.gen)
+#         except StopIteration:
+#             raise StopAsyncIteration
 
-async def run_agent(agent, prompt):
-    response_gen = agent.run(prompt, stream=True)
-    async_response = AsyncGeneratorWrapper(response_gen)
-    collected_content = ""
-    text_placeholder = st.empty()  # Create a placeholder in the Streamlit app
-    async for chunk in async_response:
-        if hasattr(chunk, 'content') and chunk.content:
-            collected_content += chunk.content
-            # st.write(chunk.content)
-            text_placeholder.markdown(collected_content)  # Update the placeholder with the new content
-    return collected_content
+# async def run_agent(agent, prompt):
+#     response_gen = agent.run(prompt, stream=True)
+#     async_response = AsyncGeneratorWrapper(response_gen)
+#     collected_content = ""
+#     text_placeholder = st.empty()  # Create a placeholder in the Streamlit app
+#     async for chunk in async_response:
+#         if hasattr(chunk, 'content') and chunk.content:
+#             collected_content += chunk.content
+#             # st.write(chunk.content)
+#             text_placeholder.markdown(collected_content)  # Update the placeholder with the new content
+#     return collected_content
 
 # Initialize chat history
 if "messages" not in st.session_state:
@@ -67,8 +82,20 @@ agent = Agent(
     markdown=True,
 )
 
-# Streamlit app
-st.title("NYC News Reporter")
+# import random
+# import string
+# # async 
+# def booking(ctx: RunContext[Deps], name: str = "Guest") -> str:
+#     """Generate a random booking reference number as confirmation."""
+#     if name == "Guest":
+#         # Prompt the user to provide their name
+#         return "Please provide your name to complete the booking."
+#     else:
+#         # Generate a random alphanumeric booking reference
+#         booking_ref = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+#         return f"Your booking is confirmed, {name}! Booking Reference: {booking_ref}"
+
+
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
@@ -78,6 +105,9 @@ for message in st.session_state.messages:
 
 # Accept user input
 if prompt := st.chat_input("What is up?"):
+
+    st.session_state["counter"] = 0
+
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
     # Display user message in chat message container
@@ -106,13 +136,26 @@ if prompt := st.chat_input("What is up?"):
 
 
         # THIS WORKS! WITH STREAM
-        response = asyncio.run(run_agent(agent, prompt))
-   
+        # response = asyncio.run(run_agent(agent, prompt))
+
+        # FINALLY THIS WORKS! WITH STREAM
+        stream = False 
+        if stream:
+            run_response: Iterator[RunResponse] = agent.run(prompt, stream=True)
+            response = ""
+            text_placeholder = st.empty()
+            for chunk in run_response:
+                # st.write(chunk.content)
+                response += chunk.content
+                text_placeholder.markdown(response)
+                st.session_state["counter"] += 1
+                counter_placeholder.write(st.session_state["counter"])
+        else:
+            response = agent.run(prompt, stream=False)
+            response = response.content
+            st.write(response)
         
     st.session_state.messages.append({"role": "assistant", "content": response})
-
-
-
 
 
 

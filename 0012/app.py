@@ -261,12 +261,22 @@ async def retriever(ctx: RunContext[Deps], query: str) -> float:
     conversation.append({"role": "assistant", "content": observation_text})
     return conversation
 
+# @agent.tool
+# async def booking(ctx: RunContext[Deps], name: str = "Guest") -> str:
+#     """Generate a random booking reference number as confirmation."""
+#     # Generate a random alphanumeric booking reference
+#     booking_ref = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+#     return f"Your booking is confirmed, {name}! Booking Reference: {booking_ref}"
 @agent.tool
 async def booking(ctx: RunContext[Deps], name: str = "Guest") -> str:
     """Generate a random booking reference number as confirmation."""
-    # Generate a random alphanumeric booking reference
-    booking_ref = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-    return f"Your booking is confirmed, {name}! Booking Reference: {booking_ref}"
+    if name == "Guest":
+        # Prompt the user to provide their name
+        return "Please provide your name to complete the booking."
+    else:
+        # Generate a random alphanumeric booking reference
+        booking_ref = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+        return f"Your booking is confirmed, {name}! Booking Reference: {booking_ref}"
 
 # Model-specific avatars
 MODEL_AVATARS = {
