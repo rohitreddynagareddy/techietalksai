@@ -21,6 +21,10 @@ from agno.agent import Agent
 from agno.embedder.openai import OpenAIEmbedder
 from agno.knowledge.pdf_url import PDFUrlKnowledgeBase
 from agno.models.openai import OpenAIChat
+from agno.models.xai import xAI
+from agno.models.deepseek import DeepSeek
+from agno.models.google import Gemini
+from agno.models.groq import Groq
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.vectordb.lancedb import LanceDb, SearchType
 
@@ -36,6 +40,13 @@ if not openai_api_key:
 # Create a Recipe Expert Agent with knowledge of Thai recipes
 agent = Agent(
     model=OpenAIChat(id="gpt-4o-mini"),
+    # model=xAI(id="grok-2"),
+    # model=Groq(id="llama-3.3-70b-versatile"),
+    # model=DeepSeek(id="deepseek-chat"),
+    # model=Gemini(
+    #     id="gemini-2.0-flash-exp",
+    #     api_key=gemini_api_key,
+    # ),
     instructions=dedent("""\
         You are a passionate and knowledgeable Thai cuisine expert! 🧑‍🍳
         Think of yourself as a combination of a warm, encouraging cooking instructor,
@@ -93,6 +104,7 @@ agent = Agent(
     show_tool_calls=True,
     markdown=True,
     add_references=True,
+    debug_mode=True,
 )
 
 # Comment out after the knowledge base is loaded

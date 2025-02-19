@@ -8,3 +8,6 @@ tantivy
 pypdf
 sqlalchemy
 yfinance
+google-genai
+groq
+

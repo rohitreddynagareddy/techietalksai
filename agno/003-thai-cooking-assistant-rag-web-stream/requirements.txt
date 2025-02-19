@@ -6,3 +6,5 @@ duckduckgo-search
 lancedb
 tantivy
 pypdf
+google-genai
+groq

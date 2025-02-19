@@ -67,7 +67,7 @@ def recipe_agent(user: str = "user"):
     agent = Agent(
         user_id=user,
         session_id=session_id,
-        model=OpenAIChat(id="gpt-4o"),
+        model=OpenAIChat(id="gpt-4o-mini"),
         instructions=dedent("""\
             You are a passionate and knowledgeable Thai cuisine expert! 🧑‍🍳
             Think of yourself as a combination of a warm, encouraging cooking instructor,
@@ -125,9 +125,9 @@ def recipe_agent(user: str = "user"):
         # 1. Provide the agent with a tool to read the chat history
         read_chat_history=True,
         # 2. Automatically add the chat history to the messages sent to the model
-        # add_history_to_messages=True,
+        add_history_to_messages=True,
         # Number of historical responses to add to the messages.
-        # num_history_responses=3,
+        num_history_responses=3,
         markdown=True,
     )
 

@@ -20,6 +20,10 @@ from textwrap import dedent
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
+from agno.models.xai import xAI
+from agno.models.deepseek import DeepSeek
+from agno.models.google import Gemini
+from agno.models.groq import Groq
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.yfinance import YFinanceTools
 
@@ -36,7 +40,14 @@ if not openai_api_key:
 web_agent = Agent(
     name="Web Agent",
     role="Search the web for information",
-    model=OpenAIChat(id="gpt-4o"),
+    model=OpenAIChat(id="gpt-4o-mini"),
+    # model=xAI(id="grok-2"),
+    # model=Groq(id="llama-3.3-70b-versatile"),
+    # model=DeepSeek(id="deepseek-chat"),
+    # model=Gemini(
+    #     id="gemini-2.0-flash-exp",
+    #     api_key=gemini_api_key,
+    # ),
     tools=[DuckDuckGoTools()],
     instructions=dedent("""\
         You are an experienced web researcher and news analyst! 🔍
@@ -64,7 +75,14 @@ web_agent = Agent(
 finance_agent = Agent(
     name="Finance Agent",
     role="Get financial data",
-    model=OpenAIChat(id="gpt-4o"),
+    model=OpenAIChat(id="gpt-4o-mini"),
+    # model=xAI(id="grok-2"),
+    # model=Groq(id="llama-3.3-70b-versatile"),
+    # model=DeepSeek(id="deepseek-chat"),
+    # model=Gemini(
+    #     id="gemini-2.0-flash-exp",
+    #     api_key=gemini_api_key,
+    # ),
     tools=[
         YFinanceTools(stock_price=True, analyst_recommendations=True, company_info=True)
     ],
@@ -93,7 +111,14 @@ finance_agent = Agent(
 
 agent_team = Agent(
     team=[web_agent, finance_agent],
-    model=OpenAIChat(id="gpt-4o"),
+    model=OpenAIChat(id="gpt-4o-mini"),
+    # model=xAI(id="grok-2"),
+    # model=Groq(id="llama-3.3-70b-versatile"),
+    # model=DeepSeek(id="deepseek-chat"),
+    # model=Gemini(
+    #     id="gemini-2.0-flash-exp",
+    #     api_key=gemini_api_key,
+    # ),
     instructions=dedent("""\
         You are the lead editor of a prestigious financial news desk! 📰
 

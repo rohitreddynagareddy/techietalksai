@@ -21,7 +21,7 @@ if not openai_api_key:
 agent_storage = SqliteAgentStorage(table_name="recipe_agent", db_file="tmp/agents.db")
 
 # --------------- TITLE AND INFO SECTION -------------------
-st.title("🧑🍳 AI Thai Cooking Assistant with Memory")
+st.title("🧑🍳 AI Thai Cooking Assistant Agent with RAG, Web, and Memory")
 st.write("Your personal Thai cuisine expert with conversation memory!")
 
 # --------------- SESSION MANAGEMENT -------------------
@@ -73,7 +73,7 @@ with st.sidebar:
 agent = Agent(
     user_id=st.session_state.user_id,
     session_id=st.session_state.session_id,
-    model=OpenAIChat(id="gpt-4o", api_key=openai_api_key),
+    model=OpenAIChat(id="gpt-4o-mini", api_key=openai_api_key),
     instructions=dedent("""\
         You are a passionate Thai cuisine expert! 🧑‍🍳
         Combine cooking instruction with food history expertise.
@@ -112,8 +112,19 @@ agent = Agent(
         ),
     ),
     tools=[DuckDuckGoTools()],
+    # Show tool calls in the response
     show_tool_calls=True,
+    # To provide the agent with the chat history
+    # We can either:
+    # 1. Provide the agent with a tool to read the chat history
+    # 2. Automatically add the chat history to the messages sent to the model
+    #
+    # 1. Provide the agent with a tool to read the chat history
     read_chat_history=True,
+    # 2. Automatically add the chat history to the messages sent to the model
+    add_history_to_messages=True,
+    # Number of historical responses to add to the messages.
+    num_history_responses=3,
     markdown=True,
 )
 

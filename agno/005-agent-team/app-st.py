@@ -5,6 +5,10 @@ from textwrap import dedent
 import os
 from agno.agent import Agent, RunResponse
 from agno.models.openai import OpenAIChat
+from agno.models.xai import xAI
+from agno.models.deepseek import DeepSeek
+from agno.models.google import Gemini
+from agno.models.groq import Groq
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.yfinance import YFinanceTools
 
@@ -24,7 +28,14 @@ def create_agent_team():
     web_agent = Agent(
         name="Web Agent",
         role="Financial news researcher",
-        model=OpenAIChat(id="gpt-4o", api_key=openai_api_key),
+        model=OpenAIChat(id="gpt-4o-mini", api_key=openai_api_key),
+        # model=xAI(id="grok-2"),
+        # model=Groq(id="llama-3.3-70b-versatile"),
+        # model=DeepSeek(id="deepseek-chat"),
+        # model=Gemini(
+        #     id="gemini-2.0-flash-exp",
+        #     api_key=gemini_api_key,
+        # ),
         tools=[DuckDuckGoTools()],
         instructions=dedent("""\
             🔍 Financial News Analyst Protocol:
@@ -42,7 +53,14 @@ def create_agent_team():
     finance_agent = Agent(
         name="Finance Agent",
         role="Market data analyst",
-        model=OpenAIChat(id="gpt-4o", api_key=openai_api_key),
+        model=OpenAIChat(id="gpt-4o-mini", api_key=openai_api_key),
+        # model=xAI(id="grok-2"),
+        # model=Groq(id="llama-3.3-70b-versatile"),
+        # model=DeepSeek(id="deepseek-chat"),
+        # model=Gemini(
+        #     id="gemini-2.0-flash-exp",
+        #     api_key=gemini_api_key,
+        # ),
         tools=[YFinanceTools(stock_price=True, analyst_recommendations=True, company_info=True)],
         instructions=dedent("""\
             📊 Financial Analyst Protocol:
@@ -59,7 +77,14 @@ def create_agent_team():
     # Lead Editor Agent
     return Agent(
         team=[web_agent, finance_agent],
-        model=OpenAIChat(id="gpt-4o", api_key=openai_api_key),
+        model=OpenAIChat(id="gpt-4o-mini", api_key=openai_api_key),
+        # model=xAI(id="grok-2"),
+        # model=Groq(id="llama-3.3-70b-versatile"),
+        # model=DeepSeek(id="deepseek-chat"),
+        # model=Gemini(
+        #     id="gemini-2.0-flash-exp",
+        #     api_key=gemini_api_key,
+        # ),
         instructions=dedent("""\
             📰 Chief Editor Protocol:
             1. Combine news and data into executive summary
