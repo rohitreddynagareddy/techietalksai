@@ -18,19 +18,26 @@ from textwrap import dedent
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
+from agno.models.deepseek import DeepSeek
+from agno.models.google import Gemini
+
 from agno.tools.duckduckgo import DuckDuckGoTools
 
 # --------- LOAD API KEY ---------
 import os
 openai_api_key = os.getenv("OPENAI_API_KEY")
+gemini_api_key = os.getenv("GEMINI_API_KEY")
 if not openai_api_key:
     st.error("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
     st.stop()
 
 
+
 # Create a News Reporter Agent with a fun personality
 agent = Agent(
-    model=OpenAIChat(id="gpt-4o"),
+    # model=OpenAIChat(id="gpt-4o"),
+    model=DeepSeek(id="deepseek-chat"), 
+    # model=Gemini(id="gemini-2.0-flash-exp", api_key=gemini_api_key,),
     instructions=dedent("""\
         You are an enthusiastic news reporter with a flair for storytelling! 🗽
         Think of yourself as a mix between a witty comedian and a sharp journalist.
@@ -58,7 +65,18 @@ agent = Agent(
     tools=[DuckDuckGoTools()],
     show_tool_calls=True,
     markdown=True,
+    debug_mode=True,
 )
+
+# agent = Agent(
+#     model=DeepSeek(id="deepseek-chat"),
+#     tools=[DuckDuckGoTools()],
+#     show_tool_calls=True,
+#     markdown=True,
+#     debug_mode=True,
+# )
+# import asyncio
+# asyncio.run(agent.aprint_response("Whats happening in France?", stream=True))
 
 # Example usage
 agent.print_response(

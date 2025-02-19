@@ -1,16 +1,25 @@
-import os
+
 from typing import Iterator
 import streamlit as st
 from textwrap import dedent
 from agno.agent import Agent, RunResponse
 from agno.models.openai import OpenAIChat
+from agno.models.deepseek import DeepSeek
+from agno.models.google import Gemini
 from agno.tools.duckduckgo import DuckDuckGoTools
 
 # --------- LOAD API KEY ---------
+import os
 openai_api_key = os.getenv("OPENAI_API_KEY")
+gemini_api_key = os.getenv("GEMINI_API_KEY")
+deepseek_api_key = os.getenv("DEEPSEEK_API_KEY")
 if not openai_api_key:
     st.error("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
     st.stop()
+if not gemini_api_key:
+    st.error("Gemini API key not found. Please set the GEMINI_API_KEY environment variable.")
+    st.stop()
+
 
 # --------------- TITLE AND INFO SECTION -------------------
 st.title("🗽 NYC Web-Savvy News Reporter")
@@ -39,7 +48,9 @@ stream = st.sidebar.checkbox("Live Reporting Mode")
 
 # --------------- AGENT INITIALIZATION -------------------
 agent = Agent(
-    model=OpenAIChat(id="gpt-4o-mini", api_key=openai_api_key),
+    # model=OpenAIChat(id="gpt-4o-mini", api_key=openai_api_key),
+    # model=DeepSeek(id="deepseek-chat"),
+    model=Gemini(id="gemini-2.0-flash-exp", api_key=gemini_api_key,),
     tools=[DuckDuckGoTools()],
     show_tool_calls=True,
     instructions=dedent("""\
@@ -74,6 +85,7 @@ agent = Agent(
         - Flag unconfirmed rumors\
     """),
     markdown=True,
+    debug_mode=True,
 )
 
 # --------------- USER INPUT HANDLING -------------------
@@ -113,3 +125,4 @@ st.caption("""
 
 # Dependencies note (hidden but useful for documentation)
 st.markdown("<!--- Run `pip install openai duckduckgo-search agno` for dependencies -->", unsafe_allow_html=True)
+
