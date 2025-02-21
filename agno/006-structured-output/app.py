@@ -20,6 +20,10 @@ from typing import List
 
 from agno.agent import Agent, RunResponse  # noqa
 from agno.models.openai import OpenAIChat
+from agno.models.xai import xAI
+from agno.models.deepseek import DeepSeek
+from agno.models.google import Gemini
+from agno.models.groq import Groq
 from pydantic import BaseModel, Field
 
 # --------- LOAD API KEY ---------
@@ -59,7 +63,15 @@ class MovieScript(BaseModel):
 
 # Agent that uses JSON mode
 json_mode_agent = Agent(
+    # model=xAI(id="grok-2", api_key=xai_api_key),
     model=OpenAIChat(id="gpt-4o-mini"),
+    # model=xAI(id="grok-2"),
+    # model=Groq(id="llama-3.3-70b-versatile"),
+    # model=DeepSeek(id="deepseek-chat"),
+    # model=Gemini(
+    #     id="gemini-2.0-flash-exp",
+    #     api_key=gemini_api_key,
+    # ),
     description=dedent("""\
         You are an acclaimed Hollywood screenwriter known for creating unforgettable blockbusters! 🎬
         With the combined storytelling prowess of Christopher Nolan, Aaron Sorkin, and Quentin Tarantino,
@@ -97,7 +109,15 @@ json_mode_agent = Agent(
 
 # Agent that uses structured outputs
 structured_output_agent = Agent(
+    # model=xAI(id="grok-2", api_key=xai_api_key),
     model=OpenAIChat(id="gpt-4o-mini"),
+    # model=xAI(id="grok-2"),
+    # model=Groq(id="llama-3.3-70b-versatile"),
+    # model=DeepSeek(id="deepseek-chat"),
+    # model=Gemini(
+    #     id="gemini-2.0-flash-exp",
+    #     api_key=gemini_api_key,
+    # ),
     description=dedent("""\
         You are an acclaimed Hollywood screenwriter known for creating unforgettable blockbusters! 🎬
         With the combined storytelling prowess of Christopher Nolan, Aaron Sorkin, and Quentin Tarantino,
@@ -139,14 +159,14 @@ json_mode_agent.print_response("Tokyo", stream=True)
 structured_output_agent.print_response("Ancient Rome", stream=True)
 
 # More examples to try:
-"""
-Creative location prompts to explore:
-1. "Underwater Research Station" - For a claustrophobic sci-fi thriller
-2. "Victorian London" - For a gothic mystery
-3. "Dubai 2050" - For a futuristic heist movie
-4. "Antarctic Research Base" - For a survival horror story
-5. "Caribbean Island" - For a tropical adventure romance
-"""
+# """
+# Creative location prompts to explore:
+# 1. "Underwater Research Station" - For a claustrophobic sci-fi thriller
+# 2. "Victorian London" - For a gothic mystery
+# 3. "Dubai 2050" - For a futuristic heist movie
+# 4. "Antarctic Research Base" - For a survival horror story
+# 5. "Caribbean Island" - For a tropical adventure romance
+# """
 
 # To get the response in a variable:
 # from rich.pretty import pprint
@@ -155,3 +175,4 @@ Creative location prompts to explore:
 # pprint(json_mode_response.content)
 # structured_output_response: RunResponse = structured_output_agent.run("New York")
 # pprint(structured_output_response.content)
+

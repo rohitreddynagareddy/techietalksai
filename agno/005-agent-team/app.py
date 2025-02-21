@@ -70,6 +70,8 @@ web_agent = Agent(
     """),
     show_tool_calls=True,
     markdown=True,
+    add_references=True,
+    debug_mode=True,
 )
 
 finance_agent = Agent(
@@ -107,6 +109,9 @@ finance_agent = Agent(
     """),
     show_tool_calls=True,
     markdown=True,
+    add_references=True,
+    debug_mode=True,
+
 )
 
 agent_team = Agent(
@@ -149,13 +154,13 @@ agent_team = Agent(
 agent_team.print_response(
     "Summarize analyst recommendations and share the latest news for NVDA", stream=True
 )
-agent_team.print_response(
-    "What's the market outlook and financial performance of AI semiconductor companies?",
-    stream=True,
-)
-agent_team.print_response(
-    "Analyze recent developments and financial performance of TSLA", stream=True
-)
+# agent_team.print_response(
+#     "What's the market outlook and financial performance of AI semiconductor companies?",
+#     stream=True,
+# )
+# agent_team.print_response(
+#     "Analyze recent developments and financial performance of TSLA", stream=True
+# )
 
 # More example prompts to try:
 """

@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  app-st:
+    build: .
+    ports:
+      - "8511:8501"
+    volumes:
+      - ${PWD}:/app
+    env_file:
+      - .env
+    entrypoint: ["streamlit", "run", "--server.port=8501", "--server.address=0.0.0.0"]
+    command: ["app-st.py"]
+  app:
+    build: .
+    ports:
+      - "8511:8501"
+    volumes:
+      - ${PWD}:/app
+    env_file:
+      - .env
+    entrypoint: ["python"]
+    command: ["app.py"]

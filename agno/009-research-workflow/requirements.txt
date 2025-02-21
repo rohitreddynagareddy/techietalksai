@@ -6,7 +6,8 @@ duckduckgo-search
 lancedb
 tantivy
 pypdf
-sqlalchemy
-yfinance
 google-genai
 groq
+newspaper4k
+lxml_html_clean
+sqlalchemy
