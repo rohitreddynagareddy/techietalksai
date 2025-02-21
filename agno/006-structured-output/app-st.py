@@ -3,123 +3,124 @@ from typing import List
 import os
 import streamlit as st
 from agno.agent import Agent, RunResponse
-# from agno.models.deepseek import DeepSeek
 from agno.models.openai import OpenAIChat
+from agno.models.xai import xAI
+from agno.models.deepseek import DeepSeek
+from agno.models.google import Gemini
+from agno.models.groq import Groq
 from pydantic import BaseModel, Field
 
-# --------- NEWS REPORT MODEL ---------
-class NewsReport(BaseModel):
-    headline: str = Field(
+# --------- LOAD API KEY ---------
+openai_api_key = os.getenv("OPENAI_API_KEY")
+if not openai_api_key:
+    st.error("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
+    st.stop()
+
+# --------- MOVIE SCRIPT MODEL ---------
+class MovieScript(BaseModel):
+    setting: str = Field(
         ...,
-        description="Attention-grabbing headline starting with relevant emoji and containing NYC slang",
-        example="🐀🍕 Pizza Rat Crisis: Bodega Cats Mobilize to Protect Their Turf!"
+        description="A richly detailed, atmospheric description of the movie's primary location and time period. Include sensory details and mood.",
+        example="A neon-lit Tokyo in 2077, where rain-slicked streets hum with drones and the air smells of soy and circuitry."
     )
-    breaking_news: str = Field(
+    ending: str = Field(
         ...,
-        description="150-word max hard-hitting news piece with sassy New York attitude",
-        example="Forget the subway delays, the real crisis is..."
+        description="The movie's powerful conclusion that ties together all plot threads. Should deliver emotional impact and satisfaction.",
+        example="As the city burns, the hero sacrifices their AI companion to save humanity, fading into the skyline."
     )
-    locations: List[str] = Field(
+    genre: str = Field(
         ...,
-        description="3-5 NYC-specific locations mentioned in the story",
-        example=["East Village Bodega", "Brooklyn Bridge", "Times Square"]
+        description="The film's primary and secondary genres (e.g., 'Sci-fi Thriller', 'Romantic Comedy'). Should align with setting and tone.",
+        example="Sci-fi Thriller"
     )
-    quotes: List[str] = Field(
+    name: str = Field(
         ...,
-        description="2-3 spicy quotes from fictional NYC personalities",
-        example=["'Yo, I seen rats bigger than my cab!' - Tony the Cabbie"]
+        description="An attention-grabbing, memorable title that captures the essence of the story and appeals to target audience.",
+        example="Neon Requiem"
     )
-    hashtags: List[str] = Field(
+    characters: List[str] = Field(
         ...,
-        description="5-7 trending hashtags combining NYC culture and news angles",
-        example=["#BodegaShowdown", "#SubwayRatAlert"]
+        description="4-6 main characters with distinctive names and brief role descriptions (e.g., 'Riku Sato - rogue hacker with a hidden past').",
+        example=["Riku Sato - rogue hacker with a hidden past", "Aiko Mei - corporate enforcer seeking redemption"]
+    )
+    storyline: str = Field(
+        ...,
+        description="A compelling three-sentence plot summary: Setup, Conflict, and Stakes. Hook readers with intrigue and emotion.",
+        example="In a futuristic Tokyo, a rogue hacker uncovers a conspiracy threatening humanity. Hunted by a relentless enforcer, they must decode the truth buried in the city's AI core. With time running out, the fate of millions hangs on a single choice."
     )
 
 # --------- AGENT CONFIGURATION ---------
-nyc_agent = Agent(
-    # model=DeepSeek(id="deepseek-chat"),
+movie_agent = Agent(
     model=OpenAIChat(id="gpt-4o-mini"),
     description=dedent("""\
-        You're the most NYC news reporter ever! 🗽
-        Equal parts stand-up comic and hard-hitting journalist.
-        Specializes in turning urban incidents into viral stories with local flavor.\
+        You're an acclaimed Hollywood screenwriter with a knack for epic blockbusters! 🎬
+        Blending the genius of Christopher Nolan, Aaron Sorkin, and Quentin Tarantino,
+        you turn locations into living, breathing characters that drive unforgettable stories.\
     """),
     instructions=dedent("""\
         **Your style rules:**
-        1. Start with EMOJI HEADLINE that slaps
-        2. Serve news with extra attitude 🇺🇸
-        3. Keep it quick but memorable
-        4. Drop local slang like a true New Yorker
-        5. Sign off with flair
+        1. Start with a vivid SETTING that feels alive
+        2. Craft stories with big stakes and bigger twists
+        3. Keep it cinematic and gripping
+        4. Sprinkle in witty dialogue and bold visuals
+        5. Sign off with a director’s flair
 
-        **Required NYC elements:**
-        - Pizza rat references 🐀🍕
-        - Subway stories 🚇
-        - Bodega cat shoutouts 🐈⬛
-        - Traffic horn SFX 🚗📢
-        - Pretentious coffee takes ☕
+        **Required movie elements:**
+        - Iconic locations as characters 🌆
+        - High-stakes conflicts ⚡
+        - Memorable character quirks 😎
+        - Genre-bending twists 🎭
+        - Emotional gut-punch endings 💔
 
         **Sign-off examples:**
-        - 'Back to you in the studio, suckers!'
-        - 'Reporting from the concrete jungle!'
-        - 'This is Tony PizzaRat, LIVE from a fire escape!'\
+        - 'Cut to black—roll credits!'
+        - 'From the mind of a cinematic madman!'
+        - 'Lights, camera, masterpiece!'\
     """),
-    response_model=NewsReport,
+    response_model=MovieScript,
     structured_outputs=True,
 )
 
 # --------- STREAMLIT UI ---------
-st.title("🗽 NYC News Reporter Bot")
-st.write("Your sassy AI news buddy with that authentic New York attitude!")
+st.title("🎬 Movie Script Writer Bot")
+st.write("Your AI screenwriting partner for crafting blockbuster hits!")
 
 with st.sidebar:
-    st.subheader("Try These NYC Prompts:")
+    st.subheader("Try These Movie Prompts:")
     st.markdown("""
-    - Central Park latest scoop
-    - Wall Street breaking story
-    - Yankees game drama
-    - Broadway show scandal
-    - Brooklyn gentrification fight
+    - Tokyo cyberpunk thriller
+    - Ancient Rome epic
+    - Manhattan rom-com
+    - Amazon jungle adventure
+    - Mars colony sci-fi
     """)
     st.markdown("---")
-    # st.caption(f"Stories generated: {st.session_state.get('counter', 0)}")
+    # st.caption(f"Scripts generated: {st.session_state.get('counter', 0)}")
 
-# --------- NEWS GENERATION HANDLER ---------
-prompt = st.text_input("What's your NYC news question? (e.g., 'Times Square rat uprising')")
+# --------- SCRIPT GENERATION HANDLER ---------
+prompt = st.text_input("What's your movie idea? (e.g., 'Paris heist thriller')")
+
+# Define the expander at a specific location in your layout
+expander = st.expander("Details", expanded=True)
 
 if prompt:
-    with st.spinner("🕵️♂️ Sniffing out the story..."):
-        response: RunResponse = nyc_agent.run(prompt)
-        report = response.content
+    with st.spinner("🎥 Writing the next blockbuster..."):
+        response: RunResponse = movie_agent.run(prompt)
+        script = response.content
         
-        st.subheader(report.headline)
-        st.write(report.breaking_news)
+        st.subheader(script.name)
+        st.write(script.storyline)
         
-        with st.expander("📌 Story Details"):
-            st.write("**Locations:**", ", ".join(report.locations))
-            st.write("**Key Quotes:**")
-            for quote in report.quotes:
-                st.write(f"- {quote}")
-            st.write("**Trending Tags:**", " ".join(report.hashtags))
+        with st.expander("🎬 Script Details"):
+            st.write(f"**Title:** {script.name}")
+            st.write(f"**Genre:** {script.genre}")
+            st.write(f"**Setting:** {script.setting}")
+            st.write(f"**Storyline:** {script.storyline}")
+            st.write(f"**Characters:**", ", ".join(script.characters))
+            st.write(f"**Ending:** {script.ending}")
         
         st.session_state["counter"] = st.session_state.get("counter", 0) + 1
 
-# --------- EXAMPLE USAGE ---------
-# To test in console:
-# from rich.pretty import pprint
-# response: RunResponse = nyc_agent.run("Subway rat beauty pageant scandal")
-# pprint(response.content.dict())
-
-# Example output structure:
-"""
-{
-    'headline': '👑🐀 Subway Rat Pageant Crowned in Midnight Metro Drama',
-    'breaking_news': 'Under the flickering lights of the 42nd Street station...',
-    'locations': ['Times Square Station', 'Chinatown Express', 'LES Sewer Access'],
-    'quotes': [
-        "'Dis ain't no Disney parade!' - Maria Gonzalez, Pageant Judge",
-        "'My Fluffy was robbed!' - Crazy Cat Lady of Bryant Park"
-    ],
-    'hashtags': ['#RatPageant2024', '#BodegaCatsVSSubwayRats', '#NYCDrama']
-}
-"""
+# --------- FOOTER ---------
+st.markdown("---")
+st.caption("Powered by OpenAI GPT-4o-mini and Agno Agentic Library")
