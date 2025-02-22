@@ -26,7 +26,7 @@ if not tmp.exists():
     tmp.mkdir(exist_ok=True, parents=True)
 
 # --------------- TITLE AND INFO SECTION -------------------
-st.title("🔍 AI Research Agent")
+st.title("🔍 AI Deep Research Agent")
 st.write("Your advanced AI research assistant with academic-grade analysis capabilities")
 
 # --------------- SIDEBAR CONTROLS -------------------
@@ -51,9 +51,19 @@ stream = st.sidebar.checkbox("Stream research process")
 show_references = st.sidebar.checkbox("Show source references", True)
 
 # --------------- AGENT INITIALIZATION -------------------
+today = datetime.now().strftime("%Y-%m-%d")
 agent = Agent(
-    model=OpenAIChat(id="gpt-4o", api_key=openai_api_key),
-    tools=[ExaTools(api_key=exa_api_key, start_published_date="2023-01-01")],
+    model=OpenAIChat(id="gpt-4o-mini", api_key=openai_api_key),
+    # model=xAI(id="grok-2", api_key=xai_api_key),
+    # model=OpenAIChat(id="gpt-4o-mini"),
+    # model=Groq(id="llama-3.3-70b-versatile"),
+    # model=DeepSeek(id="deepseek-chat"),
+    # model=Gemini(
+    #     id="gemini-2.0-flash-exp",
+    #     api_key=gemini_api_key,
+    # ),
+    # tools=[ExaTools(api_key=exa_api_key, start_published_date="2023-01-01")],
+    tools=[ExaTools(api_key=exa_api_key, start_published_date=today)],
     instructions=dedent("""\
         You are Professor X-1000, an AI research scientist specializing in:
         - Cutting-edge technology analysis
@@ -146,6 +156,8 @@ st.caption("""
 - Markdown report export 📥
 - Cross-disciplinary synthesis 🔄
 """)
+
+st.caption(f"Note: I'm using {agent.model.id}!")
 
 # Hidden dependency note
 st.markdown("<!--- Run `pip install openai exa-py agno` -->", unsafe_allow_html=True)
