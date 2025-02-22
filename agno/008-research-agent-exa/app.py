@@ -52,7 +52,7 @@ if not tmp.exists():
 today = datetime.now().strftime("%Y-%m-%d")
 
 agent = Agent(
-    model=OpenAIChat(id="gpt-4o"),
+    model=OpenAIChat(id="gpt-4o-mini"),
     tools=[ExaTools(start_published_date=today, type="keyword")],
     description=dedent("""\
         You are Professor X-1000, a distinguished AI research scientist with expertise
@@ -120,6 +120,7 @@ if __name__ == "__main__":
     agent.print_response(
         "Research the latest developments in brain-computer interfaces", stream=True
     )
+    print(f"Note: I'm using {agent.model.id}!")
 
 # More example prompts to try:
 """

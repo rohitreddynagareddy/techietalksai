@@ -66,7 +66,6 @@ def get_top_hackernews_stories(num_stories: int = 10) -> str:
 agent = Agent(
     # model=xAI(id="grok-2", api_key=xai_api_key),
     model=OpenAIChat(id="gpt-4o-mini"),
-    # model=xAI(id="grok-2"),
     # model=Groq(id="llama-3.3-70b-versatile"),
     # model=DeepSeek(id="deepseek-chat"),
     # model=Gemini(
@@ -97,3 +96,7 @@ agent = Agent(
 # - "Summarize the top 5 stories on Hacker News"
 # - "What's the most upvoted story today?"
 agent.print_response("Summarize the top 5 stories on hackernews?", stream=True)
+
+print(agent.model.id)
+print(agent.model.provider)
+print(agent.model.name)

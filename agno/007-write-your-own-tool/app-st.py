@@ -42,7 +42,7 @@ with st.sidebar:
 
 # Set up the Streamlit app
 st.title("🤖 Your AI Agentic Assistant")
-st.write("I'm built by AI. Ask me anything—I'm here to help with info, analysis, and insights!")
+st.write("I'm built using AI. Ask me anything—I'm here to help with info, analysis, and insights!")
 
 stream = st.sidebar.checkbox("Stream")
 
@@ -61,7 +61,6 @@ with st.sidebar:
 agent = Agent(
     # model=xAI(id="grok-2", api_key=xai_api_key),
     model=OpenAIChat(id="gpt-4o-mini"),
-    # model=xAI(id="grok-2"),
     # model=Groq(id="llama-3.3-70b-versatile"),
     # model=DeepSeek(id="deepseek-chat"),
     # model=Gemini(
@@ -138,4 +137,4 @@ if prompt:
 
         st.caption(f"🤔 Questions answered: {st.session_state['counter']}")
 
-st.caption(f"Note: I’m Grok 3, running on knowledge updated to February 20, 2025, plus real-time tools. Complex queries might take a moment!")
+st.caption(f"Note: I'm using {agent.model.id}!")
