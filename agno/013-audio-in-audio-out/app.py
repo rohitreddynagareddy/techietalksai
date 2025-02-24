@@ -47,8 +47,8 @@ if not gemini_api_key:
 # Create an AI Voice Interaction Agent
 agent = Agent(
     model=OpenAIChat(
-        # id="gpt-4o-audio-preview",
-        id="gpt-4o-mini-audio-preview",
+        id="gpt-4o-audio-preview",
+        # id="gpt-4o-mini-audio-preview",
         modalities=["text", "audio"],
         audio={"voice": "alloy", "format": "wav"},
     ),
