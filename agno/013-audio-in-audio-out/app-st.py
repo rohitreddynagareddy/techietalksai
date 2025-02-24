@@ -57,7 +57,9 @@ voice = st.sidebar.selectbox("Response Voice", ["alloy", "echo", "fable", "onyx"
 # --------------- AGENT INITIALIZATION -------------------
 agent = Agent(
     model=OpenAIChat(
-        id="gpt-4o-audio-preview",
+        # id="gpt-4o-audio-preview",
+        # id="gpt-4o-mini-audio-preview",
+        id="gpt-4o-mini-audio-preview-2024-12-17",
         api_key=openai_api_key,
         modalities=["text", "audio"],
         audio={"voice": voice, "format": "wav"},
