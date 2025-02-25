@@ -55,6 +55,7 @@ with st.sidebar:
         
         st.session_state.agent = Agent(
             model=OpenAIChat(id="gpt-4o-mini"),
+            # model=DeepSeek(id="deepseek-chat"),
             user_id=user_id,
             session_id=session_id,
             memory=AgentMemory(
@@ -70,6 +71,10 @@ with st.sidebar:
             storage=agent_storage,
             add_history_to_messages=True,
             num_history_responses=3,
+
+            show_tool_calls=True,
+            debug_mode=True,
+
             description=dedent("""\
                 You are a helpful AI assistant with long-term memory:
                 - Remember user details and preferences

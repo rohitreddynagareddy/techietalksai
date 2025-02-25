@@ -86,6 +86,8 @@ agent.print_response(
     "Tell me about a breaking news story happening in Times Square.", stream=True
 )
 
+print(agent.model)
+
 # asyncio.run(agent.aprint_response("Share a 2 sentence horror story"))
 
 # More example prompts to try:
