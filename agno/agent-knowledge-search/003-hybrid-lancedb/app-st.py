@@ -1,0 +1,106 @@
+import os
+import streamlit as st
+from agno.agent import Agent
+from agno.document.chunking.semantic import SemanticChunking
+from agno.knowledge.pdf_url import PDFUrlKnowledgeBase
+from agno.vectordb.lancedb import LanceDb
+from agno.models.openai import OpenAIChat
+from agno.vectordb.search import SearchType
+
+# --------------- TITLE & HEADER -------------------
+st.title("RAG - SearchType: Hybrid!")
+st.write("Perform vector similarity and full-text search.")
+st.title("🍜 Thai Recipe AI Agent")
+
+# --------------- SIDEBAR CONTROLS -------------------
+with st.sidebar:
+    st.subheader("Example Questions")
+    st.markdown("""
+    - How to make green curry?
+    - What's in tom yum soup?
+    - Vegetarian pad thai recipe
+    - How to prepare sticky mango rice?
+    - Traditional Thai dessert ideas
+    """)
+    st.markdown("---")
+    
+    # Query counter
+    if "query_count" not in st.session_state:
+        st.session_state.query_count = 0
+    st.caption(f"Recipes shared: {st.session_state.query_count}")
+    
+    # Database info
+    st.markdown("---")
+    st.markdown("**Database Status**")
+    if 'knowledge_base' in st.session_state:
+        st.success("Recipes loaded")
+    else:
+        st.warning("Loading recipes...")
+
+# --------------- INITIALIZATION -------------------
+if 'knowledge_base' not in st.session_state:
+    with st.spinner("📚 Loading Thai recipe database..."):
+        try:
+
+            vector_db = LanceDb(
+                table_name="recipes",
+                uri="tmp/lancedb",
+                search_type=SearchType.hybrid,
+            )
+            
+            st.session_state.knowledge_base = PDFUrlKnowledgeBase(
+                urls=["https://agno-public.s3.amazonaws.com/recipes/ThaiRecipes.pdf"],
+                vector_db=vector_db,
+            )
+            st.session_state.knowledge_base.load(recreate=False)
+            
+            st.session_state.agent = Agent(
+                model=OpenAIChat(id="gpt-4o"),
+                user_id="Sree",
+                knowledge=st.session_state.knowledge_base,
+                search_knowledge=True,
+                show_tool_calls=True,
+                debug_mode=True,
+            )
+            st.rerun()
+        except Exception as e:
+            st.error(f"Error initializing database: {str(e)}")
+            st.stop()
+
+# --------------- MAIN INTERFACE -------------------
+question = st.text_input("Ask about Thai cooking:", 
+                        placeholder="e.g., 'How to make authentic pad thai?'")
+
+if question:
+    st.session_state.query_count += 1
+    
+    with st.spinner("🔍 Searching recipes..."):
+        try:
+            response = st.session_state.agent.run(question)
+            
+            st.markdown("---")
+            st.subheader("🥘 Recipe Guidance")
+            st.markdown(response.content)
+            
+            with st.expander("📚 Source References", expanded=False):
+                st.markdown("""
+                Recipes sourced from:
+                - [Thai Recipes PDF](https://agno-public.s3.amazonaws.com/recipes/ThaiRecipes.pdf)
+                """)
+                
+        except Exception as e:
+            st.error(f"Error processing request: {str(e)}")
+
+# --------------- FOOTER -------------------
+st.markdown("---")
+st.caption("""
+**Recipe Assistant Features:**
+- Authentic Thai recipes 🇹🇭
+- Step-by-step instructions 👩🍳
+- Ingredient breakdown 🧄
+- Cooking tips & tricks 🔪
+- Dietary adaptations 🌱
+""")
+
+# Hidden dependency note
+st.markdown("<!--- Run `pip install agno pgvector` -->", unsafe_allow_html=True)

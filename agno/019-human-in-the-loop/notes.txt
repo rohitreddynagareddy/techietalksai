@@ -1,0 +1,10 @@
+
+
+TO RUN THE COMMAND LINE APPLICATION
+
+docker compose up app --build
+
+TO RUN THE COMMAND STREAMLIT APPLICATION
+
+docker compose up app-st --build
+
