@@ -52,6 +52,7 @@ if 'knowledge_base' not in st.session_state:
                 knowledge=st.session_state.knowledge_base,
                 search_knowledge=True,
             )
+            st.rerun()
         except Exception as e:
             st.error(f"Error initializing database: {str(e)}")
             st.stop()

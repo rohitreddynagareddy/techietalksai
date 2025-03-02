@@ -44,7 +44,7 @@ if 'knowledge_base' not in st.session_state:
             
             st.session_state.knowledge_base = PDFUrlKnowledgeBase(
                 urls=["https://agno-public.s3.amazonaws.com/recipes/ThaiRecipes.pdf"],
-                vector_db=PgVector(table_name="recipes_agentic_chunking", db_url=db_url),
+                vector_db=PgVector(table_name="recipes_semantic_chunking", db_url=db_url),
                 chunking_strategy=SemanticChunking(),
             )
             st.session_state.knowledge_base.load(recreate=False)

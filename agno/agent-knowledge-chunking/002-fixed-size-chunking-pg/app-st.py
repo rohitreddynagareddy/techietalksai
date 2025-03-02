@@ -5,6 +5,7 @@ from agno.document.chunking.fixed import FixedSizeChunking
 from agno.knowledge.pdf_url import PDFUrlKnowledgeBase
 from agno.vectordb.pgvector import PgVector
 from agno.models.openai import OpenAIChat
+from agno.models.ollama import OllamaTools
 
 # --------------- TITLE & HEADER -------------------
 st.title("RAG - FixedSizeChunking!")
@@ -44,16 +45,22 @@ if 'knowledge_base' not in st.session_state:
             
             st.session_state.knowledge_base = PDFUrlKnowledgeBase(
                 urls=["https://agno-public.s3.amazonaws.com/recipes/ThaiRecipes.pdf"],
-                vector_db=PgVector(table_name="recipes_agentic_chunking", db_url=db_url),
+                vector_db=PgVector(table_name="recipes_fixed_chunking", db_url=db_url),
                 chunking_strategy=FixedSizeChunking(),
             )
             st.session_state.knowledge_base.load(recreate=True)
             
             st.session_state.agent = Agent(
                 model=OpenAIChat(id="gpt-4o-mini"),
+                # model=OllamaTools(
+                #     id="deepseek-r1:latest",
+                #     # id="phi4-mini",
+                #     host="http://host.docker.internal:11434"
+                #     ),
                 knowledge=st.session_state.knowledge_base,
                 search_knowledge=True,
             )
+            st.rerun()
         except Exception as e:
             st.error(f"Error initializing database: {str(e)}")
             st.stop()
