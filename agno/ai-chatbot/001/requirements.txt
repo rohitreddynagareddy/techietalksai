@@ -11,4 +11,8 @@ nest_asyncio
 sqlalchemy
 anthropic
 google-genai
-ollama
+chonkie
+tiktoken
+lancedb
+tantivy
+groq

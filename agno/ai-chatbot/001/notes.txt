@@ -1,0 +1,75 @@
+💬 Reasoning Multi-Model Agno Chat Agent
+2 plus 2
+
+🦾
+The sum of 2 plus 2 is 4. If you have any more questions or need help with something else, feel free to ask!
+
+I am Sree please book for me
+
+🦾
+Running: booking_tool(name=Sree)
+Your booking has been confirmed, Sree! Here is your booking reference: TIT6J75C. If you need anything else, feel free to ask!
+
+latest thai news
+
+🦾
+Running: duckduckgo_news(query=Thailand, max_results=5)
+Here are some of the latest headlines from Thailand:
+
+Marc Marquez beats brother Alex to win season-opening Thailand GP
+
+Six-time MotoGP champion Marc Marquez achieved a double victory at the Thailand Grand Prix, finishing ahead of his brother Alex.
+Read more
+Thailand Should Be Commended for Uyghur Deportation, Deputy PM Says
+
+The deputy premier praised Thailand's handling of the return of 40 Uyghur Muslims to China, despite facing international criticism.
+Read more
+US embassy issues security alert in Thailand after Uyghurs' deportation to China
+
+The U.S. embassy in Bangkok issued a security alert for its citizens in Thailand following the deportation of Uyghurs that has drawn widespread condemnation.
+Read more
+Thailand deports 40 Uyghur men back to China after more than a decade in detention
+
+Confirmed by the Chinese embassy, a group of Uyghur men who had been detained for over ten years has been deported to China.
+Read more
+Marc Marquez leads family one-two at Thailand GP
+
+Marc Marquez completed a successful weekend with a victory at the opening MotoGP race at the Buriram International Circuit.
+Read more
+If you want to know more about any specific topic, let me know!
+
+Gluai Buat Chi recipe
+
+🦾
+Gluai Buat Chi (Bananas in Coconut Milk) Recipe
+
+This traditional Thai dessert is both simple and delicious. Here's how to make it:
+
+Ingredients (Serves 2)
+5 almost-ripe Nam Wa bananas
+1/4 cup coconut cream
+1 1/2 cups coconut milk
+1/2 cup sugar
+1/2 tablespoon salt
+Preparation Time
+Total: 30 minutes
+Preparation: 10 minutes
+Cooking: 20 minutes
+Directions
+Prepare the Bananas:
+
+Peel the bananas and slice them vertically into halves, then horizontally into smaller pieces.
+Cook the Bananas:
+
+Pour the coconut milk into a pot and bring it to a boil. Lower the heat to medium and add the bananas.
+Cook until the bananas are tender (be careful not to overcook).
+Add Flavors:
+
+Turn off the heat and stir in the sugar and salt until dissolved.
+Finish Up:
+
+Add the coconut cream and allow it to cool to room temperature before serving.
+Tips
+You can substitute Nam Wa bananas with options like sweet potato, pumpkin, or tapioca; just ensure they are boiled until cooked but not mashed.
+If using unripe bananas, boil them in water for 3-5 minutes first to reduce stickiness.
+Enjoy your delightful Gluai Buat Chi!

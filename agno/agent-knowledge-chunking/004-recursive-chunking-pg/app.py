@@ -9,7 +9,7 @@ db_url = "postgresql+psycopg://ai:ai@pgvector:5432/ai"
 
 knowledge_base = PDFUrlKnowledgeBase(
     urls=["https://agno-public.s3.amazonaws.com/recipes/ThaiRecipes.pdf"],
-    vector_db=PgVector(table_name="recipes_agentic_chunking", db_url=db_url),
+    vector_db=PgVector(table_name="recipes_recursive_chunking", db_url=db_url),
     chunking_strategy=RecursiveChunking(),
 )
 knowledge_base.load(recreate=True)  # Comment out after first run

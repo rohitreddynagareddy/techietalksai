@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  app-st:
+  chatbot:
     build: .
     ports:
       - "8511:8501"
@@ -31,12 +31,27 @@ services:
       - pgvolume:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-
   adminer:
     image: adminer
     restart: always
     ports:
       - "8080:8080"
+
+  webserver:
+    image: nginx:alpine
+    ports:
+      - "8503:80"  # Web server port
+    volumes:
+      - ./web/static:/usr/share/nginx/html  # Directory containing index.html
+    networks:
+      - app-network
+    depends_on:
+      - chatbot
+
 volumes:
   pgvolume:
 
+
+networks:
+  app-network:
+    driver: bridge
