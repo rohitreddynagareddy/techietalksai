@@ -121,36 +121,68 @@ def create_agent(model_choice: str):
     elif model_choice == "Gemini":
         model = Gemini(id="gemini-1.5-flash", api_key=GEMINI_API_KEY)
 
-    return Agent(
-        model=model,
-        instructions=dedent("""
-            You're a helpful assistant. Respond conversationally and keep answers concise.
-            Follow these steps:
-            1. For bookings use only the tools provided, like the bookingtool
-            2. Check knowledge base for technical information as second priority
-            3. Use web search for real-time data as third priority
-            4. Cite sources when using external information
+    if reason:
+        return Agent(
+            model=model,
+            instructions=dedent("""
+                You're a helpful assistant. Respond conversationally and keep answers concise.
+                Follow these steps:
+                1. For bookings use only the tools provided, like the bookingtool
+                2. Check knowledge base for technical information as second priority
+                3. Use web search for real-time data as third priority
+                4. Cite sources when using external information
 
-            When presenting mathematical expressions:
-            - Use double dollar signs for block equations: $$\\frac{3}{5} = 0.6$$
-            - Use escaped percentage signs: 60\\%
-            - For inline equations: $x^2 + y^2 = z^2$
+                When presenting mathematical expressions:
+                - Use double dollar signs for block equations: $$\\frac{3}{5} = 0.6$$
+                - Use escaped percentage signs: 60\\%
+                - For inline equations: $x^2 + y^2 = z^2$
 
-            When asked to book use the booking tool
-        """),
-        # knowledge=init_knowledge(knowledge_urls),
-        knowledge=st.session_state.knowledge_db, #init_knowledge_pg(knowledge_urls),
-        tools=[booking_tool, DuckDuckGoTools()],
-        # tools=[booking_tool],
-        # reasoning_model=DeepSeek(id="deepseek-reasoner"),
-        reasoning_model=OpenAIChat(id="o1-mini"),
-        # reasoning_model=Groq(
-        #     id="deepseek-r1-distill-llama-70b", temperature=0.6, max_tokens=1024, top_p=0.95
-        # ),
-        show_tool_calls=True,
-        markdown=True,
-        add_references=True,
-    )
+                When asked to book use the booking tool do not reason
+            """),
+            # knowledge=init_knowledge(knowledge_urls),
+            knowledge=st.session_state.knowledge_db, #init_knowledge_pg(knowledge_urls),
+            tools=[booking_tool, DuckDuckGoTools()],
+            # tools=[booking_tool],
+            # reasoning_model=DeepSeek(id="deepseek-reasoner"),
+            # reasoning_model=OpenAIChat(id="o1-mini"),
+            reasoning_model=Groq(
+                id="deepseek-r1-distill-llama-70b", temperature=0.6, max_tokens=1024, top_p=0.95
+            ),
+            show_tool_calls=True,
+            markdown=True,
+            add_references=True,
+        )
+    else:
+        return Agent(
+            model=model,
+            instructions=dedent("""
+                You're a helpful assistant. Respond conversationally and keep answers concise.
+                Follow these steps:
+                1. For bookings use only the tools provided, like the bookingtool
+                2. Check knowledge base for technical information as second priority
+                3. Use web search for real-time data as third priority
+                4. Cite sources when using external information
+
+                When presenting mathematical expressions:
+                - Use double dollar signs for block equations: $$\\frac{3}{5} = 0.6$$
+                - Use escaped percentage signs: 60\\%
+                - For inline equations: $x^2 + y^2 = z^2$
+
+                When asked to book use the booking tool do not reason
+            """),
+            # knowledge=init_knowledge(knowledge_urls),
+            knowledge=st.session_state.knowledge_db, #init_knowledge_pg(knowledge_urls),
+            tools=[booking_tool, DuckDuckGoTools()],
+            # tools=[booking_tool],
+            # reasoning_model=DeepSeek(id="deepseek-reasoner"),
+            # reasoning_model=OpenAIChat(id="o1-mini"),
+            # reasoning_model=Groq(
+            #     id="deepseek-r1-distill-llama-70b", temperature=0.6, max_tokens=1024, top_p=0.95
+            # ),
+            show_tool_calls=True,
+            markdown=True,
+            add_references=True,
+        )
 
 
 if "knowledge_urls" not in st.session_state:
@@ -159,8 +191,8 @@ if "knowledge_urls" not in st.session_state:
     # st.session_state["knowledge_urls"] = ['file:///app/data/uploads/ThaiRecipes.pdf']
 
 if "knowledge_db" not in st.session_state:
-    urls = len(st.session_state.knowledge_urls)
-    st.success(f"Count {urls} URLs")
+    # urls = len(st.session_state.knowledge_urls)
+    # st.success(f"Count {urls} URLs")
     st.session_state["knowledge_db"] = init_knowledge_pg()
 
 # UI Components
@@ -172,6 +204,8 @@ st.title("💬 Reasoning Multi-Model Agno Chat Agent")
 with st.sidebar:
     model_choice = st.selectbox("Choose AI Model", list(MODEL_AVATARS.keys()))
     st.caption(f"Currently using: {model_choice} {MODEL_AVATARS[model_choice]}")
+
+    reason = st.sidebar.checkbox("Reasoning")
 
     st.header("Knowledge Base Management")
     
