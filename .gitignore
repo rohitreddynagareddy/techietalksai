@@ -111,3 +111,5 @@ sree.txt
 sree/
 # Explicitly include .env.example
 !.env.example
+
+node_modules/
