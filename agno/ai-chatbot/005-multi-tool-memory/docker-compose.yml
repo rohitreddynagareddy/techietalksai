@@ -1,0 +1,56 @@
+version: "3.8"
+services:
+  chatbot:
+    build: .
+    ports:
+      - "8511:8501"
+    volumes:
+      - ${PWD}:/app
+    env_file:
+      - .env
+    entrypoint: ["streamlit", "run", "--server.port=8501", "--server.address=0.0.0.0"]
+    command: ["app-st.py"]
+
+  # app:
+  #   build: .
+  #   volumes:
+  #     - ${PWD}:/app
+  #   env_file:
+  #     - .env
+  #   entrypoint: ["python"]
+  #   command: ["app.py"]
+
+  pgvector:
+    image: agnohq/pgvector:16
+    environment:
+      - POSTGRES_DB=ai
+      - POSTGRES_USER=ai
+      - POSTGRES_PASSWORD=ai
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - pgvolume:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
+  webserver:
+    image: nginx:alpine
+    ports:
+      - "8503:80"  # Web server port
+    volumes:
+      - ./web/static:/usr/share/nginx/html  # Directory containing index.html
+    networks:
+      - app-network
+    depends_on:
+      - chatbot
+
+volumes:
+  pgvolume:
+
+networks:
+  app-network:
+    driver: bridge

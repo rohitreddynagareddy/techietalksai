@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 import random
 import string
-from agno.agent import Agent, RunResponse
+from agno.agent import Agent, RunResponse, AgentMemory
 from agno.embedder.openai import OpenAIEmbedder
 from agno.knowledge.pdf_url import PDFUrlKnowledgeBase
 from agno.models.openai import OpenAIChat
@@ -17,7 +17,8 @@ from agno.vectordb.pgvector import PgVector
 import nest_asyncio
 from agno.models.groq import Groq
 import time
-
+from agno.memory.db.sqlite import SqliteMemoryDb
+from agno.storage.agent.sqlite import SqliteAgentStorage
 from agno.document.chunking.recursive import RecursiveChunking
 from agno.document.chunking.agentic import AgenticChunking
 from agno.document.chunking.fixed import FixedSizeChunking
@@ -65,19 +66,64 @@ MODEL_AVATARS = {
     "Gemini": "🤖"
 }
 
-def booking_tool(name: str = "Guest") -> str:
-    """Use this function to Generate Thai Hotel booking or appointment confirmation, returns booking reference number
+def restaurant_booking_tool(name: str = "Guest", party_size: int = 2, date: str = None, time: str = None) -> str:
+    """Use this function to book a table at the restaurant
 
     Args:
-        name (str): name of the user or Guest.
+        name (str): Name of the guest
+        party_size (int): Number of people in the party
+        date (str): Date of reservation (format: YYYY-MM-DD)
+        time (str): Time of reservation (format: HH:MM)
 
     Returns:
-        str: string containing the booking reference number
+        str: Booking confirmation with reference number
     """
     if name == "Guest":
         return "Please provide your name to complete the booking."
+    if not date or not time:
+        return "Please provide both date and time for your restaurant reservation."
     booking_ref = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-    return f"Your booking is confirmed, {name}! Booking Reference: {booking_ref}"
+    return f"Your table for {party_size} is confirmed, {name}! Date: {date}, Time: {time}. Booking Reference: {booking_ref}"
+
+def hotel_booking_tool(name: str = "Guest", room_type: str = "Standard", check_in: str = None, check_out: str = None, guests: int = 1) -> str:
+    """Use this function to book a hotel room
+
+    Args:
+        name (str): Name of the guest
+        room_type (str): Type of room (Standard, Deluxe, Suite)
+        check_in (str): Check-in date (format: YYYY-MM-DD)
+        check_out (str): Check-out date (format: YYYY-MM-DD)
+        guests (int): Number of guests
+
+    Returns:
+        str: Booking confirmation with reference number
+    """
+    if name == "Guest":
+        return "Please provide your name to complete the booking."
+    if not check_in or not check_out:
+        return "Please provide both check-in and check-out dates for your hotel reservation."
+    booking_ref = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+    return f"Your {room_type} room for {guests} guest(s) is confirmed, {name}! Check-in: {check_in}, Check-out: {check_out}. Booking Reference: {booking_ref}"
+
+def airport_pickup_tool(name: str = "Guest", flight_number: str = None, arrival_date: str = None, arrival_time: str = None, passengers: int = 1) -> str:
+    """Use this function to book an airport pickup service
+
+    Args:
+        name (str): Name of the guest
+        flight_number (str): Flight number
+        arrival_date (str): Date of arrival (format: YYYY-MM-DD)
+        arrival_time (str): Time of arrival (format: HH:MM)
+        passengers (int): Number of passengers
+
+    Returns:
+        str: Booking confirmation with reference number
+    """
+    if name == "Guest":
+        return "Please provide your name to complete the booking."
+    if not flight_number or not arrival_date or not arrival_time:
+        return "Please provide flight number, arrival date, and arrival time for your airport pickup."
+    booking_ref = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+    return f"Your airport pickup for {passengers} passenger(s) is confirmed, {name}! Flight: {flight_number}, Arrival: {arrival_date} at {arrival_time}. Booking Reference: {booking_ref}"
 
 # Initialize RAG knowledge base
 # def init_knowledge_lancedb(urls: List[str] = None) -> PDFUrlKnowledgeBase:
@@ -216,7 +262,6 @@ def load_knowledge(recreate_tf):
 if "chunking_strategy_selected" not in globals():
     chunking_strategy_selected = "Fixed"
 
-
 # Initialize agent with dynamic knowledge
 def create_agent(model_choice: str):
     # Select model
@@ -233,7 +278,7 @@ def create_agent(model_choice: str):
             instructions=dedent("""
                 You're a helpful assistant. Respond conversationally and keep answers concise.
                 Follow these steps:
-                1. For bookings use only the tools provided, like the bookingtool
+                1. For bookings use only the tools provided, like restaurant_booking_tool, hotel_booking_tool, or airport_pickup_tool
                 2. Check knowledge base for technical information as second priority
                 3. Use web search for real-time data as third priority
                 4. Cite sources when using external information
@@ -243,11 +288,11 @@ def create_agent(model_choice: str):
                 - Use escaped percentage signs: 60\\%
                 - For inline equations: $x^2 + y^2 = z^2$
 
-                When asked to book use the booking tool do not reason
+                When asked to book use the appropriate booking tool do not reason
             """),
             # knowledge=init_knowledge(knowledge_urls),
             knowledge=st.session_state.knowledge_db, #init_knowledge_pg(knowledge_urls),
-            tools=[booking_tool, DuckDuckGoTools()],
+            tools=[restaurant_booking_tool, hotel_booking_tool, airport_pickup_tool, DuckDuckGoTools()],
             # tools=[booking_tool],
             # reasoning_model=DeepSeek(id="deepseek-reasoner"),
             # reasoning_model=OpenAIChat(id="o1-mini"),
@@ -257,6 +302,22 @@ def create_agent(model_choice: str):
             show_tool_calls=True,
             markdown=True,
             add_references=True,
+            memory=AgentMemory(
+                db=SqliteMemoryDb(
+                    table_name="memory",
+                    db_file="tmp/memory.db",
+                ),
+                create_user_memories=True,
+                update_user_memories_after_run=True,
+                create_session_summary=True,
+                update_session_summary_after_run=True,
+            ),
+            storage=SqliteAgentStorage(
+                table_name="storage", 
+                db_file="tmp/storage.db"
+            ),
+            add_history_to_messages=True,
+            num_history_responses=3,
         )
     else:
         return Agent(
@@ -264,7 +325,7 @@ def create_agent(model_choice: str):
             instructions=dedent("""
                 You're a helpful assistant. Respond conversationally and keep answers concise.
                 Follow these steps:
-                1. For bookings use only the tools provided, like the bookingtool
+                1. For bookings use only the tools provided, like restaurant_booking_tool, hotel_booking_tool, or airport_pickup_tool
                 2. Check knowledge base for technical information as second priority
                 3. Use web search for real-time data as third priority
                 4. Cite sources when using external information
@@ -274,11 +335,11 @@ def create_agent(model_choice: str):
                 - Use escaped percentage signs: 60\\%
                 - For inline equations: $x^2 + y^2 = z^2$
 
-                When asked to book use the booking tool do not reason
+                When asked to book use the appropriate booking tool do not reason
             """),
             # knowledge=init_knowledge(knowledge_urls),
             knowledge=st.session_state.knowledge_db, #init_knowledge_pg(knowledge_urls),
-            tools=[booking_tool, DuckDuckGoTools()],
+            tools=[restaurant_booking_tool, hotel_booking_tool, airport_pickup_tool, DuckDuckGoTools()],
             # tools=[booking_tool],
             # reasoning_model=DeepSeek(id="deepseek-reasoner"),
             # reasoning_model=OpenAIChat(id="o1-mini"),
@@ -288,6 +349,22 @@ def create_agent(model_choice: str):
             show_tool_calls=True,
             markdown=True,
             add_references=True,
+            memory=AgentMemory(
+                db=SqliteMemoryDb(
+                    table_name="memory",
+                    db_file="tmp/memory.db",
+                ),
+                create_user_memories=True,
+                update_user_memories_after_run=True,
+                create_session_summary=True,
+                update_session_summary_after_run=True,
+            ),
+            storage=SqliteAgentStorage(
+                table_name="storage", 
+                db_file="tmp/storage.db"
+            ),
+            add_history_to_messages=True,
+            num_history_responses=3,
         )
 
 

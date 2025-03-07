@@ -24,6 +24,22 @@ from agno.document.chunking.fixed import FixedSizeChunking
 from agno.document.chunking.document import DocumentChunking
 from agno.document.chunking.semantic import SemanticChunking
 
+from agno.vectordb.lancedb import LanceDb, SearchType
+from agno.vectordb.pineconedb import PineconeDb
+# For ChromaDB support
+import chromadb
+from langchain_community.vectorstores import Chroma
+from langchain_openai import OpenAIEmbeddings
+
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+logger.info("===== App Start =====")
+# logger.warning("This is a warning message printed in Docker logs")
+
+
 # Apply nest_asyncio for async handling
 nest_asyncio.apply()
 
@@ -36,7 +52,7 @@ st.set_page_config(
 
 # Initialize environment
 load_dotenv()
-
+api_key = os.getenv("PINECONE_API_KEY")
 # Validate API keys
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
@@ -67,78 +83,209 @@ def booking_tool(name: str = "Guest") -> str:
     booking_ref = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
     return f"Your booking is confirmed, {name}! Booking Reference: {booking_ref}"
 
-
-
-
 # Initialize RAG knowledge base
-def init_knowledge(urls: List[str] = None) -> PDFUrlKnowledgeBase:
-    return PDFUrlKnowledgeBase(
-        urls=urls or [],
-        vector_db=LanceDb(
-            uri="data/vector_store",
-            table_name="knowledge_base",
-            search_type=SearchType.hybrid,
+# def init_knowledge_lancedb(urls: List[str] = None) -> PDFUrlKnowledgeBase:
+#     return PDFUrlKnowledgeBase(
+#         urls=urls or [],
+#         vector_db=LanceDb(
+#             uri="data/vector_store",
+#             table_name="knowledge_base",
+#             search_type=SearchType.hybrid,
+#             chunking_strategy=chunking_strategy,
+#             embedder=OpenAIEmbedder(
+#                 id="text-embedding-3-small",
+#                 api_key=OPENAI_API_KEY
+#             ),
+#         ),
+#     )
+
+if "search_type_selected" not in globals():
+    search_type_selected = "Hybrid PostgreSQL"
+    
+# Initialize ChromaDB embeddings
+def init_chroma_embeddings():
+    return OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+
+
+def init_knowledge() -> PDFUrlKnowledgeBase:
+    urls = st.session_state["knowledge_urls"]
+
+    if chunking_strategy_selected == "Agentic":
+        chunking_strategy = AgenticChunking()
+    elif chunking_strategy_selected == "Fixed":
+        chunking_strategy = FixedSizeChunking()
+    elif chunking_strategy_selected == "Recursive":
+        chunking_strategy = RecursiveChunking()
+    elif chunking_strategy_selected == "Document":
+        chunking_strategy = DocumentChunking()
+    elif chunking_strategy_selected == "Semantic":
+        chunking_strategy = SemanticChunking()
+    else:
+        chunking_strategy = FixedSizeChunking()
+
+
+    # st.success(urls)
+    if search_type_selected == "Hybrid PostgreSQL":
+        db_url = "postgresql+psycopg://ai:ai@pgvector:5432/ai"
+        logger.info("===== init_knowledge PG =====")
+        return PDFUrlKnowledgeBase(
+            # urls=["https://agno-public.s3.amazonaws.com/recipes/ThaiRecipes.pdf"],
+            urls=urls or [],
+            vector_db=PgVector(
+                table_name="recipes", 
+                db_url=db_url,
+            ),
             chunking_strategy=chunking_strategy,
+            search_type=SearchType.hybrid,
             embedder=OpenAIEmbedder(
                 id="text-embedding-3-small",
                 api_key=OPENAI_API_KEY
             ),
-        ),
-    )
-
-
-
-# def init_knowledge_pg(urls: List[str] = None) -> PDFUrlKnowledgeBase:
-def init_knowledge_pg() -> PDFUrlKnowledgeBase:
-# if 'knowledge_base' not in st.session_state:
-    # with st.spinner("📚 Loading Thai recipe database..."):
-    #     try:
-            global chunking_strategy_selected
-
-            if "chunking_strategy_selected" not in globals():
-                chunking_strategy_selected = "Fixed"
-
-
-            if chunking_strategy_selected == "Agentic":
-                chunking_strategy = AgenticChunking()
-            elif chunking_strategy_selected == "Fixed":
-                chunking_strategy = FixedSizeChunking()
-            elif chunking_strategy_selected == "Recursive":
-                chunking_strategy = RecursiveChunking()
-            elif chunking_strategy_selected == "Document":
-                chunking_strategy = DocumentChunking()
-            elif chunking_strategy_selected == "Semantic":
-                chunking_strategy = SemanticChunking()
-            else:
-                chunking_strategy = FixedSizeChunking()
-
-            db_url = "postgresql+psycopg://ai:ai@pgvector:5432/ai"
-            urls = st.session_state["knowledge_urls"]
-            return PDFUrlKnowledgeBase(
-                # urls=["https://agno-public.s3.amazonaws.com/recipes/ThaiRecipes.pdf"],
-                urls=urls or [],
-                vector_db=PgVector(
-                    table_name=chunking_strategy_selected, 
-                    db_url=db_url,
-                ),
+        )
+    elif search_type_selected == "Hybrid LanceDB":
+        logger.info("===== init_knowledge Lance =====")
+        return PDFUrlKnowledgeBase(
+            urls=urls or [],
+            vector_db=LanceDb(
+                uri="data/vector_store",
+                table_name="knowledge_base",
                 search_type=SearchType.hybrid,
-                chunking_strategy=chunking_strategy,
                 embedder=OpenAIEmbedder(
                     id="text-embedding-3-small",
                     api_key=OPENAI_API_KEY
                 ),
-            )
-            # knowledge_base.load(recreate=False)
+            ),
+            chunking_strategy=chunking_strategy,
+            search_type=SearchType.hybrid,
+            embedder=OpenAIEmbedder(
+                id="text-embedding-3-small",
+                api_key=OPENAI_API_KEY
+            ),
+        )
+    elif search_type_selected == "Hybrid Pinecone":
+        logger.info("===== init_knowledge Pine =====")
+        return PDFUrlKnowledgeBase(
+            urls=urls or [],
+            vector_db = PineconeDb(
+                name="thai-recipe",
+                dimension=1536,
+                metric="cosine",
+                spec={"serverless": {"cloud": "aws", "region": "us-east-1"}},
+                api_key=api_key,
+                use_hybrid_search=True,
+                hybrid_alpha=0.5,
+            ),
+            chunking_strategy=chunking_strategy,
+            search_type=SearchType.hybrid,
+            embedder=OpenAIEmbedder(
+                id="text-embedding-3-small",
+                api_key=OPENAI_API_KEY
+            ),
+        )
+    elif search_type_selected == "Hybrid ChromaDB":
+        logger.info("===== init_knowledge ChromaDB =====")
+        # Create ChromaDB client
+        chroma_client = chromadb.Client()
+        # Create/get collection
+        collection_name = "knowledge_base"
+        
+        # Create the ChromaDB vectorstore
+        chroma_embeddings = init_chroma_embeddings()
+        
+        # Create or get collection
+        os.makedirs("data/chroma_store", exist_ok=True)
+        
+        # Using Langchain's Chroma wrapper
+        vector_store = Chroma(
+            collection_name=collection_name,
+            embedding_function=chroma_embeddings,
+            persist_directory="data/chroma_store"
+        )
+        
+        # Create a custom wrapper for ChromaDB to integrate with Agno
+        class ChromaWrapper:
+            def __init__(self, chroma_store):
+                self.chroma_store = chroma_store
+            
+            def add_items(self, items):
+                # Convert items to format expected by Chroma
+                texts = [item["content"] for item in items]
+                metadatas = [{"source": item.get("source", ""), "chunk_id": item.get("chunk_id", "")} for item in items]
+                ids = [str(i) for i in range(len(texts))]
+                
+                # Add to Chroma
+                self.chroma_store.add_texts(texts=texts, metadatas=metadatas, ids=ids)
+                return True
+            
+            def search(self, query, k=3, filters=None):
+                # Search in Chroma
+                results = self.chroma_store.similarity_search(query, k=k)
+                
+                # Format results to match Agno's expected output
+                formatted_results = []
+                for doc in results:
+                    formatted_results.append({
+                        "content": doc.page_content,
+                        "source": doc.metadata.get("source", ""),
+                        "chunk_id": doc.metadata.get("chunk_id", ""),
+                        "score": 0.9  # Score not directly available, using placeholder
+                    })
+                return formatted_results
+        
+        # Wrap ChromaDB with our adapter
+        chroma_wrapper = ChromaWrapper(vector_store)
+        
+        return PDFUrlKnowledgeBase(
+            urls=urls or [],
+            vector_db=chroma_wrapper,  # Using our wrapper
+            chunking_strategy=chunking_strategy,
+            search_type=SearchType.similarity,  # ChromaDB uses similarity search
+            embedder=OpenAIEmbedder(
+                id="text-embedding-3-small",
+                api_key=OPENAI_API_KEY
+            ),
+        )
+    logger.info("===== init_knowledge fails =====")
+
+# def init_knowledge_pg(urls: List[str] = None) -> PDFUrlKnowledgeBase:
+# def init_knowledge_pg() -> PDFUrlKnowledgeBase:
+# # if 'knowledge_base' not in st.session_state:
+#     # with st.spinner("📚 Loading Thai recipe database..."):
+#     #     try:
+#             db_url = "postgresql+psycopg://ai:ai@pgvector:5432/ai"
+#             urls = st.session_state["knowledge_urls"]
+#             return PDFUrlKnowledgeBase(
+#                 # urls=["https://agno-public.s3.amazonaws.com/recipes/ThaiRecipes.pdf"],
+#                 urls=urls or [],
+#                 vector_db=PgVector(
+#                     table_name="recipes", 
+#                     db_url=db_url,
+#                 ),
+#                 search_type=SearchType.hybrid,
+#                 embedder=OpenAIEmbedder(
+#                     id="text-embedding-3-small",
+#                     api_key=OPENAI_API_KEY
+#                 ),
+#             )
+#             # knowledge_base.load(recreate=False)
 def load_knowledge(recreate_tf):
-    st.session_state["knowledge_db"] = init_knowledge_pg()
-    # if "knowledge_db" in st.session_state:
-    #     with st.spinner("Initializing knowledge base..."):
-    #         st.session_state.knowledge_db.load(recreate=recreate_tf)
-        # return
+    logger.info("===== load_knowledge =====")
+    if "knowledge_db" in st.session_state:
+        with st.spinner("Initializing knowledge base..."):
+            # time.sleep(10)
+            logger.info("===== load_knowledge init =====")
+            st.session_state["knowledge_db"] = init_knowledge()
+            logger.info("===== load_knowledge load =====")
+            st.session_state.knowledge_db.load(recreate=recreate_tf)
+            logger.info("===== load_knowledge loaded =====")
+            # st.success("Loaded Knowledge..")
+        return
+    logger.info("===== load_knowledge returns =====")
+    # st.success("Not Loaded DB")
 
+if "chunking_strategy_selected" not in globals():
+    chunking_strategy_selected = "Fixed"
 
-# if "chunking_strategy_selected" not in globals():
-#     chunking_strategy_selected = "Fixed"
 
 # Initialize agent with dynamic knowledge
 def create_agent(model_choice: str):
@@ -149,8 +296,6 @@ def create_agent(model_choice: str):
         model = DeepSeek(id="deepseek-chat", api_key=DEEPSEEK_API_KEY)
     elif model_choice == "Gemini":
         model = Gemini(id="gemini-1.5-flash", api_key=GEMINI_API_KEY)
-
-
 
     if reason:
         return Agent(
@@ -224,39 +369,56 @@ if "knowledge_urls" not in st.session_state:
 if "knowledge_db" not in st.session_state:
     # urls = len(st.session_state.knowledge_urls)
     # st.success(f"Count {urls} URLs")
-    st.session_state["knowledge_db"] = init_knowledge_pg()
+    st.session_state["knowledge_db"] = init_knowledge()
+
+# UI Components
+st.title("💬 Flexible VectorDB and Chunking Multi-Model Agno Chat Agent")
+st.write(f"**Chunking Strategy:** {chunking_strategy_selected} | **VectorDB:** {search_type_selected}" )
+# model_choice = st.selectbox("Choose AI Model", list(MODEL_AVATARS.keys()))
+# st.caption(f"Currently using: {model_choice} {MODEL_AVATARS[model_choice]}")
 
 # File management sidebar
 with st.sidebar:
+    st.title("💬 Chatbot Options")
+    st.sidebar.subheader("Model Selection")
     model_choice = st.selectbox("Choose AI Model", list(MODEL_AVATARS.keys()))
     st.caption(f"Currently using: {model_choice} {MODEL_AVATARS[model_choice]}")
 
+    st.sidebar.subheader("Reasoning Yes/No")
     reason = st.sidebar.checkbox("Reasoning")
     
     # Function to show loading when chunking strategy changes
     def chunking_strategy_change():
         with st.sidebar:
-            with st.spinner(f"Loading {chunking_strategy_selected} chunking strategy..."):
-                load_knowledge(False)  # Reload knowledge with new strategy
+            with st.spinner("Loading new chunking strategy..."):
+                load_knowledge(True)  # Reload knowledge with new strategy
                 time.sleep(5)  # Simulate loading time
+
+    def search_type_change():
+        with st.sidebar:
+            with st.spinner("Loading new search type..."):
+                load_knowledge(True)  # Reload knowledge with new strategy
+                time.sleep(3)  # Simulate loading time
 
     # Add chunking strategy selector with loading indicator
     st.sidebar.subheader("Chunking Strategy")
-    # prev_chunking_strategy_selected = chunking_strategy_selected
     chunking_strategy_selected = st.sidebar.radio(
         "Select Chunking Method",
         options=["Agentic", "Fixed", "Recursive", "Document", "Semantic"],
-        # index=1,
+        index=1,
         key="chunking_strategy_radio",
-        # on_change=chunking_strategy_change
+        on_change=chunking_strategy_change
     )
-    if "chunking_strategy_selected" not in globals():
-        chunking_strategy_selected = "Fixed"
-        
-    if "prev_chunking_strategy_selected" not in globals() or prev_chunking_strategy_selected != chunking_strategy_selected:
-        chunking_strategy_change()
-        prev_chunking_strategy_selected = chunking_strategy_selected
-
+    
+    # Add search type selector
+    st.sidebar.subheader("Search Type")
+    search_type_selected = st.sidebar.radio(
+        "Search Type",
+        options=["Hybrid PostgreSQL", "Hybrid LanceDB", "Hybrid Pinecone", "Hybrid ChromaDB"],
+        index=0,
+        key="search_type_radio",
+        on_change=search_type_change
+    )
 
     st.header("Knowledge Base Management")
     
@@ -268,7 +430,7 @@ with st.sidebar:
     # )
     
     # Website URL
-    website_url = st.text_input("Add Website URL", placeholder="https://example.com")
+    website_url = st.text_input("Add PDF URL", placeholder="https://example.com/abcd.pdf")
     
     # Process new content
     if st.button("Update Knowledge Base"):
@@ -296,19 +458,9 @@ with st.sidebar:
         # with st.spinner("Initializing knowledge base..."):
             # agent.knowledge.load(recreate=True)
             # st.success("BB")
-        st.success(knowledge_urls)
+        # st.success(knowledge_urls)
         load_knowledge(True)
             # st.session_state.knowledge="Yes"
-
-
-
-# UI Components
-st.title("💬 Flexible Chunking Multi-Model Agno Chat Agent")
-if "chunking_strategy_selected" in globals():
-    st.write(f"Chunking Strategy: {chunking_strategy_selected}")
-# model_choice = st.selectbox("Choose AI Model", list(MODEL_AVATARS.keys()))
-# st.caption(f"Currently using: {model_choice} {MODEL_AVATARS[model_choice]}")
-
 
 
 # Initialize session state
@@ -329,9 +481,9 @@ agent = create_agent(model_choice)
 #         # st.session_state.knowledge_db.load(True)
 
 
-if 'knowledge_base' not in st.session_state:
-    load_knowledge(False)
-    st.session_state["knowledge_base"] = "KB Loaded"
+# if 'knowledge_base_loaded' not in st.session_state:
+#     load_knowledge(False)
+#     st.session_state["knowledge_base_loaded"] = "KB Loaded"
 
 # Chat interface
 for message in st.session_state.messages:

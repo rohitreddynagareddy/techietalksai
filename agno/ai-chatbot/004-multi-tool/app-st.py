@@ -24,6 +24,18 @@ from agno.document.chunking.fixed import FixedSizeChunking
 from agno.document.chunking.document import DocumentChunking
 from agno.document.chunking.semantic import SemanticChunking
 
+from agno.vectordb.lancedb import LanceDb, SearchType
+from agno.vectordb.pineconedb import PineconeDb
+
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+logger.info("===== App Start =====")
+# logger.warning("This is a warning message printed in Docker logs")
+
+
 # Apply nest_asyncio for async handling
 nest_asyncio.apply()
 
@@ -36,7 +48,7 @@ st.set_page_config(
 
 # Initialize environment
 load_dotenv()
-
+api_key = os.getenv("PINECONE_API_KEY")
 # Validate API keys
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
@@ -53,92 +65,202 @@ MODEL_AVATARS = {
     "Gemini": "🤖"
 }
 
-def booking_tool(name: str = "Guest") -> str:
-    """Use this function to Generate Thai Hotel booking or appointment confirmation, returns booking reference number
+def restaurant_booking_tool(name: str = "Guest", party_size: int = 2, date: str = None, time: str = None) -> str:
+    """Use this function to book a table at the restaurant
 
     Args:
-        name (str): name of the user or Guest.
+        name (str): Name of the guest
+        party_size (int): Number of people in the party
+        date (str): Date of reservation (format: YYYY-MM-DD)
+        time (str): Time of reservation (format: HH:MM)
 
     Returns:
-        str: string containing the booking reference number
+        str: Booking confirmation with reference number
     """
     if name == "Guest":
         return "Please provide your name to complete the booking."
+    if not date or not time:
+        return "Please provide both date and time for your restaurant reservation."
     booking_ref = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-    return f"Your booking is confirmed, {name}! Booking Reference: {booking_ref}"
+    return f"Your table for {party_size} is confirmed, {name}! Date: {date}, Time: {time}. Booking Reference: {booking_ref}"
 
+def hotel_booking_tool(name: str = "Guest", room_type: str = "Standard", check_in: str = None, check_out: str = None, guests: int = 1) -> str:
+    """Use this function to book a hotel room
 
+    Args:
+        name (str): Name of the guest
+        room_type (str): Type of room (Standard, Deluxe, Suite)
+        check_in (str): Check-in date (format: YYYY-MM-DD)
+        check_out (str): Check-out date (format: YYYY-MM-DD)
+        guests (int): Number of guests
 
+    Returns:
+        str: Booking confirmation with reference number
+    """
+    if name == "Guest":
+        return "Please provide your name to complete the booking."
+    if not check_in or not check_out:
+        return "Please provide both check-in and check-out dates for your hotel reservation."
+    booking_ref = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+    return f"Your {room_type} room for {guests} guest(s) is confirmed, {name}! Check-in: {check_in}, Check-out: {check_out}. Booking Reference: {booking_ref}"
+
+def airport_pickup_tool(name: str = "Guest", flight_number: str = None, arrival_date: str = None, arrival_time: str = None, passengers: int = 1) -> str:
+    """Use this function to book an airport pickup service
+
+    Args:
+        name (str): Name of the guest
+        flight_number (str): Flight number
+        arrival_date (str): Date of arrival (format: YYYY-MM-DD)
+        arrival_time (str): Time of arrival (format: HH:MM)
+        passengers (int): Number of passengers
+
+    Returns:
+        str: Booking confirmation with reference number
+    """
+    if name == "Guest":
+        return "Please provide your name to complete the booking."
+    if not flight_number or not arrival_date or not arrival_time:
+        return "Please provide flight number, arrival date, and arrival time for your airport pickup."
+    booking_ref = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+    return f"Your airport pickup for {passengers} passenger(s) is confirmed, {name}! Flight: {flight_number}, Arrival: {arrival_date} at {arrival_time}. Booking Reference: {booking_ref}"
 
 # Initialize RAG knowledge base
-def init_knowledge(urls: List[str] = None) -> PDFUrlKnowledgeBase:
-    return PDFUrlKnowledgeBase(
-        urls=urls or [],
-        vector_db=LanceDb(
-            uri="data/vector_store",
-            table_name="knowledge_base",
-            search_type=SearchType.hybrid,
+# def init_knowledge_lancedb(urls: List[str] = None) -> PDFUrlKnowledgeBase:
+#     return PDFUrlKnowledgeBase(
+#         urls=urls or [],
+#         vector_db=LanceDb(
+#             uri="data/vector_store",
+#             table_name="knowledge_base",
+#             search_type=SearchType.hybrid,
+#             chunking_strategy=chunking_strategy,
+#             embedder=OpenAIEmbedder(
+#                 id="text-embedding-3-small",
+#                 api_key=OPENAI_API_KEY
+#             ),
+#         ),
+#     )
+
+if "search_type_selected" not in globals():
+    search_type_selected = "Hybrid PostgreSQL"
+
+
+def init_knowledge() -> PDFUrlKnowledgeBase:
+    urls = st.session_state["knowledge_urls"]
+
+    if chunking_strategy_selected == "Agentic":
+        chunking_strategy = AgenticChunking()
+    elif chunking_strategy_selected == "Fixed":
+        chunking_strategy = FixedSizeChunking()
+    elif chunking_strategy_selected == "Recursive":
+        chunking_strategy = RecursiveChunking()
+    elif chunking_strategy_selected == "Document":
+        chunking_strategy = DocumentChunking()
+    elif chunking_strategy_selected == "Semantic":
+        chunking_strategy = SemanticChunking()
+    else:
+        chunking_strategy = FixedSizeChunking()
+
+    search_method=SearchType.hybrid
+
+    # st.success(urls)
+    if search_type_selected == "Hybrid PostgreSQL":
+        db_url = "postgresql+psycopg://ai:ai@pgvector:5432/ai"
+        logger.info("===== init_knowledge PG =====")
+        return PDFUrlKnowledgeBase(
+            # urls=["https://agno-public.s3.amazonaws.com/recipes/ThaiRecipes.pdf"],
+            urls=urls or [],
+            vector_db=PgVector(
+                table_name="recipes", 
+                db_url=db_url,
+            ),
             chunking_strategy=chunking_strategy,
+            search_type=search_method,
             embedder=OpenAIEmbedder(
                 id="text-embedding-3-small",
                 api_key=OPENAI_API_KEY
             ),
-        ),
-    )
-
-
-
-# def init_knowledge_pg(urls: List[str] = None) -> PDFUrlKnowledgeBase:
-def init_knowledge_pg() -> PDFUrlKnowledgeBase:
-# if 'knowledge_base' not in st.session_state:
-    # with st.spinner("📚 Loading Thai recipe database..."):
-    #     try:
-            global chunking_strategy_selected
-
-            if "chunking_strategy_selected" not in globals():
-                chunking_strategy_selected = "Fixed"
-
-
-            if chunking_strategy_selected == "Agentic":
-                chunking_strategy = AgenticChunking()
-            elif chunking_strategy_selected == "Fixed":
-                chunking_strategy = FixedSizeChunking()
-            elif chunking_strategy_selected == "Recursive":
-                chunking_strategy = RecursiveChunking()
-            elif chunking_strategy_selected == "Document":
-                chunking_strategy = DocumentChunking()
-            elif chunking_strategy_selected == "Semantic":
-                chunking_strategy = SemanticChunking()
-            else:
-                chunking_strategy = FixedSizeChunking()
-
-            db_url = "postgresql+psycopg://ai:ai@pgvector:5432/ai"
-            urls = st.session_state["knowledge_urls"]
-            return PDFUrlKnowledgeBase(
-                # urls=["https://agno-public.s3.amazonaws.com/recipes/ThaiRecipes.pdf"],
-                urls=urls or [],
-                vector_db=PgVector(
-                    table_name=chunking_strategy_selected, 
-                    db_url=db_url,
-                ),
-                search_type=SearchType.hybrid,
-                chunking_strategy=chunking_strategy,
+        )
+    elif search_type_selected == "Hybrid LanceDB":
+        logger.info("===== init_knowledge Lance =====")
+        return PDFUrlKnowledgeBase(
+            urls=urls or [],
+            vector_db=LanceDb(
+                uri="data/vector_store",
+                table_name="knowledge_base",
+                search_type=search_method,
                 embedder=OpenAIEmbedder(
                     id="text-embedding-3-small",
                     api_key=OPENAI_API_KEY
                 ),
-            )
-            # knowledge_base.load(recreate=False)
+            ),
+            chunking_strategy=chunking_strategy,
+            search_type=search_method,
+            embedder=OpenAIEmbedder(
+                id="text-embedding-3-small",
+                api_key=OPENAI_API_KEY
+            ),
+        )
+    elif search_type_selected == "Hybrid Pinecone":
+        logger.info("===== init_knowledge Pine =====")
+        return PDFUrlKnowledgeBase(
+            urls=urls or [],
+            vector_db = PineconeDb(
+                name="thai-recipe",
+                dimension=1536,
+                metric="cosine",
+                spec={"serverless": {"cloud": "aws", "region": "us-east-1"}},
+                api_key=api_key,
+                use_hybrid_search=True,
+                hybrid_alpha=0.5,
+            ),
+            chunking_strategy=chunking_strategy,
+            search_type=SearchType.hybrid,
+            embedder=OpenAIEmbedder(
+                id="text-embedding-3-small",
+                api_key=OPENAI_API_KEY
+            ),
+        )
+    logger.info("===== init_knowledge fails =====")
+
+# def init_knowledge_pg(urls: List[str] = None) -> PDFUrlKnowledgeBase:
+# def init_knowledge_pg() -> PDFUrlKnowledgeBase:
+# # if 'knowledge_base' not in st.session_state:
+#     # with st.spinner("📚 Loading Thai recipe database..."):
+#     #     try:
+#             db_url = "postgresql+psycopg://ai:ai@pgvector:5432/ai"
+#             urls = st.session_state["knowledge_urls"]
+#             return PDFUrlKnowledgeBase(
+#                 # urls=["https://agno-public.s3.amazonaws.com/recipes/ThaiRecipes.pdf"],
+#                 urls=urls or [],
+#                 vector_db=PgVector(
+#                     table_name="recipes", 
+#                     db_url=db_url,
+#                 ),
+#                 search_type=SearchType.hybrid,
+#                 embedder=OpenAIEmbedder(
+#                     id="text-embedding-3-small",
+#                     api_key=OPENAI_API_KEY
+#                 ),
+#             )
+#             # knowledge_base.load(recreate=False)
 def load_knowledge(recreate_tf):
-    st.session_state["knowledge_db"] = init_knowledge_pg()
-    # if "knowledge_db" in st.session_state:
-    #     with st.spinner("Initializing knowledge base..."):
-    #         st.session_state.knowledge_db.load(recreate=recreate_tf)
-        # return
+    logger.info("===== load_knowledge =====")
+    if "knowledge_db" in st.session_state:
+        with st.spinner("Initializing knowledge base..."):
+            # time.sleep(10)
+            logger.info("===== load_knowledge init =====")
+            st.session_state["knowledge_db"] = init_knowledge()
+            logger.info("===== load_knowledge load =====")
+            st.session_state.knowledge_db.load(recreate=recreate_tf)
+            logger.info("===== load_knowledge loaded =====")
+            # st.success("Loaded Knowledge..")
+        return
+    logger.info("===== load_knowledge returns =====")
+    # st.success("Not Loaded DB")
 
+if "chunking_strategy_selected" not in globals():
+    chunking_strategy_selected = "Fixed"
 
-# if "chunking_strategy_selected" not in globals():
-#     chunking_strategy_selected = "Fixed"
 
 # Initialize agent with dynamic knowledge
 def create_agent(model_choice: str):
@@ -150,15 +272,13 @@ def create_agent(model_choice: str):
     elif model_choice == "Gemini":
         model = Gemini(id="gemini-1.5-flash", api_key=GEMINI_API_KEY)
 
-
-
     if reason:
         return Agent(
             model=model,
             instructions=dedent("""
                 You're a helpful assistant. Respond conversationally and keep answers concise.
                 Follow these steps:
-                1. For bookings use only the tools provided, like the bookingtool
+                1. For bookings use only the tools provided, like restaurant_booking_tool, hotel_booking_tool, or airport_pickup_tool
                 2. Check knowledge base for technical information as second priority
                 3. Use web search for real-time data as third priority
                 4. Cite sources when using external information
@@ -168,11 +288,11 @@ def create_agent(model_choice: str):
                 - Use escaped percentage signs: 60\\%
                 - For inline equations: $x^2 + y^2 = z^2$
 
-                When asked to book use the booking tool do not reason
+                When asked to book use the appropriate booking tool do not reason
             """),
             # knowledge=init_knowledge(knowledge_urls),
             knowledge=st.session_state.knowledge_db, #init_knowledge_pg(knowledge_urls),
-            tools=[booking_tool, DuckDuckGoTools()],
+            tools=[restaurant_booking_tool, hotel_booking_tool, airport_pickup_tool, DuckDuckGoTools()],
             # tools=[booking_tool],
             # reasoning_model=DeepSeek(id="deepseek-reasoner"),
             # reasoning_model=OpenAIChat(id="o1-mini"),
@@ -189,7 +309,7 @@ def create_agent(model_choice: str):
             instructions=dedent("""
                 You're a helpful assistant. Respond conversationally and keep answers concise.
                 Follow these steps:
-                1. For bookings use only the tools provided, like the bookingtool
+                1. For bookings use only the tools provided, like restaurant_booking_tool, hotel_booking_tool, or airport_pickup_tool
                 2. Check knowledge base for technical information as second priority
                 3. Use web search for real-time data as third priority
                 4. Cite sources when using external information
@@ -199,11 +319,11 @@ def create_agent(model_choice: str):
                 - Use escaped percentage signs: 60\\%
                 - For inline equations: $x^2 + y^2 = z^2$
 
-                When asked to book use the booking tool do not reason
+                When asked to book use the appropriate booking tool do not reason
             """),
             # knowledge=init_knowledge(knowledge_urls),
             knowledge=st.session_state.knowledge_db, #init_knowledge_pg(knowledge_urls),
-            tools=[booking_tool, DuckDuckGoTools()],
+            tools=[restaurant_booking_tool, hotel_booking_tool, airport_pickup_tool, DuckDuckGoTools()],
             # tools=[booking_tool],
             # reasoning_model=DeepSeek(id="deepseek-reasoner"),
             # reasoning_model=OpenAIChat(id="o1-mini"),
@@ -224,39 +344,56 @@ if "knowledge_urls" not in st.session_state:
 if "knowledge_db" not in st.session_state:
     # urls = len(st.session_state.knowledge_urls)
     # st.success(f"Count {urls} URLs")
-    st.session_state["knowledge_db"] = init_knowledge_pg()
+    st.session_state["knowledge_db"] = init_knowledge()
+
+# UI Components
+st.title("💬 Flexible VectorDB and Chunking Multi-Model Agno Chat Agent")
+st.write(f"**Chunking Strategy:** {chunking_strategy_selected} | **VectorDB:** {search_type_selected}" )
+# model_choice = st.selectbox("Choose AI Model", list(MODEL_AVATARS.keys()))
+# st.caption(f"Currently using: {model_choice} {MODEL_AVATARS[model_choice]}")
 
 # File management sidebar
 with st.sidebar:
+    st.title("💬 Chatbot Options")
+    st.sidebar.subheader("Model Selection")
     model_choice = st.selectbox("Choose AI Model", list(MODEL_AVATARS.keys()))
     st.caption(f"Currently using: {model_choice} {MODEL_AVATARS[model_choice]}")
 
+    st.sidebar.subheader("Reasoning Yes/No")
     reason = st.sidebar.checkbox("Reasoning")
     
     # Function to show loading when chunking strategy changes
     def chunking_strategy_change():
         with st.sidebar:
-            with st.spinner(f"Loading {chunking_strategy_selected} chunking strategy..."):
-                load_knowledge(False)  # Reload knowledge with new strategy
+            with st.spinner("Loading new chunking strategy..."):
+                load_knowledge(True)  # Reload knowledge with new strategy
                 time.sleep(5)  # Simulate loading time
+
+    def search_type_change():
+        with st.sidebar:
+            with st.spinner("Loading new search type..."):
+                load_knowledge(True)  # Reload knowledge with new strategy
+                time.sleep(3)  # Simulate loading time
 
     # Add chunking strategy selector with loading indicator
     st.sidebar.subheader("Chunking Strategy")
-    # prev_chunking_strategy_selected = chunking_strategy_selected
     chunking_strategy_selected = st.sidebar.radio(
         "Select Chunking Method",
         options=["Agentic", "Fixed", "Recursive", "Document", "Semantic"],
-        # index=1,
+        index=1,
         key="chunking_strategy_radio",
-        # on_change=chunking_strategy_change
+        on_change=chunking_strategy_change
     )
-    if "chunking_strategy_selected" not in globals():
-        chunking_strategy_selected = "Fixed"
-        
-    if "prev_chunking_strategy_selected" not in globals() or prev_chunking_strategy_selected != chunking_strategy_selected:
-        chunking_strategy_change()
-        prev_chunking_strategy_selected = chunking_strategy_selected
-
+    
+    # Add search type selector
+    st.sidebar.subheader("Search Type")
+    search_type_selected = st.sidebar.radio(
+        "Search Type",
+        options=["Hybrid PostgreSQL", "Hybrid LanceDB", "Hybrid Pinecone"],
+        index=0,
+        key="search_type_radio",
+        on_change=search_type_change
+    )
 
     st.header("Knowledge Base Management")
     
@@ -268,7 +405,7 @@ with st.sidebar:
     # )
     
     # Website URL
-    website_url = st.text_input("Add Website URL", placeholder="https://example.com")
+    website_url = st.text_input("Add PDF URL", placeholder="https://example.com/abcd.pdf")
     
     # Process new content
     if st.button("Update Knowledge Base"):
@@ -296,19 +433,9 @@ with st.sidebar:
         # with st.spinner("Initializing knowledge base..."):
             # agent.knowledge.load(recreate=True)
             # st.success("BB")
-        st.success(knowledge_urls)
+        # st.success(knowledge_urls)
         load_knowledge(True)
             # st.session_state.knowledge="Yes"
-
-
-
-# UI Components
-st.title("💬 Flexible Chunking Multi-Model Agno Chat Agent")
-if "chunking_strategy_selected" in globals():
-    st.write(f"Chunking Strategy: {chunking_strategy_selected}")
-# model_choice = st.selectbox("Choose AI Model", list(MODEL_AVATARS.keys()))
-# st.caption(f"Currently using: {model_choice} {MODEL_AVATARS[model_choice]}")
-
 
 
 # Initialize session state
@@ -329,9 +456,9 @@ agent = create_agent(model_choice)
 #         # st.session_state.knowledge_db.load(True)
 
 
-if 'knowledge_base' not in st.session_state:
-    load_knowledge(False)
-    st.session_state["knowledge_base"] = "KB Loaded"
+# if 'knowledge_base_loaded' not in st.session_state:
+#     load_knowledge(False)
+#     st.session_state["knowledge_base_loaded"] = "KB Loaded"
 
 # Chat interface
 for message in st.session_state.messages:
