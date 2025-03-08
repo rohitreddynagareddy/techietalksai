@@ -206,9 +206,7 @@ def create_domain_specific_knowledge(domain: str) -> PDFUrlKnowledgeBase:
 # )
 # knowledge_base.load(recreate=True)  # Comment out after first run
 
-restaurant_agent_storage = SqliteAgentStorage(
-    table_name="restaurant_agent_memories", db_file="tmp/agents.db"
-)
+
 restaurant_knowledge_db = create_domain_specific_knowledge("restaurant")
 if "restaurant_knowledge_db" not in st.session_state or not st.session_state["restaurant_knowledge_db"]:
     with st.spinner("Initializing Restaurant knowledge base..."):
@@ -238,9 +236,7 @@ restaurant_agent = Agent(
     # add_history_to_messages=True,
     # num_history_responses=3,
 )
-hotel_agent_storage = SqliteAgentStorage(
-    table_name="hotel_agent_memories", db_file="tmp/agents.db"
-)
+
 hotel_knowledge_db = create_domain_specific_knowledge("hotel")
 if "hotel_knowledge_db" not in st.session_state or not st.session_state["hotel_knowledge_db"]:
     with st.spinner("Initializing Hotel knowledge base..."):
@@ -274,9 +270,7 @@ hotel_agent = Agent(
     # add_history_to_messages=True,
     # num_history_responses=3,
 )
-airport_agent_storage = SqliteAgentStorage(
-    table_name="airport_agent_memories", db_file="tmp/agents.db"
-)
+
 airport_knowledge_db = create_domain_specific_knowledge("airport")
 if "airport_knowledge_db" not in st.session_state or not st.session_state["airport_knowledge_db"]:
     with st.spinner("Initializing Airport knowledge base..."):

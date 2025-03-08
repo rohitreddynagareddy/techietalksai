@@ -11,7 +11,7 @@ services:
     entrypoint: ["streamlit", "run", "--server.port=8501", "--server.address=0.0.0.0"]
     command: ["app-st.py"]
 
-  app:
+  app-sqlite-view:
     build: .
     ports:
       - "8512:8501"
@@ -21,7 +21,7 @@ services:
       - .env
     # entrypoint: ["python"]
     entrypoint: ["streamlit", "run", "--server.port=8501", "--server.address=0.0.0.0"]
-    command: ["app.py"]
+    command: ["app-sqlite-view.py"]
 
   pgvector:
     image: agnohq/pgvector:16
