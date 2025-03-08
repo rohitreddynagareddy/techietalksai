@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siam Orchid Thai Cuisine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .thai-pattern {
+            background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0c8.837 0 16 7.163 16 16s-7.163 16-16 16S0 24.837 0 16 7.163 0 16 0zm0 4.799a11.2 11.2 0 100 22.402A11.2 11.2 0 0016 4.8z" fill="%23f59e0b" fill-rule="evenodd"/></svg>');
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        .heading-font {
+            font-family: 'Playfair Display', serif;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f97316;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e86306;
+        }
+        /* Glowing Effect */
+        .glow-accent {
+            box-shadow: 0 0 15px rgba(249, 115, 22, 0.5);
+        }
+        /* Animated Gradient Background */
+        .animated-gradient {
+            background: linear-gradient(270deg, #1a1a1a, #121212);
+            background-size: 400% 400%;
+            animation: gradient 8s ease infinite;
+        }
+        @keyframes gradient {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#121212',
+                            800: '#1e1e1e',
+                            700: '#2d2d2d',
+                            600: '#383838',
+                            500: '#404040',
+                            400: '#545454',
+                            300: '#737373',
+                            200: '#a3a3a3',
+                            100: '#d4d4d4',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-dark-900 text-gray-200">
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-dark-800 shadow-lg z-50 border-b border-orange-600/30">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="heading-font text-2xl font-bold text-orange-500">SIAM ORCHID</a>
+            <div class="space-x-6">
+                <a href="#menu" class="text-gray-300 hover:text-orange-400 transition">Menu</a>
+                <a href="#about" class="text-gray-300 hover:text-orange-400 transition">About</a>
+                <a href="#contact" class="text-gray-300 hover:text-orange-400 transition">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="pt-24 pb-32 animated-gradient relative overflow-hidden">
+        <div class="thai-pattern absolute inset-0 opacity-5"></div>
+        <div class="container mx-auto px-6 text-center relative">
+            <h1 class="heading-font text-5xl md:text-6xl mb-6 text-orange-500">Authentic Thai Cuisine</h1>
+            <p class="text-xl text-gray-300 mb-8">Experience the Flavors of Thailand in Every Bite</p>
+            <a href="#menu" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-8 py-3 rounded-full hover:from-orange-700 hover:to-orange-600 transition glow-accent">View Menu</a>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-dark-800">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-wrap items-center">
+                <div class="w-full md:w-1/2 mb-8 md:mb-0">
+                    <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9" alt="Restaurant Interior" class="rounded-lg shadow-lg border border-orange-600/20 glow-accent">
+                </div>
+                <div class="w-full md:w-1/2 md:pl-12">
+                    <h2 class="heading-font text-4xl mb-6 text-orange-500">Our Story</h2>
+                    <p class="text-gray-300 leading-relaxed mb-6">Since 1995, Siam Orchid has been bringing authentic Thai flavors to your table. Our recipes are passed down through generations, using only the freshest ingredients and traditional cooking methods.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="py-20 bg-dark-900">
+        <div class="container mx-auto px-6">
+            <h2 class="heading-font text-4xl text-center mb-12 text-orange-500">Signature Dishes</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-dark-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition border border-orange-600/20">
+                    <img src="https://images.unsplash.com/photo-1551504734-5ee1c4a1479b" alt="Tom Yum Goong" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="heading-font text-xl mb-2 text-orange-400">Tom Yum Goong</h3>
+                        <p class="text-gray-300 mb-4">Spicy shrimp soup with lemongrass and lime leaves</p>
+                        <p class="text-orange-500 font-bold">$12.95</p>
+                    </div>
+                </div>
+                <div class="bg-dark-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition border border-orange-600/20">
+                    <img src="https://images.unsplash.com/photo-1551504734-5ee1c4a1479b" alt="Pad Thai" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="heading-font text-xl mb-2 text-orange-400">Pad Thai</h3>
+                        <p class="text-gray-300 mb-4">Stir-fried rice noodles with shrimp, tofu, and peanuts</p>
+                        <p class="text-orange-500 font-bold">$14.95</p>
+                    </div>
+                </div>
+                <div class="bg-dark-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition border border-orange-600/20">
+                    <img src="https://images.unsplash.com/photo-1551504734-5ee1c4a1479b" alt="Green Curry" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="heading-font text-xl mb-2 text-orange-400">Green Curry</h3>
+                        <p class="text-gray-300 mb-4">Spicy coconut curry with bamboo shoots and thai basil</p>
+                        <p class="text-orange-500 font-bold">$16.95</p>
+                    </div>
+                </div>
+                <!-- Add more menu items here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-dark-800">
+        <div class="container mx-auto px-6">
+            <h2 class="heading-font text-4xl text-center mb-12 text-orange-500">Make a Reservation</h2>
+            <div class="max-w-lg mx-auto bg-dark-700 rounded-xl p-8 shadow-md border border-orange-600/30 glow-accent">
+                <form class="space-y-4">
+                    <input type="text" placeholder="Your Name" class="w-full px-4 py-2 rounded-lg border border-orange-500/30 bg-dark-600 text-white focus:outline-none focus:border-orange-500">
+                    <input type="email" placeholder="Email" class="w-full px-4 py-2 rounded-lg border border-orange-500/30 bg-dark-600 text-white focus:outline-none focus:border-orange-500">
+                    <input type="date" class="w-full px-4 py-2 rounded-lg border border-orange-500/30 bg-dark-600 text-white focus:outline-none focus:border-orange-500">
+                    <textarea placeholder="Special Requests" class="w-full px-4 py-2 rounded-lg border border-orange-500/30 bg-dark-600 text-white focus:outline-none focus:border-orange-500 h-32"></textarea>
+                    <button class="w-full bg-gradient-to-r from-orange-600 to-orange-500 text-white py-3 rounded-lg hover:from-orange-700 hover:to-orange-600 transition">Book Table</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark-900 text-white py-12 border-t border-orange-600/30">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="heading-font text-xl mb-4 text-orange-400">Hours</h3>
+                    <p class="text-gray-300">Mon-Fri: 11am - 10pm<br>Sat-Sun: 12pm - 11pm</p>
+                </div>
+                <div>
+                    <h3 class="heading-font text-xl mb-4 text-orange-400">Contact</h3>
+                    <p class="text-gray-300">123 Spice Street<br>New York, NY 10001<br>(212) 555-1234</p>
+                </div>
+                <div>
+                    <h3 class="heading-font text-xl mb-4 text-orange-400">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-orange-400">Facebook</a>
+                        <a href="#" class="text-gray-300 hover:text-orange-400">Instagram</a>
+                        <a href="#" class="text-gray-300 hover:text-orange-400">Twitter</a>
+                    </div>
+                </div>
+            </div>
+            <p class="text-center mt-8 text-gray-400">&copy; 2023 Siam Orchid Thai Cuisine. All rights reserved.</p>
+        </div>
+    </footer>
+
+  <!-- Chat Integration -->
+  <div class="fixed bottom-6 right-6 z-50">
+    <button id="chatToggle" class="p-4 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-full shadow-lg hover:from-orange-700 hover:to-orange-600 transition-all glow-accent">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+      </svg>
+    </button>
+  </div>
+
+  <div id="chatContainer" class="fixed bottom-20 right-6 w-96 h-[600px] bg-white shadow-xl rounded-lg hidden border border-orange-500/30 glow-accent">
+    <iframe 
+      src="http://localhost:8511?embed=true" 
+      class="w-full h-full rounded-lg"
+      frameborder="0"
+    ></iframe>
+  </div>
+
+  <script>
+    document.getElementById('chatToggle').addEventListener('click', function() {
+      const chatContainer = document.getElementById('chatContainer');
+      chatContainer.classList.toggle('hidden');
+      
+      // Optional: Reset iframe on close
+      if (chatContainer.classList.contains('hidden')) {
+        chatContainer.querySelector('iframe').src = chatContainer.querySelector('iframe').src;
+      }
+    });
+  </script>
+</body>
+</html>
