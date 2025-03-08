@@ -309,7 +309,9 @@ airport_agent = Agent(
     # num_history_responses=3,
 )
 
-
+team_agent_storage = SqliteAgentStorage(
+    table_name="team_agent_memories", db_file="tmp/agents.db"
+)
 team_of_agents = Agent(
     model=main_model,
     team=[restaurant_agent, hotel_agent, airport_agent],
@@ -327,6 +329,17 @@ team_of_agents = Agent(
     show_tool_calls=True,
     markdown=True,
     add_references=True,
+    memory=AgentMemory(
+        db=SqliteMemoryDb(
+            table_name="agent_memory",
+            db_file="tmp/agent_memory.db",
+        ),
+        create_user_memories=True,
+        update_user_memories_after_run=True,
+        create_session_summary=True,
+        update_session_summary_after_run=True,
+    ),
+    storage=team_agent_storage,
     add_history_to_messages=True,
     num_history_responses=3,
 )
@@ -344,7 +357,7 @@ if "knowledge_urls" not in st.session_state:
 #     st.session_state["knowledge_db"] = init_knowledge()
 
 # UI Components
-st.title("💬 Multi-Agent Multi-Knowledge")
+st.title("💬 Team: Agents+Memory+Knowledge")
 # st.write(f"**Chunking Strategy:** {chunking_strategy_selected} | **VectorDB:** {search_type_selected}" )
 # model_choice = st.selectbox("Choose AI Model", list(MODEL_AVATARS.keys()))
 # st.caption(f"Currently using: {model_choice} {MODEL_AVATARS[model_choice]}")
