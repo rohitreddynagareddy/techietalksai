@@ -3,13 +3,19 @@
 
 
 I am Sree, need to book a table on 2025-04-04, 10pm for 2
-I am Sree, need airport pickup flight ab0001, 2025-04-04, 10am for 2
+I also need airport pickup flight ab0001, 2025-04-04, 10am for 2
+I need a room booked for checking 2025-04-04 checkout 2025-04-05, deluxe for 2
+
+
 I am Sree 2025-04-04, 2025-04-05,2 deluxe
 
-FAILS AS IT HAS NO MEMORY
-I also need airport pickup flight ab0001, 2025-04-04, 10am for 2 
+I also need airport pickup flight ab0001, 2025-04-04, 10am for 2
 
 I need a table booked for 2025-04-04 10am for 2
+
+Please clear the memory that you have about me
+
+
 
 
 https://blog.schogini.com/html_files/Airport-Pickup-Service-RAG-Database.pdf
