@@ -16,3 +16,4 @@ tiktoken
 lancedb
 tantivy
 groq
+pandas

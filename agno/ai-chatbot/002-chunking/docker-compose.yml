@@ -11,14 +11,25 @@ services:
     entrypoint: ["streamlit", "run", "--server.port=8501", "--server.address=0.0.0.0"]
     command: ["app-st.py"]
 
-  app:
+  # app:
+  #   build: .
+  #   volumes:
+  #     - ${PWD}:/app
+  #   env_file:
+  #     - .env
+  #   entrypoint: ["python"]
+  #   command: ["app.py"]
+  app-postgressql-view:
     build: .
+    ports:
+      - "8513:8501"
     volumes:
       - ${PWD}:/app
     env_file:
       - .env
-    entrypoint: ["python"]
-    command: ["app.py"]
+    # entrypoint: ["python"]
+    entrypoint: ["streamlit", "run", "--server.port=8501", "--server.address=0.0.0.0"]
+    command: ["app-postgressql-view.py"]
 
   pgvector:
     image: agnohq/pgvector:16
