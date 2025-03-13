@@ -12,7 +12,7 @@ knowledge_base = PDFUrlKnowledgeBase(
     vector_db=PgVector(table_name="recipes_semantic_chunking", db_url=db_url),
     chunking_strategy=SemanticChunking(),
 )
-knowledge_base.load(recreate=True)  # Comment out after first run
+knowledge_base.load(recreate=False)  # Comment out after first run
 
 agent = Agent(
 	model=OpenAIChat(id="gpt-4o-mini"),
@@ -20,4 +20,6 @@ agent = Agent(
     search_knowledge=True,
 )
 
-agent.print_response("How to make Thai curry?", markdown=True)
+# agent.print_response("How to make Thai curry?", markdown=True)
+
+print(knowledge_base.search("Thai curry"))
