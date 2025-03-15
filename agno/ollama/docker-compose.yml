@@ -5,6 +5,9 @@ services:
     build: .
     ports:
       - "8511:8501"
+    # environment:
+    #   - OPENAI_API_KEY=${OPENAI_API_KEY}
+    #   - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
     volumes:
       - ${PWD}:/usr/src/app
     # environment:

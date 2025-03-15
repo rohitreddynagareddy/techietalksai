@@ -3,11 +3,14 @@ import streamlit as st
 from openai import OpenAI
 from tqdm import tqdm
 import concurrent.futures
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # --------------- TITLE & HEADER -------------------
-st.title("📰 OpenAI RAG New Responses API 2025")
+st.title("📰 OpenAI File Search RAG")
 # st.title("📰 Daily Positive News Finder")
-st.write("Your AI-powered good news aggregator with web search integration")
+st.subheader("OpenAI Responses API 2025 - Agentic Assistant + RAG + Web Search")
 
 
 
@@ -15,6 +18,61 @@ st.write("Your AI-powered good news aggregator with web search integration")
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 dir_pdfs = "uploaded_pdfs"
 os.makedirs(dir_pdfs, exist_ok=True)
+
+def get_vector_store_id(store_name: str) -> str:
+    # Find vector store ID by name
+    # store_name = "test_docs"  # Change this to your desired vector store name
+    vector_store_id = None
+
+    # List all vector stores
+    vector_stores = client.vector_stores.list()
+
+    # print(json.dumps(vector_stores.model_dump(), indent=4))
+
+    for vs in vector_stores:
+        if vs.name == store_name:
+            # vector_store_id = vs.id
+            return vs.id
+
+            # if vector_store_id:
+            #     # print(f"Vector Store ID: {vector_store_id}")
+            #     vector_store = client.vector_stores.retrieve(
+            #      vector_store_id=vector_store_id
+            #     )
+            #     print(json.dumps(vector_store.model_dump(), indent=4))
+
+            # else:
+            #     print("Vector store not found.")
+    return None
+
+def get_vector_store_files(vector_store_id: str) -> list:
+    files = []
+    if not vector_store_id:
+        return files
+    vector_store_files = client.vector_stores.files.list(
+        vector_store_id=vector_store_id
+    )
+    for file in vector_store_files.data:
+        file_id = file.id
+        # print(f"File: {file_id}")
+        file_info=client.files.retrieve(file_id)
+        # print(json.dumps(file_info.model_dump(), indent=4))
+        # {
+        #     "id": "file-2RkkBxRQjMKZBTAaKBVLn3",
+        #     "bytes": 653471,
+        #     "created_at": 1741847224,
+        #     "filename": "ThaiRecipes.pdf",
+        #     "object": "file",
+        #     "purpose": "assistants",
+        #     "status": "processed",
+        #     "expires_at": null,
+        #     "status_details": null
+        # }
+        file_name = file_info.filename
+        # print(f"Filename: {file_name}")
+        # Filename: ThaiRecipes.pdf
+        files.append(file_name)
+    return files
 
 def upload_single_pdf(file_path: str, vector_store_id: str):
     file_name = os.path.basename(file_path)
@@ -56,33 +114,47 @@ def create_vector_store(store_name: str) -> dict:
             "created_at": vector_store.created_at,
             "file_count": vector_store.file_counts.completed
         }
-        print("Vector store created:", details)
+        # print("Vector store created:", details)
         return details
     except Exception as e:
         print(f"Error creating vector store: {e}")
         return {}
 
+store_name = "Thai Recipes"
+if "vector_store_id" not in st.session_state:
+    vsid = get_vector_store_id(store_name)
+    if vsid:
+        st.session_state.vector_store_id = vsid
+        logger.info(f"VECTOR STORE ID SAVED IN SESSION: {vsid}")
+    else:
+        logger.info(f"VECTOR STORE NOT FOUND IN OPENAI")
 
 # --------------- SIDEBAR CONTROLS -------------------
 with st.sidebar:
 
-    st.header("📚 Document Management")
+    st.header("📚 RAG Vector Store")
     
     # Vector store creation
     # vs_col1, vs_col2 = st.columns([3,1])
     # with vs_col1:
-    vector_store_name = st.text_input("Store name", "test_docs")
+    vector_store_name = st.text_input("Vector Store name", store_name)
     # with vs_col2:
     if st.button("Create Store"):
-        if 'vector_store_id' in st.session_state:
-            del st.session_state.vector_store_id
-        result = create_vector_store(vector_store_name)
-        if result:
-            st.session_state.vector_store_id = result["id"]
-            st.success(f"Created: {result['id']}")
+        # if 'vector_store_id' in st.session_state:
+        #     del st.session_state.vector_store_id
+        if 'vector_store_id' not in st.session_state:
+            result = create_vector_store(vector_store_name)
+            if result:
+                st.session_state.vector_store_id = result["id"]
+                st.success(f"Created: {result['id']}")
 
     # PDF upload section
     st.subheader("Upload PDFs")
+    files = get_vector_store_files(st.session_state.vector_store_id)
+    with st.expander("🔽 Vector Store files"):
+       st.markdown("\n".join(f"- {item}" for item in files))
+
+
     uploaded_files = st.file_uploader(
         "Drag & drop PDFs",
         type="pdf",
@@ -125,15 +197,15 @@ with st.sidebar:
 
     st.markdown("---")
 
-    st.subheader("Example Queries")
-    st.markdown("""
-    - Positive tech breakthroughs today
-    - Good environmental news this week
-    - Uplifting science discoveries
-    - Inspiring community stories
-    - Recent humanitarian achievements
-    """)
-    st.markdown("---")
+    # st.subheader("Example Queries")
+    # st.markdown("""
+    # - Positive tech breakthroughs today
+    # - Good environmental news this week
+    # - Uplifting science discoveries
+    # - Inspiring community stories
+    # - Recent humanitarian achievements
+    # """)
+    # st.markdown("---")
     
     # Stats
     if "query_count" not in st.session_state:
@@ -141,11 +213,9 @@ with st.sidebar:
     st.caption(f"News searches made: {st.session_state.query_count}")
 
 
-
-
 # --------------- MAIN INTERFACE -------------------
-query = st.text_input("Ask for positive news:", 
-                     placeholder="e.g., 'What good news happened today?'")
+query = st.text_input("Ask me:", 
+                     placeholder="e.g., 'Type your queries here'")
 
 if query:
     st.session_state.query_count += 1
@@ -157,11 +227,12 @@ if query:
         st.error("OpenAI API key not configured properly!")
         st.stop()
     
-    with st.spinner("🔍 Scanning global news sources..."):
+    with st.spinner("🔍 Generating response..."):
         try:
-            tools = [{"type": "web_search_preview"}]
+            tools = []
+            tools.append({"type": "web_search_preview"})
 
-            st.session_state.vector_store_id = "vs_67d27a7e9d3881918980bc9916f64098"
+            # st.session_state.vector_store_id = "vs_67d27a7e9d3881918980bc9916f64098"
 
             if "vector_store_id" in st.session_state:
                 tools.append({
@@ -175,29 +246,28 @@ if query:
                 input=query
             )
             
-            with st.expander("🌐 Web Search Process", expanded=True):
+            with st.expander("🌐 Agentic Process", expanded=True):
                 st.markdown("""
                 **Search Process:**
-                1. Analyzing current news trends
-                2. Filtering for positive stories
-                3. Verifying source credibility
-                4. Synthesizing key information
+                1. Searching the local knowledge base
+                2. Synthesizing key information
                 """)
                 
                 if response.output_text:
-                    st.success("✅ Found verified positive news!")
+                    st.success("✅ Found results!")
                 else:
-                    st.warning("⚠️ No positive stories found - expanding search")
+                    st.warning("⚠️ No results found")
             
             st.markdown("---")
-            st.subheader("✨ Good News Report")
+            query=query.title()
+            # st.subheader(f"✨ {query}")
             st.markdown(response.output_text)
             
             # Download button
             st.download_button(
                 label="Download Report",
                 data=response.output_text,
-                file_name="positive_news_report.md",
+                file_name="report.md",
                 mime="text/markdown"
             )
             

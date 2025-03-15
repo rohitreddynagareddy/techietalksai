@@ -5,6 +5,13 @@ from agno.media import Image as AgnoImage
 from medical_agent import agent
 from PIL import Image as PILImage
 
+# from agno.models.anthropic import Claude
+from agno.models.deepseek import DeepSeek
+from agno.models.openai import OpenAIChat
+from agno.models.groq import Groq
+from agno.models.google import Gemini
+
+
 st.set_page_config(
     page_title="Medical Imaging Analysis",
     page_icon="🏥",

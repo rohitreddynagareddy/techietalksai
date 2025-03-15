@@ -16,7 +16,10 @@ from agno.models.openai import OpenAIChat
 from agno.models.xai import xAI
 from agno.models.deepseek import DeepSeek
 from agno.models.google import Gemini
-from agno.models.groq import Groq
+# from agno.models.groq import Groq
+# from agno.models.anthropic import Claude
+
+
 
 from agno.tools.duckduckgo import DuckDuckGoTools
 
@@ -77,6 +80,7 @@ FULL_INSTRUCTIONS = BASE_PROMPT + ANALYSIS_TEMPLATE
 # Initialize the Medical Imaging Expert agent
 agent = Agent(
     name="Medical Imaging Expert",
+    # model=Gemini(id="gemma-3-27b-it"),
     model=Gemini(id="gemini-2.0-flash"),
     # model=xAI(id="grok-2", api_key=xai_api_key),
     # model=OpenAIChat(id="gpt-4o-mini"),
