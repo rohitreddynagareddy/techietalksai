@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # server:
+  #   build:
+  #     context: ./server
+  #   networks:
+  #     - mcp_network
+  #   volumes:
+  #     - ${PWD}/server:/app
+  #   ports:
+  #     - "8000:8000"  # Expose server port to host
+
+  client:
+    build:
+      context: ./client
+    # depends_on:
+    #   - server
+    volumes:
+      - ${PWD}/client:/app
+      # - ${PWD}/server/echo_server.py:/app/echo_server.py
+    networks:
+      - mcp_network
+
+  # client2:
+  #   build:
+  #     context: ./client2
+  #   depends_on:
+  #     - server
+  #   volumes:
+  #     - ${PWD}/client2:/app
+  #   networks:
+  #     - mcp_network
+
+networks:
+  mcp_network:
+    driver: bridge
+

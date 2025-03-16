@@ -28,6 +28,136 @@ import json
 from pprint import pprint
 import httpx
 
+
+# import os
+# import json
+# import shutil
+# from pathlib import Path
+# from typing import Dict, Any, List
+
+
+# class FileManager:
+#     def __init__(self, allowed_directories: List[str] = None):
+#         self.command_map = {
+#             "read_file": self._read_file,
+#             "read_multiple_files": self._read_multiple_files,
+#             "write_file": self._write_file,
+#             "edit_file": self._edit_file,
+#             "create_directory": self._create_directory,
+#             "list_directory": self._list_directory,
+#             "directory_tree": self._directory_tree,
+#             "move_file": self._move_file,
+#             "search_files": self._search_files,
+#             "get_file_info": self._get_file_info,
+#             "list_allowed_directories": self._list_allowed_directories
+#         }
+#         self.allowed_directories = allowed_directories or [
+#             str(Path.home()),
+#             os.getcwd(),
+#             "/tmp"
+#         ]
+
+#     def execute_command(self, command: str, path: str, **kwargs) -> str:
+#         """Execute file management commands with validation and error handling."""
+#         try:
+#             self._validate_command(command)
+#             self._validate_path(path)
+            
+#             handler = self.command_map[command]
+#             result = handler(path, **kwargs)
+#             return self._format_response(result)
+            
+#         except Exception as e:
+#             return self._handle_error(e)
+
+#     def _validate_command(self, command: str) -> None:
+#         """Ensure the requested command exists."""
+#         if command not in self.command_map:
+#             raise ValueError(f"Invalid command: {command}. Available commands: {list(self.command_map.keys())}")
+
+#     def _validate_path(self, path: str) -> None:
+#         """Check if path is in allowed directories."""
+#         resolved_path = Path(path).resolve()
+#         if not any(resolved_path.is_relative_to(allowed) for allowed in self.allowed_directories):
+#             raise PermissionError(f"Access to path {path} is not allowed")
+
+#     def _format_response(self, result: Any) -> str:
+#         """Format successful response as JSON."""
+#         return json.dumps({
+#             "success": True,
+#             "result": result
+#         })
+
+#     def _handle_error(self, error: Exception) -> str:
+#         """Format error response as JSON."""
+#         return json.dumps({
+#             "success": False,
+#             "error": f"{type(error).__name__}: {str(error)}"
+#         })
+
+#     # Command implementations
+#     def _read_file(self, path: str, **_) -> str:
+#         with open(path, 'r', encoding='utf-8') as f:
+#             return "ABCD"
+#             return f.read()
+
+#     def _read_multiple_files(self, paths: List[str], **_) -> Dict[str, str]:
+#         return {p: self._read_file(p) for p in paths}
+
+#     def _write_file(self, path: str, content: str = "", **_) -> None:
+#         Path(path).parent.mkdir(parents=True, exist_ok=True)
+#         with open(path, 'w', encoding='utf-8') as f:
+#             f.write(content)
+
+#     def _edit_file(self, path: str, line_numbers: List[int] = [], new_content: List[str] = [], **_) -> None:
+#         with open(path, 'r+', encoding='utf-8') as f:
+#             lines = f.readlines()
+#             for num, content in zip(line_numbers, new_content):
+#                 if 1 <= num <= len(lines):
+#                     lines[num-1] = content + '\n'
+#             f.seek(0)
+#             f.writelines(lines)
+#             f.truncate()
+
+#     def _create_directory(self, path: str, **_) -> None:
+#         Path(path).mkdir(parents=True, exist_ok=True)
+
+#     def _list_directory(self, path: str, **_) -> List[Dict]:
+#         return [{
+#             "name": entry.name,
+#             "type": "directory" if entry.is_dir() else "file",
+#             "size": entry.stat().st_size if entry.is_file() else 0
+#         } for entry in os.scandir(path)]
+
+#     def _directory_tree(self, path: str, **_) -> Dict:
+#         root = Path(path)
+#         return {
+#             "name": root.name,
+#             "children": [self._directory_tree(child) if child.is_dir() else {"name": child.name}
+#                         for child in root.iterdir()]
+#         }
+
+#     def _move_file(self, source: str, destination: str, **_) -> None:
+#         shutil.move(source, destination)
+
+#     def _search_files(self, path: str, pattern: str = "*", **_) -> List[str]:
+#         return [str(p) for p in Path(path).rglob(pattern)]
+
+#     def _get_file_info(self, path: str, **_) -> Dict:
+#         stat = os.stat(path)
+#         return {
+#             "path": path,
+#             "size": stat.st_size,
+#             "last_modified": stat.st_mtime,
+#             "created": stat.st_ctime,
+#             "is_directory": os.path.isdir(path)
+#         }
+
+#     def _list_allowed_directories(self, *_) -> List[str]:
+#         return self.allowed_directories
+
+
+
 def get_top_hackernews_stories(num_stories: int = 10) -> str:
     """Use this function to get top stories from Hacker News.
 
@@ -56,6 +186,7 @@ def get_top_hackernews_stories(num_stories: int = 10) -> str:
 
 async def create_filesystem_agent(session):
     """Create and configure a filesystem agent with MCP tools."""
+
     # Initialize the MCP toolkit
     mcp_tools = MCPTools(session=session)
     await mcp_tools.initialize()
@@ -106,7 +237,7 @@ async def create_filesystem_agent(session):
     # }
     # ---------------------------------------------------------------
 
-    # Create an agent with the MCP toolkit
+   
     return Agent(
         model=OpenAIChat(id="gpt-4o"),
         tools=[mcp_tools, get_top_hackernews_stories],
@@ -123,9 +254,9 @@ async def create_filesystem_agent(session):
         show_tool_calls=True,
     )
 
-
 async def run_agent(message: str) -> None:
     """Run the filesystem agent with the given message."""
+
     # Initialize the MCP server
     server_params = StdioServerParameters(
         command="npx",
@@ -133,7 +264,8 @@ async def run_agent(message: str) -> None:
             "-y",
             "@modelcontextprotocol/server-filesystem",
             # str(Path(__file__).parent.parent.parent.parent),
-            "/app/app"
+            "/app/app",
+            "/etc",
         ],
     )
 
@@ -153,9 +285,131 @@ if __name__ == "__main__":
 
     # https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem
 
+    # non_mcp_agent.print_response("Read file file.txt using _read_file")
+    
+    # asyncio.run(run_agent("list files"))
+    asyncio.run(run_agent("Can you write a joke and save it as /app/app/joke2.txt file"))
+
     # Basic example - exploring project license
-    asyncio.run(run_agent("latest AI News"))
-    asyncio.run(run_agent("list_allowed_directories"))
+    # asyncio.run(run_agent("latest AI News"))
+    # asyncio.run(run_agent("Read file file.txt"))
+    # asyncio.run(run_agent("explain lines of filesystem.py"))
+    # mcp-app-1  | Secure MCP Filesystem Server running on stdio
+    # mcp-app-1  | Allowed directories: [ '/app/app' ]
+    # mcp-app-1  | ┏━ Message ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃ explain lines of filesystem.py                                               ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+    # mcp-app-1  | ┏━ Response (16.9s) ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃  • Running: list_allowed_directories()                                       ┃
+    # mcp-app-1  | ┃  • Running: search_files(path=/app/app, pattern=filesystem.py)               ┃
+    # mcp-app-1  | ┃  • Running: read_file(path=/app/app/filesystem.py)                           ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃ Below is an explanation of the main components and functionality in the      ┃
+    # mcp-app-1  | ┃ filesystem.py file.                                                          ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃                                   Overview                                   ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃ The filesystem.py file defines a Filesystem Agent that uses the Model        ┃
+    # mcp-app-1  | ┃ Context Protocol (MCP) to interact with the file system, allowing it to      ┃
+    # mcp-app-1  | ┃ explore, analyze, and provide insights about files and directories.          ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃                                Key Components                                ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃                                   Imports                                    ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃  • Various libraries are imported, including asyncio, Path, json, httpx, and ┃
+    # mcp-app-1  | ┃    several others from agno and mcp.                                         ┃
+    # mcp-app-1  | ┃  • These libraries facilitate networking, asynchronous operations, file path ┃
+    # mcp-app-1  | ┃    handling, and pretty printing.                                            ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃                                  Functions                                   ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃           get_top_hackernews_stories(num_stories: int = 10) -> str           ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃  • Fetches top stories from Hacker News using the HTTP client httpx.         ┃
+    # mcp-app-1  | ┃  • Displays the top num_stories stories as a JSON string.                    ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃                       create_filesystem_agent(session)                       ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃  • Configures and creates a filesystem agent with MCP tools.                 ┃
+    # mcp-app-1  | ┃  • Initializes an MCP toolkit and returns an Agent object configured with    ┃
+    # mcp-app-1  | ┃    various tools to interact with the file system.                           ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃           Asynchronous Execution: run_agent(message: str) -> None            ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃  • Connects to an MCP server via standard input/output.                      ┃
+    # mcp-app-1  | ┃  • Creates a client session and runs the filesystem agent with a particular  ┃
+    # mcp-app-1  | ┃    message.                                                                  ┃
+    # mcp-app-1  | ┃  • Outputs the response based on the message to explore or manipulate the    ┃
+    # mcp-app-1  | ┃    filesystem.                                                               ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃                                Example Usage                                 ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃ The __main__ block shows how to use the agent with asyncio to perform        ┃
+    # mcp-app-1  | ┃ various tasks like:                                                          ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃  • Listing files                                                             ┃
+    # mcp-app-1  | ┃  • Running the list_allowed_directories command                              ┃
+    # mcp-app-1  | ┃  • Showing file content or making edits                                      ┃
+    # mcp-app-1  | ┃  • Fetching the latest AI news                                               ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃                          Comments and Documentation                          ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃  • The script includes example prompts to try with the filesystem agent,     ┃
+    # mcp-app-1  | ┃    demonstrating interactions like listing files, showing content, finding   ┃
+    # mcp-app-1  | ┃    files, and explaining the functionality.                                  ┃
+    # mcp-app-1  | ┃  • Additionally, it contains comments and sectioned-off descriptions to      ┃
+    # mcp-app-1  | ┃    clarify example outputs from previous runs.                               ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃                              Exploratory Tasks                               ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃ The script is designed to be exploratory in nature, enabling various         ┃
+    # mcp-app-1  | ┃ interactions with the filesystem agent without a rigid structure. It's       ┃
+    # mcp-app-1  | ┃ highly extendable for writing custom commands to explore test files, analyze ┃
+    # mcp-app-1  | ┃ codebase architecture, and check documentation content.                      ┃
+    # mcp-app-1  | ┃         
+    # asyncio.run(run_agent("list files"))
+    # mcp-app-1  | ┏━ Response (5.3s) ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃  • Running: list_allowed_directories()                                       ┃
+    # mcp-app-1  | ┃  • Running: list_directory(path=/app/app)                                    ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃ Here is the list of files and directories in the /app/app directory:         ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃                                    Files                                     ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃  • .env                                                                      ┃
+    # mcp-app-1  | ┃  • .env.example                                                              ┃
+    # mcp-app-1  | ┃  • Dockerfile                                                                ┃
+    # mcp-app-1  | ┃  • Dockerfile-b4                                                             ┃
+    # mcp-app-1  | ┃  • README.md                                                                 ┃
+    # mcp-app-1  | ┃  • __init__.py                                                               ┃
+    # mcp-app-1  | ┃  • deepseek.py                                                               ┃
+    # mcp-app-1  | ┃  • docker-compose.yml                                                        ┃
+    # mcp-app-1  | ┃  • filesystem.py                                                             ┃
+    # mcp-app-1  | ┃  • github.py                                                                 ┃
+    # mcp-app-1  | ┃  • groq_mcp.py                                                               ┃
+    # mcp-app-1  | ┃  • notes.txt                                                                 ┃
+    # mcp-app-1  | ┃  • requirements.txt                                                          ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃                                 Directories                                  ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃  • sree                                                                      ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┃ If you need more information about any specific file or want to explore      ┃
+    # mcp-app-1  | ┃ further, feel free to ask!                                                   ┃
+    # mcp-app-1  | ┃                                                                              ┃
+    # mcp-app-1  | ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+    # asyncio.run(run_agent("list_allowed_directories"))
     # mcp-app-1  | ┏━ Message ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
     # mcp-app-1  | ┃                                                                              ┃
     # mcp-app-1  | ┃ list_allowed_directories                                                     ┃
