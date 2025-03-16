@@ -1,25 +1,5 @@
 version: "3.8"
 services:
-  # groq_mcp:
-  #   build: .
-  #   ports:
-  #     - "8511:8501"
-  #   volumes:
-  #     - ${PWD}:/app
-  #   env_file:
-  #     - .env
-  #   entrypoint: ["streamlit", "run", "--server.port=8501", "--server.address=0.0.0.0"]
-  #   command: ["groq_mcp.py"]
-  # filesystem:
-  #   build: .
-  #   ports:
-  #     - "8512:8501"
-  #   volumes:
-  #     - ${PWD}:/app
-  #   env_file:
-  #     - .env
-  #   entrypoint: ["streamlit", "run", "--server.port=8501", "--server.address=0.0.0.0"]
-  #   command: ["filesystem.py"]
   app:
     build: .
     ports:
@@ -30,3 +10,16 @@ services:
       - .env
     entrypoint: ["python"]
     command: ["filesystem.py"]
+
+
+  # app-1:
+  #   build: .
+  #   ports:
+  #     - "8511:8501"
+  #   volumes:
+  #     - ${PWD}:/app/app
+  #   env_file:
+  #     - .env
+  #   entrypoint: ["python"]
+  #   command: ["ollama.py"]
+
