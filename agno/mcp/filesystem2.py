@@ -28,7 +28,6 @@ import json
 from pprint import pprint
 import httpx
 
-
 def get_top_hackernews_stories(num_stories: int = 10) -> str:
     """Use this function to get top stories from Hacker News.
 
@@ -61,6 +60,12 @@ async def create_filesystem_agent(session):
     # Initialize the MCP toolkit
     mcp_tools = MCPTools(session=session)
     await mcp_tools.initialize()
+
+
+    tools = await session.list_tools()
+    print("TOOLS")
+    pprint(tools.tools)
+
     # print(mcp_tools)
     # pprint(mcp_tools)
     # pprint(vars(mcp_tools))
@@ -130,14 +135,19 @@ async def run_agent(message: str) -> None:
 
     # Initialize the MCP server
     server_params = StdioServerParameters(
-        command="npx",
+        # command="npx",
+        # args=[
+        #     "-y",
+        #     "@modelcontextprotocol/server-filesystem",
+        #     # str(Path(__file__).parent.parent.parent.parent),
+        #     "/app/app",
+        #     "/etc",
+        # ],       
+        command="python",
         args=[
-            "-y",
-            "@modelcontextprotocol/server-filesystem",
+            "mcp-filesystem.py",
             # str(Path(__file__).parent.parent.parent.parent),
-            "/app/app",
-            "/etc",
-        ],
+            "/app/app",        ],
     )
 
     # Create a client session to connect to the MCP server
@@ -145,6 +155,8 @@ async def run_agent(message: str) -> None:
         async with ClientSession(read, write) as session:
             # print(session)
             # <mcp.client.session.ClientSession object at 0xffff8fcc4ad0>
+
+
             agent = await create_filesystem_agent(session)
 
             # Run the agent
@@ -158,9 +170,9 @@ if __name__ == "__main__":
 
     # non_mcp_agent.print_response("Read file file.txt using _read_file")
     
-    # asyncio.run(run_agent("list files"))
-    # asyncio.run(run_agent("Can you write a joke and save it as /app/app/joke3.txt file"))
-    asyncio.run(run_agent("Please get latest AI news and save it as a marked down file at /app/app/news.md file"))
+    # asyncio.run(run_agent("Create file1.txt with ABCD in it"))
+    asyncio.run(run_agent("Can you write a joke and save it as joke3.txt file"))
+    # asyncio.run(run_agent("Please get latest AI news and save it as a marked down file at /app/app/news.md file"))
 
     # Basic example - exploring project license
     # asyncio.run(run_agent("latest AI News"))

@@ -6,3 +6,5 @@ google-genai
 groq
 mcp
 ollama
+pathspec
+pydantic

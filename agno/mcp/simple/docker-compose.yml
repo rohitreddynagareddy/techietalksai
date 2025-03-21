@@ -1,15 +1,17 @@
 version: '3.8'
 
 services:
-  # server:
-  #   build:
-  #     context: ./server
-  #   networks:
-  #     - mcp_network
-  #   volumes:
-  #     - ${PWD}/server:/app
-  #   ports:
-  #     - "8000:8000"  # Expose server port to host
+  server:
+    build:
+      context: ./server
+    networks:
+      - mcp_network
+    volumes:
+      - ${PWD}/server:/app
+    ports:
+      - "8000:8000"  # Expose server port to host
+    entrypoint: ["python"]
+    command: ["echo_server1.py"]
 
   client:
     build:

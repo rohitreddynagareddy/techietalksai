@@ -1,0 +1,151 @@
+version: "3.8"
+services:
+
+# SSE
+  sse-server-py:
+    build: .
+    ports:
+      - "3001:3001"
+    volumes:
+      - ${PWD}/servers/simple-tool:/app/app
+    env_file:
+      - .env
+    entrypoint: ["uv","run","mcp-simple-tool","--transport", "sse", "--port", "3001"]
+
+  # sse-server-npx:
+  #   build: .
+  #   ports:
+  #     - "3001:3001"
+  #   volumes:
+  #     - ${PWD}:/app/app
+  #   env_file:
+  #     - .env
+  #   entrypoint: ["npx","@pydantic/mcp-run-python","sse"]
+  #   command: ["sse"]
+  # app-sse:
+  #   build: .
+  #   depends_on:
+  #     - sse-server-npx
+  #   volumes:
+  #     - ${PWD}:/app/app
+  #   env_file:
+  #     - .env
+  #   entrypoint: ["python"]
+  #   command: ["mcp_sse_client.py"]
+
+# STDIO
+  # app-stdio:
+  #   build: .
+  #   volumes:
+  #     - ${PWD}:/app/app
+  #   env_file:
+  #     - .env
+  #   entrypoint: ["python"]
+  #   command: ["mcp_client.py"]
+
+  sse-client-py:
+    build: .
+    volumes:
+      - ${PWD}:/app/app
+    depends_on:
+      - sse-server-py
+    env_file:
+      - .env
+    entrypoint: ["python"]
+    command: ["mcp_sse_client.py"]
+
+  app-stdio-npx:
+    build: .
+    volumes:
+      - ${PWD}:/app/app
+    depends_on:
+      - sse-server-py
+    env_file:
+      - .env
+    entrypoint: ["python"]
+    command: ["mcp_stdio_client.py"]
+
+  # mcp_run_python:
+  #   build: .
+  #   volumes:
+  #     - ${PWD}:/app/app
+  #   env_file:
+  #     - .env
+  #   entrypoint: ["python"]
+  #   command: ["mcp_run_python.py"]
+
+
+# npx @pydantic/mcp-run-python [stdio|sse]
+# (base) SreeMacMin16GB-1280:PydanticAI sree$ npx @pydantic/mcp-run-python stdio
+# ^C
+# (base) SreeMacMin16GB-1280:PydanticAI sree$ npx @pydantic/mcp-run-python sse
+# Running MCP server with SSE transport on localhost:3001
+
+
+# WORKING app
+# https://ai.pydantic.dev/mcp/server/
+# docker compose up --build
+# Attaching to pydanticai-app-1
+# pydanticai-app-1  | In the drawer, they sit in pairs,  
+# pydanticai-app-1  | Colorful stripes and polka dot wears.  
+# pydanticai-app-1  | Some are fuzzy, some are thin,  
+# pydanticai-app-1  | Every style beckons a grin.  
+# pydanticai-app-1  | 
+# pydanticai-app-1  | They dance in the laundry, a whirl and a spin,  
+# pydanticai-app-1  | A game of hide and seek, who’ll win?  
+# pydanticai-app-1  | One goes missing, where can it be?  
+# pydanticai-app-1  | Lost in a wash, or hiding for glee?  
+# pydanticai-app-1  | 
+# pydanticai-app-1  | Warm and cozy, they hug your toes,  
+# pydanticai-app-1  | On chilly nights, their comfort grows.  
+# pydanticai-app-1  | From ankle to knee, they come in all heights,  
+# pydanticai-app-1  | They’re the unsung heroes of wintery nights.  
+# pydanticai-app-1  | 
+# pydanticai-app-1  | So next time you slip them on with a smile,  
+# pydanticai-app-1  | Think of their journey, their comfort, and style.  
+# pydanticai-app-1  | For in every step, every soft little sock,  
+# pydanticai-app-1  | Lies a tale of warmth—tick tock, tick tock!
+# pydanticai-app-1 exited with code 0
+
+# SSE
+# npx @pydantic/mcp-run-python [stdio|sse]
+# npx @pydantic/mcp-run-python sse
+# Running MCP server with SSE transport on localhost:3001
+
+# INSPECTOR
+# npx @modelcontextprotocol/inspector
+
+# NPX STDIO
+# docker compose up app-stdio-npx
+# Attaching to pydanticai-app-stdio-npx-1
+# pydanticai-app-stdio-npx-1  | There are 9,208 days between January 1, 2000, and March 18, 2025.
+# pydanticai-app-stdio-npx-1 exited with code 0
+
+# https://ai.pydantic.dev/mcp/run-python/#direct-usage
+# docker compose up mcp_run_python 
+# [+] Running 1/0
+#  ⠿ Container pydanticai-mcp_run_python-1  Created                                                                           0.0s
+# Attaching to pydanticai-mcp_run_python-1
+# pydanticai-mcp_run_python-1  | npm notice
+# pydanticai-mcp_run_python-1  | npm notice New major version of npm available! 10.9.2 -> 11.2.0
+# pydanticai-mcp_run_python-1  | npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.2.0
+# pydanticai-mcp_run_python-1  | npm notice To update run: npm install -g npm@11.2.0
+# pydanticai-mcp_run_python-1  | npm notice
+# pydanticai-mcp_run_python-1  | 1
+# pydanticai-mcp_run_python-1  | 'run_python_code'
+# pydanticai-mcp_run_python-1  | {'type': 'object', 'properties': {'python_code': {'type': 'string', 'description': 'Python code to run'}}, 'required': ['python_code'], 'additionalProperties': False, '$schema': 'http://json-schema.org/draft-07/schema#'}
+# pydanticai-mcp_run_python-1  | <status>success</status>
+# pydanticai-mcp_run_python-1  | <dependencies>["numpy"]</dependencies>
+# pydanticai-mcp_run_python-1  | <output>
+# pydanticai-mcp_run_python-1  | [1 2 3]
+# pydanticai-mcp_run_python-1  | </output>
+# pydanticai-mcp_run_python-1  | <return_value>
+# pydanticai-mcp_run_python-1  | [
+# pydanticai-mcp_run_python-1  |   1,
+# pydanticai-mcp_run_python-1  |   2,
+# pydanticai-mcp_run_python-1  |   3
+# pydanticai-mcp_run_python-1  | ]
+# pydanticai-mcp_run_python-1  | </return_value>
+# pydanticai-mcp_run_python-1 exited with code 0
+
+
