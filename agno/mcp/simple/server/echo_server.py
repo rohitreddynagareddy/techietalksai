@@ -1,65 +1,59 @@
-import asyncio
-from mcp import ClientSession, types
+from fastapi import FastAPI, Request
+from fastapi.responses import StreamingResponse, JSONResponse
 import uvicorn
+import asyncio
+from typing import AsyncGenerator
 
-class MCPStreamReader:
-    def __init__(self, reader: asyncio.StreamReader):
-        self._reader = reader
+app = FastAPI(debug=True)
 
-    async def __aenter__(self):
-        return self
+# Simplified SSE transport implementation
+class SseServerTransport:
+    def __init__(self):
+        self.connections = set()
 
-    async def __aexit__(self, exc_type, exc, tb):
-        pass
+    async def event_generator(self, client_id: str) -> AsyncGenerator[str, None]:
+        self.connections.add(client_id)
+        try:
+            while True:
+                # Implement your actual event generation logic here
+                # Example: Send keepalive every 15 seconds
+                yield "data: keepalive\n\n"
+                await asyncio.sleep(15)
+        finally:
+            self.connections.remove(client_id)
 
-    def __aiter__(self):
-        return self
+    async def handle_post_message(self, data: dict):
+        # Implement message handling logic
+        print("Received message:", data)
+        return {"status": "received"}
 
-    async def __anext__(self):
-        data = await self._reader.read(1024)
-        if not data:
-            raise StopAsyncIteration
-        return types.JSONRPCMessage.parse_raw(data)
+sse_transport = SseServerTransport()
 
-class MCPStreamWriter:
-    def __init__(self, writer: asyncio.StreamWriter):
-        self._writer = writer
+@app.get("/sse")
+async def sse_endpoint(request: Request):
+    async def event_stream() -> AsyncGenerator[str, None]:
+        client_id = request.client.host  # Or use proper client identification
+        async for event in sse_transport.event_generator(client_id):
+            yield event
+            
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive"
+        }
+    )
 
-    async def __aenter__(self):
-        return self
+@app.post("/messages")
+async def messages_endpoint(request: Request):
+    data = await request.json()
+    return await sse_transport.handle_post_message(data)
 
-    async def __aexit__(self, exc_type, exc, tb):
-        self._writer.close()
-        await self._writer.wait_closed()
+@app.on_event("shutdown")
+async def shutdown_event():
+    print("Cleaning up SSE connections")
+    sse_transport.connections.clear()
 
-    async def send(self, message: types.JSONRPCMessage):
-        data = message.model_dump_json().encode()  # Updated method
-        self._writer.write(data)
-        await self._writer.drain()
-
-async def main():
-    reader, writer = await asyncio.open_connection('server', 8000)
-
-    mcp_reader = MCPStreamReader(reader)
-    mcp_writer = MCPStreamWriter(writer)
-
-    async with ClientSession(mcp_reader, mcp_writer) as session:
-        await session.initialize()
-
-        tools_response = await session.list_tools()
-        tools = tools_response.tools
-        print(f"Available tools: {[tool.name for tool in tools]}")
-
-        echo_tool = next((tool for tool in tools if tool.name == "echo_tool"), None)
-        if echo_tool:
-            message = "Hello, MCP!"
-            result = await session.call_tool(echo_tool.name, {"message": message})
-            print(f"Echo tool response: {result.content}")
-        else:
-            print("Echo tool not found on the server.")
-
-# if __name__ == "__main__":
-#     asyncio.run(main())
 if __name__ == "__main__":
-    uvicorn.run(main, host="0.0.0.0", port=8000)
-
+    uvicorn.run(app, host="0.0.0.0", port=8000)

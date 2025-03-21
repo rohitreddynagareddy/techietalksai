@@ -1,0 +1,3 @@
+curl -X POST -H "Content-Type: application/json" -d '{"key1":"value1", "key2":"value2"}' http://localhost:8000/messages
+{"detail":[{"type":"missing","loc":["query","scope"],"msg":"Field required","input":null},{"type":"missing","loc":["query","receive"],"msg":"Field required","input":null},{"type":"missing","loc":["query","send"],"msg":"Field required","input":null}]}
+

@@ -1,0 +1,16 @@
+## Latest AI News from Hacker News
+
+1. **[HTTP/3 is everywhere but nowhere](https://httptoolkit.com/blog/http3-quic-open-source-support-nowhere/)** by *doener* - Score: 70
+   - Discussion: 26 comments
+
+2. **[Launching RDAP; sunsetting WHOIS](https://www.icann.org/en/announcements/details/icann-update-launching-rdap-sunsetting-whois-27-01-2025-en)** by *radeeyate* - Score: 629
+   - Discussion: 259 comments
+
+3. **[Ogres Are Cool](https://www.lrb.co.uk/the-paper/v47/n05/colin-burrow/ogres-are-cool)** by *Vigier* - Score: 19
+   - Discussion: 3 comments
+
+4. **[Show HN: EnkiTask: Lightweight Project Management for Freelancers](https://enkitask.com/)** by *booper* - Score: 33
+   - Discussion: 20 comments
+
+5. **[Docs – Open source alternative to Notion or Outline](https://github.com/suitenumerique/docs)** by *maelito* - Score: 1582
+   - Discussion: 419 comments

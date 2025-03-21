@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  sse-server:
+    build: .
+    container_name: async-sse-server
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    entrypoint: ["python"]
+    command: ["sse-s.py"]
+
+  sse-server-mcp:
+    build: .
+    container_name: async-sse-server-mcp
+    ports:
+      - "8001:8000"
+    volumes:
+      - .:/app
+    entrypoint: ["python"]
+    command: ["sse-s-mcp.py"]
+
+  sse-client:
+    build: .
+    container_name: async-sse-client
+    volumes:
+      - .:/app
+    depends_on:
+      - sse-server  # Ensure the server starts before the client
+    stdin_open: true   # Keep stdin open for interactive input
+    tty: true          # Allocate a TTY for keyboard input
+    entrypoint: ["python"]
+    command: ["sse-c.py"]
+    networks:
+      - default  # Ensure the client and server are in the same network
+  app:
+    build: .
+    container_name: app
+    volumes:
+      - .:/app
+    # depends_on:
+    #   - sse-server  # Ensure the server starts before the client
+    # stdin_open: true   # Keep stdin open for interactive input
+    # tty: true          # Allocate a TTY for keyboard input
+    entrypoint: ["python"]
+    command: ["async-1.py"]
+    networks:
+      - default  # Ensure the client and server are in the same network
+
+networks:
+  default:
+    driver: bridge  # Explicitly define network (optional)
+
+
+
+
+#curl -N -H "Accept: text/event-stream" http://localhost:8000/sse
+#data: Event 1
+#data: Event 2
+#data: Event 3
+
+# curl -X POST -H "Content-Type: application/json" -d '{"message":"Hello from Client!"}' http://localhost:8000/messages
+# {"status":"Message received"}
+
+# docker-compose run --rm sse-client
+# Creating async_sse-client_run ... done
+# Enter message to send to server: hi
+# Server response: {'status': 'Message received'}
+# Enter message to send to server: hello
+# Server response: {'status': 'Message received'}
+# Received from server: data: hello
+# Enter message to send to server: 
+
+
+# SERVER
+# (base) SreeMacMin16GB-1280:async sree$ docker compose up sse-server -d
+# [+] Running 1/1
+#  ⠿ Container async-sse-server  Started                                                                                      0.4s
+
+# CLIENT
+# (base) SreeMacMin16GB-1280:async sree$ docker compose run sse-client
+# [+] Running 1/0
+#  ⠿ Container async-sse-server  Running                                                                                      0.0s
+# Enter message to send to server: asdasd
+
+# 📩 Received from Server: asdasd
+# ➡ Enter message to send: Server response: {'status': 'Message received'}
+# Enter message to send to server: asdasd
+# Server response: {'status': 'Message received'}
+
+# 📩 Received from Server: asdasd
+# ➡ Enter message to send: Enter message to send to server: asdasd
+
+# 📩 Received from Server: asdasd
+# ➡ Enter message to send: Server response: {'status': 'Message received'}
+# Enter message to send to server: asdasd
+# Server response: {'status': 'Message received'}
+
+# 📩 Received from Server: asdasd
+# ➡ Enter message to send: Enter message to send to server: ≈ç
+

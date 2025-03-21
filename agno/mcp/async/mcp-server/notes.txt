@@ -1,0 +1,27 @@
+https://github.com/alejandro-ao/mcp-server-example
+
+https://www.youtube.com/watch?v=Ek8JHgZtmcI
+
+
+
+
+{
+  "query": "Model Context Protocol",
+  "library": "openai"
+}
+
+
+uv run main.py
+
+
+{
+  `query`: `Model Context Protocol`,
+  `library`: `openai`
+}
+Error executing tool get_docs: Header value must be str or bytes, not <class 'NoneType'>
+
+{
+  `query`: `Model Context Protocol`,
+  `library`: `langchain`
+}
+[{"type": "text", "text": "Error executing tool get_docs: Header value must be str or bytes, not <class 'NoneType'>"}]

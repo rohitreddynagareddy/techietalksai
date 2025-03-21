@@ -11,6 +11,17 @@ services:
     entrypoint: ["python"]
     command: ["filesystem.py"]
 
+  app2:
+    build: .
+    ports:
+      - "8511:8501"
+    volumes:
+      - ${PWD}:/app/app
+    env_file:
+      - .env
+    entrypoint: ["python"]
+    command: ["filesystem2.py"]
+
 
   # app-1:
   #   build: .
