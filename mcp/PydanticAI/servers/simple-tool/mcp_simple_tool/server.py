@@ -5,6 +5,11 @@ import mcp.types as types
 from mcp.server.lowlevel import Server
 
 
+from starlette.responses import JSONResponse
+# Add this health check handler function
+async def health_check(request):
+    return JSONResponse({"status": "ok"})
+
 async def fetch_website(
     url: str,
 ) -> list[types.TextContent | types.ImageContent | types.EmbeddedResource]:
@@ -77,6 +82,7 @@ def main(port: int, transport: str) -> int:
             routes=[
                 Route("/sse", endpoint=handle_sse),
                 Mount("/messages/", app=sse.handle_post_message),
+                Route("/health", endpoint=health_check),  # New health endpoint
             ],
         )
 

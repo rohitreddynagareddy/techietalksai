@@ -53,5 +53,6 @@ RUN /app/venv/bin/pip list
 WORKDIR /app/app
 
 # ✅ FIX: Correct ENTRYPOINT and CMD
-ENTRYPOINT ["python"]
-CMD ["filesystem.py"]
+#ENTRYPOINT ["python"]
+#CMD ["filesystem.py"]
+

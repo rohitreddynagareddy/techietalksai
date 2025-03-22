@@ -1,0 +1,46 @@
+version: "3.8"
+services:
+
+  sse-server-py:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app/app
+    #env_file:
+    #  - .env
+    entrypoint: ["uv","run","sse_server.py"]
+    #healthcheck:
+    #  test: ["CMD", "curl", "--fail", "http://localhost:3001/health"]
+    #  interval: 5s
+    #  timeout: 3s
+    #  retries: 5
+    #  start_period: 10s
+
+  sse-client-py:
+    build: .
+    tty: true  # <--- Added TTY here
+    volumes:
+      - .:/app/app
+    depends_on:
+       - sse-server-py
+    #depends_on:
+    #  sse-server-py:
+    #    condition: service_healthy
+    #env_file:
+    #  - .env
+    #entrypoint: ["python"]
+    #command: ["mcp_sse_client.py"]
+    entrypoint: ["uv","run","sse_client.py"]
+
+  sse-client-curl:
+    image: alpine/curl
+    tty: true  # <--- Added TTY here
+    depends_on:
+       - sse-server-py
+    command: ["-s","-N","-H","Accept: text/event-stream", "http://sse-server-py:8000/sse"]
+
+
+# curl -N -H "Accept: text/event-stream" http://localhost:8000/sse
+
+# docker run --rm -ti alpine/curl -s -N -H "Accept: text/event-stream" http://host.docker.internal:8000/sse

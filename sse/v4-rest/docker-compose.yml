@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  sse-server:
+    build: .
+    container_name: sse-server
+    tty: True
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+
+  sse-client:
+    build: .
+    container_name: sse-client
+    tty: True
+    volumes:
+      - .:/app
+    depends_on:
+      - sse-server
+    entrypoint: ["python"]
+    command: ["sse_client.py"]
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile-st
+    container_name: sse-frontend
+    volumes:
+      - .:/app
+    depends_on:
+      - sse-server
+    ports:
+      - "8501:8501"
+    entrypoint: ["streamlit"]
+    command: ["run", "frontend.py", "--server.port=8501", "--server.address=0.0.0.0"]
+
+# curl -X POST -H "Content-Type: application/json" -d '{"message": "REST says hello"}' http://localhost:8000/send_rest
+# curl -N -H "Accept: text/event-stream" http://localhost:8000/sse

@@ -11,7 +11,12 @@ services:
     env_file:
       - .env
     entrypoint: ["uv","run","mcp-simple-tool","--transport", "sse", "--port", "3001"]
-
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:3001/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
   # sse-server-npx:
   #   build: .
   #   ports:
@@ -47,14 +52,17 @@ services:
     build: .
     volumes:
       - ${PWD}:/app/app
+    # depends_on:
+      # - sse-server-py
     depends_on:
-      - sse-server-py
+      sse-server-py:
+        condition: service_healthy
     env_file:
       - .env
     entrypoint: ["python"]
     command: ["mcp_sse_client.py"]
 
-  app-stdio-npx:
+  mcp_stdio_client:
     build: .
     volumes:
       - ${PWD}:/app/app
