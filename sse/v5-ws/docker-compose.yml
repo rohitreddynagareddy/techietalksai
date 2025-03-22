@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  ws-server:
+    build: .
+    container_name: ws-server
+    tty: True
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    entrypoint: ["python"]
+    command: ["ws_server.py"]
+
+  ws-client:
+    build: .
+    container_name: ws-client
+    tty: True
+    volumes:
+      - .:/app
+    depends_on:
+      - ws-server
+    entrypoint: ["python"]
+    command: ["ws_client.py"]
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile-st
+    container_name: sse-frontend
+    volumes:
+      - .:/app
+    depends_on:
+      - ws-server
+    ports:
+      - "8501:8501"
+    entrypoint: ["streamlit"]
+    command: ["run", "frontend.py", "--server.port=8501", "--server.address=0.0.0.0"]
+

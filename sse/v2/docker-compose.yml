@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  sse-server:
+    build: .
+    container_name: sse-server
+    ports:
+      - "8000:8000"
+
+  sse-client:
+    build: .
+    container_name: sse-client
+    depends_on:
+      - sse-server
+    entrypoint: ["python"]
+    command: ["sse_client.py"]
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile-st
+    container_name: sse-frontend
+    depends_on:
+      - sse-server
+    ports:
+      - "8501:8501"
+    entrypoint: ["streamlit"]
+    command: ["run", "frontend.py", "--server.port=8501", "--server.address=0.0.0.0"]
+

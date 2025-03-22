@@ -4,7 +4,11 @@ import asyncio
 
 
 # THIS WORKS! STDIO
-server = MCPServerStdio('npx', ['-y', '@pydantic/mcp-run-python', 'stdio'])
+# server = MCPServerStdio('npx', ['-y', '@pydantic/mcp-run-python', 'stdio'])
+# prompt = 'list the tools'
+
+server = MCPServerStdio('uv', ['run', 'servers/simple-tool/mcp_simple_tool', '--transport', 'stdio'])
+prompt = 'list the tools'
 
 # THIS TOO WORKS! STDIO
 # server = MCPServerStdio('npx', ['-y', '@modelcontextprotocol/server-filesystem', '/app/app'])
