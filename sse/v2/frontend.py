@@ -6,8 +6,9 @@ st.title("📡 Real-Time SSE Events")
 st.markdown("### Incoming Messages:")
 
 # Container for messages
+st.subheader("Messages:")
 messages = st.empty()
-
+st.subheader("Messages again:")
 async def get_sse_messages():
     url = "http://sse-server:8000/sse"
     async with httpx.AsyncClient() as client:

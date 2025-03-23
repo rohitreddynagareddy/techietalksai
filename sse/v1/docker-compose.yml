@@ -3,6 +3,7 @@ services:
 
   sse-server-py:
     build: .
+    tty: true  # <--- Added TTY here
     ports:
       - "8000:8000"
     volumes:

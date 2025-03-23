@@ -23,6 +23,17 @@ services:
     entrypoint: ["python"]
     command: ["ws_client.py"]
 
+  ws-client-parallel:
+    build: .
+    container_name: ws-client-parallel
+    tty: True
+    volumes:
+      - .:/app
+    depends_on:
+      - ws-server
+    entrypoint: ["python"]
+    command: ["ws_client_parallel.py"]
+
   frontend:
     build:
       context: .

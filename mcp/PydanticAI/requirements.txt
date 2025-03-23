@@ -2,3 +2,4 @@ openai
 python-dotenv
 pydantic-ai-slim[mcp]
 anthropic
+aiohttp
