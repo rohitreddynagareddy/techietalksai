@@ -13,10 +13,10 @@ services:
     entrypoint: ["uv","run","mcp-simple-tool","--transport", "sse", "--port", "3001"]
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:3001/health"]
-      interval: 5s
+      interval: 30s
       timeout: 3s
       retries: 5
-      start_period: 10s
+      start_period: 60s
   # sse-server-npx:
   #   build: .
   #   ports:
@@ -54,6 +54,7 @@ services:
       - ${PWD}:/app/app
     # depends_on:
       # - sse-server-py
+    tty: True
     depends_on:
       sse-server-py:
         condition: service_healthy
@@ -62,8 +63,24 @@ services:
     entrypoint: ["python"]
     command: ["mcp_sse_client.py"]
 
+  sse-client-manual:
+    build: .
+    tty: True
+    volumes:
+      - ${PWD}:/app/app
+    # depends_on:
+      # - sse-server-py
+    depends_on:
+      sse-server-py:
+        condition: service_healthy
+    env_file:
+      - .env
+    entrypoint: ["python"]
+    command: ["mcp_sse_client_manual.py"]
+
   mcp_stdio_client:
     build: .
+    tty: True
     volumes:
       - ${PWD}:/app/app
     depends_on:
@@ -157,3 +174,27 @@ services:
 # pydanticai-mcp_run_python-1 exited with code 0
 
 
+# curl -N http://localhost:3001/sse
+# event: endpoint
+# data: /messages/?session_id=e47c5beda0a94f09ba0994ca31accca9
+
+
+# curl -X POST "http://localhost:3001/messages/?session_id=e47c5beda0a94f09ba0994ca31accca9" \
+# > -H "Content-Type: application/json" \
+# > -d '{
+# >   "jsonrpc": "2.0",
+# >   "id": 1,
+# >   "method": "fetch",
+# >   "params": {}
+# > }'
+# Accepted
+
+
+# curl -X POST "http://localhost:3001/messages/?session_id=e47c5beda0a94f09ba0994ca31accca9" \
+# -H "Content-Type: application/json" \
+# -d '{
+#   "jsonrpc": "2.0",
+#    "id": 1,
+#    "method": "list_tools",
+#    "params": {}
+#  }'

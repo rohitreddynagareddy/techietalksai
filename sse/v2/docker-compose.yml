@@ -4,12 +4,19 @@ services:
   sse-server:
     build: .
     container_name: sse-server
+    volumes:
+      - .:/app
     ports:
       - "8000:8000"
+    entrypoint: ["python"]
+    command: ["sse_server.py"]
 
   sse-client:
     build: .
     container_name: sse-client
+    tty: True
+    volumes:
+      - .:/app
     depends_on:
       - sse-server
     entrypoint: ["python"]
@@ -20,6 +27,8 @@ services:
       context: .
       dockerfile: Dockerfile-st
     container_name: sse-frontend
+    volumes:
+      - .:/app
     depends_on:
       - sse-server
     ports:

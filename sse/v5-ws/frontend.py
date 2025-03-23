@@ -13,12 +13,14 @@ ws_url = "ws://ws-server:8000/ws"
 
 # ✅ Function to listen for WebSocket messages
 def receive_messages():
-    async def listen():
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+    async def listen():        
         async with websockets.connect(ws_url) as ws:
             while True:
                 message = await ws.recv()
                 st.session_state.messages.append(f"📩 Received: {message}")
-                st.experimental_rerun()  # ✅ Updates the UI in Streamlit
+                st.rerun()  # ✅ Updates the UI in Streamlit
 
     loop = asyncio.new_event_loop()  # ✅ Create a new event loop for the thread
     asyncio.set_event_loop(loop)
