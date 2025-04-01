@@ -1,0 +1,59 @@
+
+One one terminal
+docker compose up sse-server sse-server-agentic sse-client
+One the otehr terminal
+(base) SreeMacMin16GB-1280:demo02 sree$ docker compose run sse-client
+[+] Running 1/0
+ ⠿ Container sse-server-1  Running                                                                                0.0s
+I AM SSE CLIENT
+06:02:48.931 Chat Completion with 'gpt-4o-mini' [LLM]
+Logfire project URL: https://logfire-us.pydantic.dev/schogini/starter-project
+06:02:52.191 Chat Completion with 'gpt-4o-mini' [LLM]
+The response from the URL [https://httpstat.us/200](https://httpstat.us/200) is:
+
+```
+200 OK
+``` 
+
+This indicates a successful request with an HTTP status code of 200.
+06:02:53.624 Chat Completion with 'gpt-4o-mini' [LLM]
+The available tools are:
+
+1. **functions.fetch**: Fetches a website URL and returns its HTML text content, handling redirects.
+
+2. **functions.booking**: Creates a booking for a specified person and returns a unique booking reference number.
+
+3. **functions.poem**: Creates a poem for a specified name as the theme.
+06:02:55.600 Chat Completion with 'gpt-4o-mini' [LLM]
+06:02:56.737 Chat Completion with 'gpt-4o-mini' [LLM]
+Your booking has been confirmed for Sree. Your reference number is: **BK-19TYKJ**.
+06:02:58.083 Chat Completion with 'gpt-4o-mini' [LLM]
+06:03:04.026 Chat Completion with 'gpt-4o-mini' [LLM]
+Here's a heartfelt poem about dogs:
+
+---
+
+In the sun, they bound and play,  
+With wagging tails, they light the day.  
+So loyal, true, and full of cheer,  
+A dog’s love is forever near.  
+
+Their eyes like pools of endless trust,  
+In every bark, we hear a must.  
+Through fields they romp, through mud they dive,  
+In every heartbeat, they feel alive.  
+
+When the world feels heavy, dark, and cold,  
+A furry friend is worth more than gold.  
+With every nuzzle, every playful chase,  
+They bring pure joy to every space.  
+
+So here's to dogs, both big and small,  
+In every home, they bless us all.  
+With loyalty that never shakes,  
+In their sweet presence, love awakes.  
+
+--- 
+
+Enjoy the beauty and companionship that dogs bring!
+

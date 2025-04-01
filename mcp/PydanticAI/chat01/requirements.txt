@@ -1,0 +1,10 @@
+streamlit
+pydantic-ai
+openai # Or your preferred LLM provider library
+langchain
+langchain-openai # If using OpenAI embeddings/models with Langchain
+pypdf
+faiss-cpu # For local vector storage, use faiss-gpu if you have CUDA
+tiktoken # Often needed by Langchain text splitters
+python-dotenv
+

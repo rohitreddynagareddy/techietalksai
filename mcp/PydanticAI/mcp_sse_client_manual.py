@@ -12,12 +12,12 @@ async def sse_client():
 
     logger.debug(f"Connecting to SSE endpoint: {sse_url}")
     async with aiohttp.ClientSession() as session:
-        async with session.get(sse_url) as response:
+        async with session.get(sse_url) as sse_response:
             logger.debug(f"Connected to SSE endpoint: {sse_url}")
             session_id = None
 
             # Extract the session_id from the SSE stream
-            async for line in response.content:
+            async for line in sse_response.content:
                 if line:
                     decoded_line = line.decode().strip()
                     logger.debug(f"Received line: {decoded_line}")
@@ -112,10 +112,10 @@ async def sse_client():
                 "method": "tools/call",
                 "params": {
                 "name": "fetch",
-                  "arguments": {"url": "https://httpbin.org/anything"}
+                  "arguments": {"url": "https://httpstat.us/200"}
                 },
                 "jsonrpc": "2.0",
-                "id": 2
+                "id": 1
             }
             logger.debug(f"Sending fetch tool call request with payload: {fetch_payload}")
             async with session.post(f"{messages_url}?session_id={session_id}", json=fetch_payload) as post_response:
@@ -125,8 +125,8 @@ async def sse_client():
                     logger.error(f"Failed to send fetch tool call request: {post_response.status}")
                     return
 
-            # Step 5: Listen for server responses
-            async for line in response.content:
+            # Step 5: Listen for SSE server responses
+            async for line in sse_response.content:
                 if line:
                     decoded_line = line.decode().strip()
                     logger.debug(f"Received line: {decoded_line}")
@@ -135,7 +135,7 @@ async def sse_client():
                         try:
                             message = json.loads(data)
                             if message.get('id') == 1:
-                                logger.info(f"Received fetch tool call response: {message}")
+                                logger.info(f"Received fetch tool call sse_response: {message}")
                         except json.JSONDecodeError:
                             logger.warning(f"Received non-JSON message: {decoded_line}")
 
