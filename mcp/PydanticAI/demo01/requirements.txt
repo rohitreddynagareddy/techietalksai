@@ -1,0 +1,6 @@
+# requirements.txt
+streamlit
+pydantic_ai # Correct library name
+openai >= 1.0 # Explicitly include openai as pydantic_ai needs it for the "openai:" provider
+pydantic
+python-dotenv # Useful for loading .env locally, though Docker Compose handles it in container

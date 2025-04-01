@@ -22,7 +22,6 @@ services:
     entrypoint: ["python"]
     command: ["filesystem2.py"]
 
-
   # app-1:
   #   build: .
   #   ports:

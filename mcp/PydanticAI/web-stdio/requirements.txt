@@ -1,0 +1,7 @@
+streamlit>=1.28.0
+# requests - Not needed for stdio communication
+pydantic_ai
+openai>=1.0.0  # Or the specific library for your chosen LLM
+python-dotenv>=1.0.0
+mcp>=0.3.0 # Make sure to include the mcp library itself!
+# Add any other specific dependencies your PydanticAI setup might need
