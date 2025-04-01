@@ -1,3 +1,10 @@
+Build and deploy Remote Model Context Protocol (MCP) ...
+You can now build and deploy remote MCP servers on yourserver
+Handle the hard parts of building remote MCP servers for you.
+Build your own MCP server in Under 15mins
+How to Build and Deploy a Custom MCP Server in 10min
+
+
 
 One one terminal
 docker compose up sse-server sse-server-agentic sse-client

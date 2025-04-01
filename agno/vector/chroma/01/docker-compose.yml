@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  streamlit-app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: streamlit-app
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./app:/app
+      - ./chroma_data:/data  # For persistent storage
+    environment:
+      - CHROMA_DB_PATH=/data/chroma
+      - STREAMLIT_SERVER_ENABLE_FILE_WATCHER=false
+      - STREAMLIT_LOGGING_LEVEL=error
+    env_file:
+      - .env
+      
+  chroma-client:
+    build:
+      context: ./cli
+      dockerfile: Dockerfile
+    volumes:
+      - ./cli:/app
+      - ./chroma_data:/data
+    environment:
+      - CHROMA_DB_PATH=/data/chroma
+    command: ["python", "query_client.py", "Tom Yum Soup"]
+#volumes:
+#  chroma_data:

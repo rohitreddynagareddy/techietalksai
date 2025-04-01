@@ -1,0 +1,16 @@
+streamlit
+chromadb
+sentence-transformers
+pypdf
+python-docx
+unstructured
+langchain
+pandas
+#sqlite3
+umap-learn==0.5.5
+plotly==5.22.0
+scikit-learn==1.5.0  # Required for UMAP
+rich
+openai
+python-dotenv
+torch
