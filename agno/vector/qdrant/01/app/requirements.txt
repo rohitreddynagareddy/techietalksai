@@ -1,0 +1,8 @@
+streamlit
+qdrant-client
+sentence-transformers
+pypdf
+python-docx
+unstructured
+langchain
+pandas
