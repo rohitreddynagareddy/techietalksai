@@ -2,3 +2,5 @@ chromadb
 sentence-transformers
 pandas
 rich
+openai
+python-dotenv

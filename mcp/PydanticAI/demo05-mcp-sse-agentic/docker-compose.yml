@@ -1,0 +1,77 @@
+# docker-compose.yml
+version: '3.8' # Specify docker-compose version
+
+services:
+  # sse-server:
+  #   build:
+  #     context: . # Use the Dockerfile in the current directory
+  #     dockerfile: Dockerfile
+  #   container_name: sse-server
+  #   ports:
+  #     - "8888:8888"
+  #   volumes:
+  #     - ${PWD}:/app/app
+  #   env_file:
+  #     - .env
+  #   entrypoint: ["uv","run","sse_server.py","--transport", "sse", "--port", "8888"]
+  #   tty: True
+
+  sse-server-no-agent:
+    build:
+      context: . # Use the Dockerfile in the current directory
+      dockerfile: Dockerfile
+    container_name: sse-server-no-agent
+    ports:
+      - "8888:8888"
+    volumes:
+      - ${PWD}:/app/app
+    env_file:
+      - .env
+    entrypoint: ["uv","run","sse_server_no_agent.py","--transport", "sse", "--port", "8888"]
+    tty: True
+
+  sse-server-agentic:
+    build:
+      context: . # Use the Dockerfile in the current directory
+      dockerfile: Dockerfile
+    container_name: sse-server-agentic
+    ports:
+      - "8889:8889"
+    volumes:
+      - ${PWD}:/app/app
+    env_file:
+      - .env
+    entrypoint: ["uv","run","sse_server_agentic.py","--transport", "sse", "--port", "8889"]
+    tty: True
+
+  sse-client:
+    build: .
+    volumes:
+      - ${PWD}:/app/app
+    tty: True
+    # depends_on:
+    #   sse-server-py:
+    #     condition: service_healthy
+    env_file:
+      - .env
+    entrypoint: ["python"]
+    command: ["sse_client.py"]
+
+  streamlit_app: # Name of the service
+    build:
+      context: . # Use the Dockerfile in the current directory
+      dockerfile: Dockerfile-st
+    container_name: pydantic_ai_demo_app # Optional: specific container name
+    ports:
+      - "8501:8501" # Map host port 8501 to container port 8501
+    env_file:
+      - .env # Load environment variables from the .env file
+    volumes:
+      - .:/app
+    tty: True
+    environment:
+      # You can add other environment variables here if needed
+      - STREAMLIT_SERVER_PORT=8501
+    # Optional: Add volumes for live code reloading during development
+    # volumes:
+    #   - ./app:/app/app

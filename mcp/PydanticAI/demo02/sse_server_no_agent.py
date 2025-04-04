@@ -12,10 +12,12 @@ import random # <-- Import random
 import string # <-- Import string
 
 import logfire
-# configure logfire
-logfire.configure(token='pylf_v1_us_Nk68kd5CWG0L165X2zKFhB8v3LBG6hrKYypC8JX8kk8Y')
+from dotenv import load_dotenv
+import os
+load_dotenv()
+logfire_api_key = os.getenv("LOGFIRE_API_KEY")
+logfire.configure(token=logfire_api_key)
 logfire.instrument_openai()
-
 
 # Configure logging
 logging.basicConfig(
