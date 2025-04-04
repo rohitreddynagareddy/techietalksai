@@ -1,0 +1,56 @@
+npx create-next-app@latest . --typescript --eslint --tailwind --app --no-src-dir
+Need to install the following packages:
+create-next-app@15.2.4
+Ok to proceed? (y) y
+
+✔ Would you like to use Turbopack for `next dev`? … No / Yes
+✔ Would you like to customize the import alias (`@/*` by default)? … No / Yes
+Creating a new Next.js app in /Users/sree/Downloads/AI/techietalksai/misc/Zero-to-Hero-Tutorial-for-Nextjs-TypeScript-Tailwind-CSS/next-openai-hero.
+
+Using npm.
+
+Initializing project with template: app-tw 
+
+
+Installing dependencies:
+- react
+- react-dom
+- next
+
+Installing devDependencies:
+- typescript
+- @types/node
+- @types/react
+- @types/react-dom
+- @tailwindcss/postcss
+- tailwindcss
+- eslint
+- eslint-config-next
+- @eslint/eslintrc
+
+
+added 317 packages, and audited 318 packages in 1m
+
+131 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+Success! Created next-openai-hero at /Users/sree/Downloads/AI/techietalksai/misc/Zero-to-Hero-Tutorial-for-Nextjs-TypeScript-Tailwind-CSS/next-openai-hero
+
+
+
+
+#NOT FOUND ERROR
+rm -rf node_modules package-lock.json
+npm install
+docker-compose up 
+docker compose down --volumes
+docker compose build --no-cache
+docker-compose up 
+
+
+
+curl -X POST http://localhost:3000/api/ask \
+>   -H "Content-Type: application/json" \
+>   -d '{"query":"What is 2 plus 2?"}'
+{"response":"2 plus 2 equals 4."}

@@ -17,7 +17,7 @@ services:
       - STREAMLIT_LOGGING_LEVEL=error
     env_file:
       - .env
-      
+
   chroma-client:
     build:
       context: ./cli
@@ -27,6 +27,8 @@ services:
       - ./chroma_data:/data
     environment:
       - CHROMA_DB_PATH=/data/chroma
-    command: ["python", "query_client.py", "Tom Yum Soup"]
+    env_file:
+      - .env  # Add this line
+    command: ["python", "query_client.py", "Tom Yum Soup Macros"]
 #volumes:
 #  chroma_data:

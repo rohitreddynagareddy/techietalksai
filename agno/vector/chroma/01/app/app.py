@@ -91,8 +91,7 @@ if st.button("Process Documents"):
             )
         st.success(f"Processed {len(documents)} document chunks!")
 
-# Add this new section before the search interface
-st.header("Vector Data Explorer")
+# In the Vector Data Explorer section
 if st.button("Generate Vector Space Visualization"):
     with st.spinner("Generating visualization..."):
         # Get all vectors from Chroma
@@ -107,12 +106,16 @@ if st.button("Generate Vector Space Visualization"):
             reducer = umap.UMAP(random_state=42)
             reduced_vectors = reducer.fit_transform(embeddings)
             
-            # Create DataFrame for visualization
-            df = pd.DataFrame({
-                "x": reduced_vectors[:, 0],
-                "y": reduced_vectors[:, 1],
-                "text": [doc[:100] + "..." for doc in documents]
-            })
+            # Create DataFrame with all vectors
+            vector_columns = [f"vec_{i}" for i in range(embeddings.shape[1])]
+            df = pd.DataFrame(
+                data=np.hstack((
+                    reduced_vectors,
+                    embeddings,
+                    np.array([doc[:100] + "..." for doc in documents]).reshape(-1, 1)
+                )),
+                columns=["x", "y"] + vector_columns + ["text"]
+            )
             
             # Create interactive plot
             fig = px.scatter(
@@ -141,9 +144,22 @@ if st.button("Generate Vector Space Visualization"):
             
             # Add raw data preview
             with st.expander("Show Raw Vector Data"):
-                st.dataframe(df)
-
-
+                # Format columns for better display
+                pd.options.display.float_format = '{:.4f}'.format
+                st.dataframe(
+                    df.drop(columns=["x", "y"]).set_index("text"),
+                    height=400,
+                    column_config={
+                        "text": "Document Snippet",
+                        **{col: {"header": col.replace("vec_", "Dimension ")} 
+                           for col in vector_columns}
+                    }
+                )
+# Function to highlight only the first row and first column
+def highlight_top_left(x):
+    styles = pd.DataFrame('', index=x.index, columns=x.columns)
+    styles.iloc[0, 0] = 'background-color: yellow'  # You can change the color
+    return styles
 
 # Search interface
 st.header("Semantic Search")
@@ -167,8 +183,10 @@ if search_query:
                 "Text": text[:200] + "..."
             })
         
+
         df = pd.DataFrame(output)
-        st.dataframe(df.style.highlight_max(axis=0))
+        # Apply the style and show in Streamlit
+        st.dataframe(df.style.apply(highlight_top_left, axis=None))
 
 
 # Add new RAG section after semantic search
