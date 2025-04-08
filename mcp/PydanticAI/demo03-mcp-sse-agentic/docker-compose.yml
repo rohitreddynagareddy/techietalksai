@@ -1,5 +1,5 @@
 # docker-compose.yml
-version: '3.8' # Specify docker-compose version
+#version: '3.8' # Specify docker-compose version
 
 services:
   # sse-server:
@@ -16,7 +16,7 @@ services:
   #   entrypoint: ["uv","run","sse_server.py","--transport", "sse", "--port", "8888"]
   #   tty: True
 
-  sse-server-no-agent:
+  sse-server:
     build:
       context: . # Use the Dockerfile in the current directory
       dockerfile: Dockerfile
@@ -27,22 +27,22 @@ services:
       - ${PWD}:/app/app
     env_file:
       - .env
-    entrypoint: ["uv","run","sse_server_no_agent.py","--transport", "sse", "--port", "8888"]
+    entrypoint: ["uv","run","sse_server.py","--transport", "sse", "--port", "8888"]
     tty: True
 
-  sse-server-agentic:
-    build:
-      context: . # Use the Dockerfile in the current directory
-      dockerfile: Dockerfile
-    container_name: sse-server-agentic
-    ports:
-      - "8889:8889"
-    volumes:
-      - ${PWD}:/app/app
-    env_file:
-      - .env
-    entrypoint: ["uv","run","sse_server_agentic.py","--transport", "sse", "--port", "8889"]
-    tty: True
+  # sse-server-agentic:
+  #   build:
+  #     context: . # Use the Dockerfile in the current directory
+  #     dockerfile: Dockerfile
+  #   container_name: sse-server-agentic
+  #   ports:
+  #     - "8889:8889"
+  #   volumes:
+  #     - ${PWD}:/app/app
+  #   env_file:
+  #     - .env
+  #   entrypoint: ["uv","run","sse_server_agentic.py","--transport", "sse", "--port", "8889"]
+  #   tty: True
 
   sse-client:
     build: .
