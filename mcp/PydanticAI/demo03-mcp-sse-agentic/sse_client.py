@@ -7,17 +7,18 @@ import logfire
 from dotenv import load_dotenv
 import os
 load_dotenv()
-logfire_api_key = os.getenv("LOGFIRE_API_KEY")
-logfire.configure(token=logfire_api_key)
-logfire.instrument_openai()
+# logfire_api_key = os.getenv("LOGFIRE_API_KEY")
+# logfire.configure(token=logfire_api_key)
+# logfire.instrument_openai()
   
 # server = MCPServerHTTP(url='http://host.docker.internal:3001/sse') 
 # server1 = MCPServerHTTP(url='http://sse-server-py:3001/sse')   
-server2 = MCPServerHTTP(url='http://sse-server-no-agent:8888/sse')   
-server3 = MCPServerHTTP(url='http://sse-server-agentic:8889/sse')   
+server = MCPServerHTTP(url='http://sse-server:8888/sse')   
+# server2 = MCPServerHTTP(url='http://sse-server-no-agent:8888/sse')   
+# server3 = MCPServerHTTP(url='http://sse-server-agentic:8889/sse')   
 agent = Agent(
       'openai:gpt-4o-mini', 
-      mcp_servers=[server2, server3]
+      mcp_servers=[server]
     )  
 
 print("I AM SSE CLIENT")
@@ -26,16 +27,16 @@ async def main():
     async with agent.run_mcp_servers():  
         # result = await agent.run('How many days between 2000-01-01 and 2025-03-18?')
         # result = await agent.run('List tools')
-        result = await agent.run('Fetch https://httpstat.us/200')
-        print(result.data)
+        # result = await agent.run('Fetch https://httpstat.us/200')
+        # print(result.data)
 
-        result = await agent.run('List tools')
-        print(result.data)
+        # result = await agent.run('List tools')
+        # print(result.data)
 
-        result = await agent.run('Book for Sree')
-        print(result.data)
+        # result = await agent.run('Book for Sree')
+        # print(result.data)
 
-        result = await agent.run('Poem on Dog')
+        result = await agent.run('Dog')
         print(result.data)
 
 #    print(result.data)
