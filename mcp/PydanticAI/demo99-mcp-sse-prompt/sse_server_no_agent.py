@@ -11,13 +11,18 @@ import uvicorn
 import random # <-- Import random
 import string # <-- Import string
 
-import logfire
+
 from dotenv import load_dotenv
 import os
 load_dotenv()
+import logfire
 logfire_api_key = os.getenv("LOGFIRE_API_KEY")
 logfire.configure(token=logfire_api_key)
+logfire.info('I AM SSE BASED MCP SERVER')
 logfire.instrument_openai()
+logfire.instrument_mcp()
+
+
 
 # Configure logging
 logging.basicConfig(
@@ -25,31 +30,6 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-
-# --- Tool Implementation Functions ---
-
-# async def _fetch_website_impl(
-#     url: str,
-# ) -> list[types.TextContent | types.ImageContent | types.EmbeddedResource]:
-#     """Internal function to handle the actual fetching logic."""
-#     logger.debug(f"Fetching website content from URL: {url}")
-#     headers = {
-#         "User-Agent": "MCP Test Server (github.com/modelcontextprotocol/python-sdk)"
-#     }
-#     async with httpx.AsyncClient(follow_redirects=True, headers=headers) as client:
-#         try:
-#             response = await client.get(url)
-#             response.raise_for_status() # Raises exception for 4xx or 5xx status codes
-#             logger.debug(f"Received response with status code: {response.status_code} from {url}")
-#             return [types.TextContent(type="text", text=response.text)]
-#         except httpx.RequestError as exc:
-#             logger.error(f"HTTP Request Error fetching {url}: {exc}")
-#             # Return error information as text content
-#             return [types.TextContent(type="text", text=f"Error fetching URL: {exc}")]
-#         except httpx.HTTPStatusError as exc:
-#              logger.error(f"HTTP Status Error fetching {url}: {exc.response.status_code} - {exc}")
-#              # Return error information including status code
-#              return [types.TextContent(type="text", text=f"Error fetching URL: Status {exc.response.status_code} - {exc.response.text[:200]}...")] # Truncate long error pages
 
 async def _make_booking_impl(name: str) -> list[types.TextContent]:
     """Internal function to handle the booking logic."""
@@ -87,6 +67,7 @@ def main(port: int, transport: str) -> int:
                  # Return error message in the expected format
                 return [types.TextContent(type="text", text="Error: Missing required argument 'name' for booking tool.")]
             # Call the booking implementation
+            logfire.info('BOOKING TOOL CALL')
             return await _make_booking_impl(arguments["name"])
 
         else:
@@ -121,40 +102,38 @@ def main(port: int, transport: str) -> int:
     # --- Transport Handling (SSE or Stdio) ---
     print("Here")
     logger.debug(f"Here..")
-    if transport == "sse":
-        from mcp.server.sse import SseServerTransport
+    # if transport == "sse":
+    from mcp.server.sse import SseServerTransport
 
-        # Note: Changed endpoint from /sse to / for simplicity if desired, or keep /sse
-        # Using /messages/ for POST as per original code
-        sse_transport = SseServerTransport("/messages/") # Path for POSTing messages *to* the server
+    sse_transport = SseServerTransport("/messages/") # Path for POSTing messages *to* the server
 
-        async def handle_sse_connection(request):
-            """Handles the initial SSE connection request from a client."""
-            logger.debug(f"Handling new SSE connection request from: {request.client}")
-            # The sse_transport manages the actual SSE stream communication
-            async with sse_transport.connect_sse(
-                request.scope, request.receive, request._send
-            ) as streams:
-                # streams[0] is for reading from client, streams[1] is for writing to client
-                logger.debug(f"SSE connection established for {request.client}. Running MCP app logic.")
-                await app.run(
-                    streams[0], streams[1], app.create_initialization_options()
-                )
-            logger.debug(f"SSE connection closed for {request.client}.")
-            # Note: The response is handled internally by connect_sse
+    async def handle_sse_connection(request):
+        """Handles the initial SSE connection request from a client."""
+        logger.debug(f"Handling new SSE connection request from: {request.client}")
+        # The sse_transport manages the actual SSE stream communication
+        async with sse_transport.connect_sse(
+            request.scope, request.receive, request._send
+        ) as streams:
+            # streams[0] is for reading from client, streams[1] is for writing to client
+            logger.debug(f"SSE connection established for {request.client}. Running MCP app logic.")
+            await app.run(
+                streams[0], streams[1], app.create_initialization_options()
+            )
+        logger.debug(f"SSE connection closed for {request.client}.")
+        # Note: The response is handled internally by connect_sse
 
-        starlette_app = Starlette(
-            debug=True, # Set to False in production
-            routes=[
-                # Endpoint where clients connect to establish the SSE stream
-                Route("/sse", endpoint=handle_sse_connection),
-                # Endpoint where clients POST messages *to* the server (part of SSE protocol)
-                Mount("/messages/", app=sse_transport.handle_post_message),
-            ],
-        )
+    starlette_app = Starlette(
+        debug=True, # Set to False in production
+        routes=[
+            # Endpoint where clients connect to establish the SSE stream
+            Route("/sse", endpoint=handle_sse_connection),
+            # Endpoint where clients POST messages *to* the server (part of SSE protocol)
+            Mount("/messages/", app=sse_transport.handle_post_message),
+        ],
+    )
 
-        logger.info(f"Starting Uvicorn server with SSE transport on http://0.0.0.0:{port}")
-        uvicorn.run(starlette_app, host="0.0.0.0", port=port, log_level="info") # Match uvicorn log level if desired
+    logger.info(f"Starting Uvicorn server with SSE transport on http://0.0.0.0:{port}")
+    uvicorn.run(starlette_app, host="0.0.0.0", port=port, log_level="info") # Match uvicorn log level if desired
 
     return 0 # Exit code for CLI
 

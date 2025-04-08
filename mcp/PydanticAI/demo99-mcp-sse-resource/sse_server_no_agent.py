@@ -10,17 +10,17 @@ from starlette.routing import Mount, Route
 import uvicorn
 import random # <-- Import random
 import string # <-- Import string
-
+from pydantic import FileUrl
 
 from dotenv import load_dotenv
 import os
 load_dotenv()
-import logfire
-logfire_api_key = os.getenv("LOGFIRE_API_KEY")
-logfire.configure(token=logfire_api_key)
-logfire.info('I AM SSE BASED MCP SERVER')
-logfire.instrument_openai()
-logfire.instrument_mcp()
+# import logfire
+# logfire_api_key = os.getenv("LOGFIRE_API_KEY")
+# logfire.configure(token=logfire_api_key)
+# logfire.info('I AM SSE BASED MCP SERVER')
+# logfire.instrument_openai()
+# logfire.instrument_mcp()
 
 
 
@@ -30,6 +30,13 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+
+SAMPLE_RESOURCES = {
+    "greeting": "Hello! This is a sample text resource.",
+    "help": "This server provides a few sample text resources for testing.",
+    "about": "This is the simple-resource MCP server implementation.",
+}
 
 async def _make_booking_impl(name: str) -> list[types.TextContent]:
     """Internal function to handle the booking logic."""
@@ -98,6 +105,31 @@ def main(port: int, transport: str) -> int:
                  # outputSchema could specify the format of the TextContent if needed
             ),
         ]
+
+
+    @app.list_resources()
+    async def list_resources() -> list[types.Resource]:
+        return [
+            types.Resource(
+                uri=FileUrl(f"file:///{name}.txt"),
+                name=name,
+                description=f"A sample text resource named {name}",
+                mimeType="text/plain",
+            )
+            for name in SAMPLE_RESOURCES.keys()
+        ]
+
+    @app.read_resource()
+    async def read_resource(uri: FileUrl) -> str | bytes:
+        name = uri.path.replace(".txt", "").lstrip("/")
+
+        if name not in SAMPLE_RESOURCES:
+            raise ValueError(f"Unknown resource: {uri}")
+
+        return SAMPLE_RESOURCES[name]
+
+
+
 
     # --- Transport Handling (SSE or Stdio) ---
     print("Here")
