@@ -14,8 +14,8 @@ from agno.models.groq import Groq
 reasoning_agent = Agent(
     model=OpenAIChat(id="gpt-3.5-turbo"),
     # model=DeepSeek(id="deepseek-chat"),
-    # reasoning_model=DeepSeek(id="deepseek-chat"),  # Should default to manual COT because it is not a native reasoning model
-    reasoning_model=Groq(id="deepseek-r1-distill-llama-70b"),  # Should default to manual COT because it is not a native reasoning model
+    reasoning_model=DeepSeek(id="deepseek-chat"),  # Should default to manual COT because it is not a native reasoning model
+    # reasoning_model=Groq(id="deepseek-r1-distill-llama-70b"),  # Should default to manual COT because it is not a native reasoning model
                 # model=OllamaTools(
                 #     id="deepseek-r1:latest",
                 #     # id="phi4-mini",
@@ -23,6 +23,7 @@ reasoning_agent = Agent(
                 #     ),
 
     markdown=True,
+    reasoning=True,
 )
 reasoning_agent.print_response(
     "Give me steps to write a python script for fibonacci series",
@@ -32,10 +33,10 @@ reasoning_agent.print_response(
 
 
 # It uses the default model of the Agent
-reasoning_agent = Agent(
-    reasoning=True,
-    markdown=True,
-)
+# reasoning_agent = Agent(
+#     reasoning=True,
+#     markdown=True,
+# )
 reasoning_agent.print_response(
     "Give me steps to write a python script for fibonacci series",
     stream=True,
