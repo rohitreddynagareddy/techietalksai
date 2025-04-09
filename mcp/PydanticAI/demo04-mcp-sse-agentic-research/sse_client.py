@@ -36,7 +36,8 @@ async def main():
         # result = await agent.run('Book for Sree')
         # print(result.data)
 
-        result = await agent.run('Write a report comparing NVDA to TSLA')
+        # result = await agent.run('Write a report comparing NVDA to TSLA')
+        result = await agent.run('AWS vs Azure')
         print(result.data)
 
 #    print(result.data)
