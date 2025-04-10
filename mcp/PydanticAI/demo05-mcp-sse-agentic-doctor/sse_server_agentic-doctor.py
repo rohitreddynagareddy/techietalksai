@@ -29,9 +29,9 @@ import logfire
 from dotenv import load_dotenv
 import os
 load_dotenv()
-logfire_api_key = os.getenv("LOGFIRE_API_KEY")
-logfire.configure(token=logfire_api_key)
-logfire.instrument_openai()
+# logfire_api_key = os.getenv("LOGFIRE_API_KEY")
+# logfire.configure(token=logfire_api_key)
+# logfire.instrument_openai()
 
 # Configure logging
 logging.basicConfig(
@@ -42,50 +42,50 @@ logger = logging.getLogger(__name__)
 
 logfire.info('MCP Server using SSE Transport')
 
-async def _poem_impl(name: str) -> list[types.TextContent]:
-    """Internal function to handle the booking logic."""
-    logger.debug(f"Creating poem on name: {name}")
+# async def _poem_impl(name: str) -> list[types.TextContent]:
+#     """Internal function to handle the booking logic."""
+#     logger.debug(f"Creating poem on name: {name}")
 
-    MODEL_CHOICE = "DeepSeek"
-    # Initialize selected model
-    if MODEL_CHOICE == "OpenAI":
-        model = OpenAIModel(
-            # model_name='gpt-3.5-turbo',
-            model_name='gpt-4o-mini',
-            # base_url='https://api.openai.com/v1',
-            # api_key=OPENAI_API_KEY,
-        )
-    elif MODEL_CHOICE == "DeepSeek":
-        model = OpenAIModel(
-            'deepseek-chat',
-            provider=DeepSeekProvider(api_key=DEEPSEEK_API_KEY),
-        )
-    elif MODEL_CHOICE == "Gemini":
-        model = GeminiModel(
-            # model_name='gemini-2.0-flash-exp',
-            model_name='gemini-1.5-flash',
-            api_key=GEMINI_API_KEY,
-        )
+#     MODEL_CHOICE = "DeepSeek"
+#     # Initialize selected model
+#     if MODEL_CHOICE == "OpenAI":
+#         model = OpenAIModel(
+#             # model_name='gpt-3.5-turbo',
+#             model_name='gpt-4o-mini',
+#             # base_url='https://api.openai.com/v1',
+#             # api_key=OPENAI_API_KEY,
+#         )
+#     elif MODEL_CHOICE == "DeepSeek":
+#         model = OpenAIModel(
+#             'deepseek-chat',
+#             provider=DeepSeekProvider(api_key=DEEPSEEK_API_KEY),
+#         )
+#     elif MODEL_CHOICE == "Gemini":
+#         model = GeminiModel(
+#             # model_name='gemini-2.0-flash-exp',
+#             model_name='gemini-1.5-flash',
+#             api_key=GEMINI_API_KEY,
+#         )
 
-    server_agent = Agent(
-        # 'anthropic:claude-3-5-haiku-latest', system_prompt='always reply in rhyme'
-        model=model, system_prompt='always reply in rhyme'
-    )
-    """Poem generator"""
-    r = await server_agent.run(f'write a poem about {name}')
-    # return r.data
+#     server_agent = Agent(
+#         # 'anthropic:claude-3-5-haiku-latest', system_prompt='always reply in rhyme'
+#         model=model, system_prompt='always reply in rhyme'
+#     )
+#     """Poem generator"""
+#     r = await server_agent.run(f'write a poem about {name}')
+#     # return r.data
 
 
-    if not name or not isinstance(name, str):
-         logger.error("Invalid 'name' provided for poem.")
-         # Return error information as text content
-         return [types.TextContent(type="text", text="Error: Invalid or missing 'name' for poem.")]
+#     if not name or not isinstance(name, str):
+#          logger.error("Invalid 'name' provided for poem.")
+#          # Return error information as text content
+#          return [types.TextContent(type="text", text="Error: Invalid or missing 'name' for poem.")]
 
-    # Generate a random booking reference (e.g., BK- seguido de 6 letras/números maiúsculos)
-    # reference = "BK-" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-    logger.info(f"Generated poem '{r.data}' for '{name}'")
-    result_text = f"Poem for {name}. {r.data}"
-    return [types.TextContent(type="text", text=r.data)]
+#     # Generate a random booking reference (e.g., BK- seguido de 6 letras/números maiúsculos)
+#     # reference = "BK-" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+#     logger.info(f"Generated poem '{r.data}' for '{name}'")
+#     result_text = f"Poem for {name}. {r.data}"
+#     return [types.TextContent(type="text", text=r.data)]
 
 async def _doctor_impl(name: str) -> list[types.TextContent]:
     """Internal function to handle the booking logic."""
