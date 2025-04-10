@@ -1,0 +1,11 @@
+streamlit
+pydantic_ai
+openai
+pydantic
+python-dotenv
+pydantic[email]
+nest_asyncio
+pydantic-ai-slim[mcp]
+logfire
+agno
+yfinance
