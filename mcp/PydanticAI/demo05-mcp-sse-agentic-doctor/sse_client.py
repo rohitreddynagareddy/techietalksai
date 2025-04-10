@@ -26,10 +26,10 @@ XAI_API_KEY = os.getenv("XAI_API_KEY")
 server = MCPServerHTTP(url='http://sse-server:8888/sse')   
 # server2 = MCPServerHTTP(url='http://sse-server-no-agent:8888/sse')   
 # server3 = MCPServerHTTP(url='http://sse-server-agentic:8889/sse')   
-agent = Agent(
-      'openai:gpt-4o-mini', 
-      mcp_servers=[server]
-    )  
+# agent = Agent(
+#       'openai:gpt-4o-mini', 
+#        mcp_servers=[server]
+#     )  
 
 # model = OpenAIModel(
 #     model_name='deepseek-chat',
@@ -38,26 +38,24 @@ agent = Agent(
 #     mcp_servers=[server]
 # )
 
-model = OpenAIModel(
-    'deepseek-chat',
-    provider=DeepSeekProvider(api_key=DEEPSEEK_API_KEY),
-)
-agent = Agent(
-      model, 
-      mcp_servers=[server]
-    ) 
+# model = OpenAIModel(
+#     'deepseek-chat',
+#     provider=DeepSeekProvider(api_key=DEEPSEEK_API_KEY),
+# )
+# agent = Agent(
+#       model, 
+#       mcp_servers=[server]
+#     ) 
 
 model = OpenAIModel(
     'grok-2-1212',
     provider=OpenAIProvider(base_url='https://api.x.ai/v1', api_key=XAI_API_KEY),
 )
 agent = Agent(
-      model, 
-      mcp_servers=[server],
+    model, 
+    mcp_servers=[server],
     system_prompt="""Use the doctor tool to provide the anwser exactly as received from the tool."""
-
-
-    ) 
+) 
 
 print(f"I AM SSE CLIENT: {model.model_name}")
 
@@ -68,17 +66,16 @@ async def main():
         # result = await agent.run('Fetch https://httpstat.us/200')
         # print(result.data)
 
-        # result = await agent.run('List tools')
-        # print(result.data)
+        result = await agent.run('List tools')
+        print(result.data)
 
         # result = await agent.run('Book for Sree')
         # print(result.data)
 
         # result = await agent.run('Write a report comparing NVDA to TSLA')
-        result = await agent.run('Ask family doctor for consultation on my ear ache')
-        result = await agent.run('Ask family doctor for consultation on my ear ache')
-        print(result)
-        print(result.data)
+        # result = await agent.run('Ask family doctor for consultation on my ear ache')
+        # result = await agent.run('I have ear ache')
+        # print(result.data)
 
 #    print(result.data)
     #> There are 9,208 days between January 1, 2000, and March 18, 2025.
