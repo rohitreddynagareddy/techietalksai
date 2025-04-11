@@ -1,0 +1,62 @@
+# version: "3.12"
+
+services:
+  # agent:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: a2a_agent
+  #   ports:
+  #     - "10000:10000"
+  #   # environment:
+  #   #   - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+  #   command: uv run agents/langgraph --host 0.0.0.0 --port 10000
+  #   depends_on:
+  #     - cli
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - .:/app
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agent
+    ports:
+      - "10002:10002"
+      - "10000:10000"
+    # environment:
+    #   - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+    # depends_on:
+    #   - cli
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    # working_dir: /app/agents/google_adk  # REFUND
+    # working_dir: /app/agents/langgraph # CURRENCY EXCHANGE
+    working_dir: /app/agents/crewai # IMAGE
+    # command: uv run . #agents/langgraph --host 0.0.0.0 --port 10000
+    command: uv run . --host 0.0.0.0 --port 10000
+    networks:
+      - a2a_network
+
+  cli:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cli
+    # environment:
+    #   - AGENT_URL=http://google_adk_agent:10000
+    # working_dir: /app/hosts/cli
+    # command: uv run hosts/cli --agent http://host.docker.internal:10002 #${AGENT_URL}
+    command: uv run hosts/cli --agent http://agent:10000 #${AGENT_URL}
+    volumes:
+      - .:/app
+    tty: True
+    networks:
+      - a2a_network
+
+networks:
+  a2a_network:
+    driver: bridge
