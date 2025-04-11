@@ -1,0 +1,13 @@
+services:
+  adk-agent:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+    volumes:
+      - ./multi_tool_agent:/app/multi_tool_agent
+      - ./entrypoint.sh:/app/entrypoint.sh
+#    restart: unless-stopped
+    env_file:
+      - .env
