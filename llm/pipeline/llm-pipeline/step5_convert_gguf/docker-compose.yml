@@ -1,0 +1,13 @@
+# version: "3.8"
+services:
+  convert_gguf:
+    build: .
+    platform: linux/arm64
+    # volumes:
+    #   - ../step3_finetune_custom/output_finetuned/:/app/ft_model  # if using local fine-tuned model
+    #   # - ./output_gguf/:/app        # output directory for GGUF
+    #   # - ./convert_to_gguf.py:/app/convert_to_gguf.py
+    #   - ./output_gguf:/app/output_gguf
+    volumes:
+      - ../step3_finetune_custom/output_finetuned:/app/ft_model
+      - ./output_gguf:/app/output_gguf
