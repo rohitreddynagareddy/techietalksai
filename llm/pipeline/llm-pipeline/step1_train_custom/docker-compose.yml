@@ -1,0 +1,8 @@
+# version: "3.8"
+services:
+  train_custom:
+    build: .
+    platform: linux/arm64  # ensure ARM architecture
+    volumes:
+      - ./:/app            # mount current directory into container (read-write)
+      - ./output_model:/app/output_model   # mount output dir to get saved model

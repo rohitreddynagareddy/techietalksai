@@ -1,0 +1,9 @@
+# step3_finetune_custom/docker-compose.yml
+# version: "3.8"
+services:
+  finetune_custom:
+    build: .
+    platform: linux/arm64
+    volumes:
+      - ../step1_train_custom/output_model/:/app/base_model   # mount base model
+      - ./output_finetuned/:/app/output_finetuned             # save fine-tuned model
