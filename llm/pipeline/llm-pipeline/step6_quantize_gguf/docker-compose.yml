@@ -1,0 +1,13 @@
+# version: "3.8"
+services:
+  quantize:
+    build: .
+    platform: linux/arm64
+    # volumes:
+    #   - ../step5_convert_gguf/output_gguf/:/app    # mount the directory containing model-f16.gguf
+    #   - ./output_quant/:/app  # output (will contain model-q4_0.gguf)
+    #   - ./quantize.sh:/app/quantize.sh
+    volumes:
+      - .:/app  # ✅ This ensures model-f16.gguf is accessible inside container at /app/model-f16.gguf
+    tty: True
+    stdin_open: True

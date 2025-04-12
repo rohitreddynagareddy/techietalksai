@@ -1,0 +1,7 @@
+FROM llama2
+
+# Replace with your actual quantized model path
+PARAMETER model model-q4_0.gguf
+
+# Add a system prompt or template (optional)
+SYSTEM "You are a helpful assistant."

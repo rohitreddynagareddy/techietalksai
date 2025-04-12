@@ -1,0 +1,4 @@
+I am a tiny model.
+I can be fine-tuned on small data.
+This new training will change my responses.
+Let's see what I can learn from this fine-tune.

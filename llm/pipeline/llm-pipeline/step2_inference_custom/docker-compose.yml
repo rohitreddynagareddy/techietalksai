@@ -1,0 +1,8 @@
+# step2_inference_custom/docker-compose.yml
+# version: "3.8"
+services:
+  infer_custom:
+    build: .
+    platform: linux/arm64
+    volumes:
+      - ../step1_train_custom/output_model/:/app/model  # mount the trained model from step1
