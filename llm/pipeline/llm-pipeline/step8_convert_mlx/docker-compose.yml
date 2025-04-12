@@ -1,0 +1,9 @@
+# step8_convert_mlx/docker-compose.yml
+# version: "3.8"
+services:
+  convert_mlx:
+    build: .
+    platform: linux/arm64
+    volumes:
+      - ../step3_finetune_custom/output_finetuned/:/app/ft_model   # mount HF model (fine-tuned)
+      - ./mlx_model/:/app/mlx_model                               # output MLX model directory
