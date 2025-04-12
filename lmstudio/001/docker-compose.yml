@@ -1,0 +1,16 @@
+#version: "3.8"
+
+services:
+  app:
+    build: .
+    container_name: lmstudio-app
+    volumes:
+      - .:/app
+    ports:
+      - "1234:1234"
+    extra_hosts:
+      - "localhost:host-gateway"  # redirects SDK's localhost to host's IP
+    entrypoint: python
+    command: chat-app.py
+    stdin_open: true  # allows keyboard input
+    tty: true         # allocates a pseudo-TTY
