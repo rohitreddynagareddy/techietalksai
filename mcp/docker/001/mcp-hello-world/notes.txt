@@ -1,0 +1,22 @@
+
+
+
+docker build -t sree-greet . --no-cache
+docker run -i -v /var/run/docker.sock:/var/run/docker.sock sree-greet client-docker.py
+
+
+from another terminal
+docker ps
+docker logs -f <id>
+
+
+control c on first terminal exits
+
+
+
+docker run -i -v /var/run/docker.sock:/var/run/docker.sock sree-greet client.py
+
+
+docker run -i  sree-greet client.py
+Available tools: ['hello-world2']
+Echo tool response: [TextContent(type='text', text='Hello World!', annotations=None)]
