@@ -13,11 +13,15 @@ logfire.instrument_openai()
   
 # server = MCPServerHTTP(url='http://host.docker.internal:3001/sse') 
 # server1 = MCPServerHTTP(url='http://sse-server-py:3001/sse')   
-server2 = MCPServerHTTP(url='http://sse-server-no-agent:8888/sse')   
-server3 = MCPServerHTTP(url='http://sse-server-agentic:8889/sse')   
+server2 = MCPServerHTTP(url='http://sse-server-no-agent:8888/sse') 
+
+# COMMNET  
+# server3 = MCPServerHTTP(url='http://sse-server-agentic:8889/sse')   
+
 agent = Agent(
       'openai:gpt-4o-mini', 
-      mcp_servers=[server2, server3]
+      # mcp_servers=[server2, server3]
+      mcp_servers=[server2]
     )  
 
 print("I AM SSE CLIENT")
