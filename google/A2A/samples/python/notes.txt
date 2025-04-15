@@ -1,0 +1,213 @@
+AGENT WORKS!
+
+UNCOMMENT THIS IN docker-compose.yml
+    # working_dir: /app/agents/google_adk
+    working_dir: /app/agents/langgraph
+    # working_dir: /app/agents/crewai
+
+
+
+cd /Users/sree/Downloads/AI/techietalksai/google/A2A/samples/python
+docker compose up agent --remove-orphans
+
+Attaching to agent
+agent  | INFO:__main__:Starting A2AServer
+agent  | INFO:     Started server process [9]
+agent  | INFO:     Waiting for application startup.
+agent  | INFO:     Application startup complete.
+agent  | INFO:     Uvicorn running on http://0.0.0.0:10000 (Press CTRL+C to quit)
+After client starts
+agent  | INFO:     172.20.0.3:33668 - "GET /.well-known/agent.json HTTP/1.1" 200 OK
+
+
+# THIS DOE NOT INTERACT
+docker compose up cli
+[+] Running 1/1
+ ✔ Container cli  Created                                                                                                              0.0s 
+Attaching to cli
+cli  | ======= Agent Card ========
+cli  | {"name":"Reimbursement Agent","description":"This agent handles the reimbursement process for the employees given the amount and purpose of the reimbursement.","url":"http://0.0.0.0:10000/","version":"1.0.0","capabilities":{"streaming":true,"pushNotifications":false,"stateTransitionHistory":false},"defaultInputModes":["text","text/plain"],"defaultOutputModes":["text","text/plain"],"skills":[{"id":"process_reimbursement","name":"Process Reimbursement Tool","description":"Helps with the reimbursement process for users given the amount and purpose of the reimbursement.","tags":["reimbursement"],"examples":["Can you reimburse me $20 for my lunch with the clients?"]}]}
+cli  | =========  starting a new task ======== 
+cli  | 
+
+
+docker compose run --rm  cli bash
+root@fc0a85f39664:/app# uv run hosts/cli --agent http://agent:10000
+======= Agent Card ========
+{"name":"Reimbursement Agent","description":"This agent handles the reimbursement process for the employees given the amount and purpose of the reimbursement.","url":"http://0.0.0.0:10000/","version":"1.0.0","capabilities":{"streaming":true,"pushNotifications":false,"stateTransitionHistory":false},"defaultInputModes":["text","text/plain"],"defaultOutputModes":["text","text/plain"],"skills":[{"id":"process_reimbursement","name":"Process Reimbursement Tool","description":"Helps with the reimbursement process for users given the amount and purpose of the reimbursement.","tags":["reimbursement"],"examples":["Can you reimburse me $20 for my lunch with the clients?"]}]}
+=========  starting a new task ======== 
+
+What do you want to send to the agent? (:q or quit to exit): 
+
+
+WORKS!! LANGRAPH AGENT
+cd /Users/sree/Downloads/AI/techietalksai/google/A2A/samples/js
+
+(base) Sreeprakashs-MacBook-Pro:js sree$ npm run a2a:cli http://localhost:10000
+
+> a2a-samples-js@0.1.0 a2a:cli
+> npx tsx src/cli.ts http://localhost:10000
+
+A2A Terminal Client
+Agent URL: http://localhost:10000
+Attempting to fetch agent card from: http://localhost:10000/.well-known/agent.json
+✓ Agent Card Found:
+  Name:        Currency Agent
+  Description: Helps with exchange rates for currencies
+  Version:     1.0.0
+Starting Task ID: 466b4c4f-004c-4802-bb0a-0d83b9519f02
+Enter messages, or use '/new' to start a new task.
+Currency Agent > You: exchange rate between USD and INR
+Sending...
+
+Currency Agent [6:54:41 pm]: ⏳ Status: working
+  Part 1: 📝 Text: Looking up the exchange rates...
+
+Currency Agent [6:54:41 pm]: ⏳ Status: working
+  Part 1: 📝 Text: Processing the exchange rates..
+
+Currency Agent [6:54:41 pm]: 📄 Artifact Received: (unnamed) (Index: 0)
+  Part 1: 📝 Text: The exchange rate between USD and INR is 1 USD = 86.16 INR as of 2025-04-10.
+
+Currency Agent [6:54:41 pm]: ✅ Status: completed
+SSE stream finished for method tasks/sendSubscribe.
+--- End of response for this input ---
+Currency Agent > You: 
+
+
+WORKS!! GOODLE AGENT
+cd /Users/sree/Downloads/AI/techietalksai/google/A2A/samples/js
+
+(base) Sreeprakashs-MacBook-Pro:js sree$ npm run a2a:cli http://localhost:10000
+
+(base) Sreeprakashs-MacBook-Pro:js sree$ npm run a2a:cli http://localhost:10000
+
+> a2a-samples-js@0.1.0 a2a:cli
+> npx tsx src/cli.ts http://localhost:10000
+
+A2A Terminal Client
+Agent URL: http://localhost:10000
+Attempting to fetch agent card from: http://localhost:10000/.well-known/agent.json
+✓ Agent Card Found:
+  Name:        Reimbursement Agent
+  Description: This agent handles the reimbursement process for the employees given the amount and purpose of the reimbursement.
+  Version:     1.0.0
+Starting Task ID: bc6fa560-20b7-47ab-a899-97d0807ae0f5
+Enter messages, or use '/new' to start a new task.
+Reimbursement Agent > You: Can you reimburse me $20 for my lunch with the clients?
+Sending...
+
+Reimbursement Agent [6:58:32 pm]: 🤔 Status: input-required
+  Part 1: 📊 Data: {
+  "type": "form",
+  "form": {
+    "type": "object",
+    "properties": {
+      "date": {
+        "type": "string",
+        "format": "date",
+        "description": "Date of expense",
+        "title": "Date"
+      },
+      "amount": {
+        "type": "string",
+        "format": "number",
+        "description": "Amount of expense",
+        "title": "Amount"
+      },
+      "purpose": {
+        "type": "string",
+        "description": "Purpose of expense",
+        "title": "Purpose"
+      },
+      "request_id": {
+        "type": "string",
+        "description": "Request id",
+        "title": "Request ID"
+      }
+    },
+    "required": [
+      "amount",
+      "purpose",
+      "date"
+    ]
+  },
+  "form_data": {
+    "amount": "20",
+    "purpose": "Lunch with the clients",
+    "date": "<transaction date>"
+  },
+  "instructions": "Please provide the transaction date."
+}
+
+Reimbursement Agent [6:58:32 pm]: 📄 Artifact Received: (unnamed) (Index: 0)
+  Part 1: 📊 Data: {
+  "type": "form",
+  "form": {
+    "type": "object",
+    "properties": {
+      "date": {
+        "type": "string",
+        "format": "date",
+        "description": "Date of expense",
+        "title": "Date"
+      },
+      "amount": {
+        "type": "string",
+        "format": "number",
+        "description": "Amount of expense",
+        "title": "Amount"
+      },
+      "purpose": {
+        "type": "string",
+        "description": "Purpose of expense",
+        "title": "Purpose"
+      },
+      "request_id": {
+        "type": "string",
+        "description": "Request id",
+        "title": "Request ID"
+      }
+    },
+    "required": [
+      "amount",
+      "purpose",
+      "date"
+    ]
+  },
+  "form_data": {
+    "amount": "20",
+    "purpose": "Lunch with the clients",
+    "date": "<transaction date>"
+  },
+  "instructions": "Please provide the transaction date."
+}
+
+Reimbursement Agent [6:58:32 pm]: 🤔 Status: input-required
+SSE stream finished for method tasks/sendSubscribe.
+--- End of response for this input ---
+
+
+WORKS!! CREWAI AGENT
+
+npm run a2a:cli http://localhost:10000
+
+> a2a-samples-js@0.1.0 a2a:cli
+> npx tsx src/cli.ts http://localhost:10000
+
+A2A Terminal Client
+Agent URL: http://localhost:10000
+Attempting to fetch agent card from: http://localhost:10000/.well-known/agent.json
+✓ Agent Card Found:
+  Name:        Image Generator Agent
+  Description: Generate stunning, high-quality images on demand and leverage powerful editing capabilities to modify, enhance, or completely transform visuals.
+  Version:     1.0.0
+Starting Task ID: 5a747ece-9d09-49d6-aeef-d5b5d029f40f
+Enter messages, or use '/new' to start a new task.
+Image Generator Agent > You: create an image of apple
+Sending...
+HTTP error 400 received for streaming method tasks/sendSubscribe. Response: {"jsonrpc":"2.0","error":{"code":-32603,"message":"Internal error"}}
+
+❌ Error communicating with agent (Image Generator Agent): HTTP error 400: Bad Request - Failed to establish stream.
+Image Generator Agent > You: 
+
