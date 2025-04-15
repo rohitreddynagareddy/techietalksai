@@ -1,3 +1,1 @@
-Hello, how are you?
-I am fine. How about you?
-This is a tiny dataset for a tiny transformer.
+I love cats
