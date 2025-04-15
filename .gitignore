@@ -5,6 +5,7 @@ __pycache__/
 
 llama.cpp/
 mlx_env/
+cpu_gpu/
 
 # C extensions
 *.so
