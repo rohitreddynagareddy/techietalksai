@@ -34,8 +34,8 @@ services:
     volumes:
       - .:/app
     # working_dir: /app/agents/google_adk  # REFUND
-    # working_dir: /app/agents/langgraph # CURRENCY EXCHANGE
-    working_dir: /app/agents/crewai # IMAGE
+    working_dir: /app/agents/langgraph # CURRENCY EXCHANGE
+    # working_dir: /app/agents/crewai # IMAGE
     # command: uv run . #agents/langgraph --host 0.0.0.0 --port 10000
     command: uv run . --host 0.0.0.0 --port 10000
     networks:
