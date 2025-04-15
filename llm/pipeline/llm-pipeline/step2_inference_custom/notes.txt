@@ -1,0 +1,10 @@
+infer_custom-1  | Setting `pad_token_id` to `eos_token_id`:50256 for open-end generation.
+infer_custom-1  | 🚀 Using device: cpu
+infer_custom-1  | 🧠 Prompt: Hello, how
+infer_custom-1  | 🧩 Tokenized input_ids: tensor([[15496,    11,   703]])
+infer_custom-1  | 🧩 Tokens: ['Hello', ',', 'Ġhow']
+infer_custom-1  | 📤 Generated token IDs: tensor([15496,    11,   703,   389,   345,    30,   198,    40,   716,  3734,
+infer_custom-1  |            13,  1374,   546])
+infer_custom-1  | 📜 Decoded output: Hello, how are you?
+infer_custom-1  | I am fine. How about
+infer_custom-1 exited with code 0

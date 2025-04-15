@@ -1,0 +1,207 @@
+Absolutely! Here's a **plain-text explanation script** you can **read aloud** or use in a voiceover while recording your tutorial video for **Step 1: Train a Custom LLM**.
+
+---
+
+## 🎙️ **Step 1: Train a Custom LLM – Tutorial Narration Script**
+
+---
+
+👋 "Hi everyone! In this tutorial, we’re going to walk through the code that trains a tiny custom Language Model using a simplified GPT-2 architecture. We'll break it down into 5 simple steps and I’ll explain what each part is doing."
+
+---
+
+### 🟦 **Step 1: Load the Dataset**
+
+📖  
+"We start by reading a small text file named `tiny_corpus.txt` from the `data` folder. This file contains a few sentences we want our model to learn from. We print a short sample from it just to visually confirm what’s inside."
+
+🧠  
+"This raw text is what we'll convert into tokens next."
+
+---
+
+### 🟩 **Step 2: Tokenize the Text**
+
+🔤  
+"Tokenization is the process of converting raw text into numbers that the model can understand. We use the GPT-2 tokenizer for this."
+
+🧾  
+"We set the padding token to match GPT-2’s end-of-sequence token, since GPT-2 doesn't have a pad token by default."
+
+🧩  
+"After tokenization, we get an `input_ids` tensor — basically a long list of numbers representing the words in the corpus."
+
+📬  
+"We print both the token IDs and their decoded text to confirm everything looks correct."
+
+---
+
+### 🟥 **Step 3: Define a Small GPT-2 Model**
+
+🧱  
+"Now we define the model. GPT-2 is a transformer-based language model, but we don’t need the full heavyweight version."
+
+⚙️  
+"So, we configure a **mini version** with:
+- 2 layers,
+- 2 attention heads,
+- and 128-dimensional embeddings."
+
+🔌  
+"This keeps training lightweight and fast."
+
+🖥️  
+"Then we send the model to Apple Silicon’s MPS accelerator if it’s available — or to CPU otherwise."
+
+---
+
+### 🟨 **Step 4: Train the Model**
+
+🏋️  
+"Now it’s time to train! We use the AdamW optimizer and a small learning rate."
+
+🔁  
+"For each of 5 epochs, we:
+- Clear old gradients,
+- Run the model on our input tokens,
+- Calculate the loss (how wrong the model is),
+- Backpropagate the error,
+- And update the weights."
+
+📉  
+"We print the loss after each epoch, so we can see how the model is improving."
+
+---
+
+### 🟪 **Step 5: Save the Model**
+
+💾  
+"Once training is complete, we save both the model and the tokenizer to a folder called `output_model`."
+
+📦  
+"This folder contains:
+- `pytorch_model.bin`: the actual model weights,
+- `config.json`: the model architecture settings,
+- `tokenizer.json` and vocab files."
+
+🔍  
+"We also open the `config.json` file and display a preview of its contents."
+
+---
+
+### ✅ **Wrap-Up**
+
+🎯  
+"And that’s it! We've successfully trained and saved a small custom language model using Hugging Face Transformers and PyTorch. All of this happens in less than a minute and is super lightweight."
+
+📢  
+"In the next step, we’ll see how to **generate text using this model**!"
+
+---
+
+Would you like me to:
+- 📼 Help structure a **video outline or scene breakdown**?
+- 🎨 Generate a matching **visual slideshow or storyboard** for this narration?
+- 🗣️ Convert this into a speech audio file?
+
+Let me know how you'd like to continue the tutorial series!
+
+
+
+docker compose up
+[+] Running 1/1
+ ✔ Container step1_train_custom-train_custom-1  Created                                                                                0.0s 
+Attaching to train_custom-1
+train_custom-1  | 🔹 Step 1: Loading the dataset...
+train_custom-1  | 
+train_custom-1  | 📘 Raw text sample:
+train_custom-1  |  Hello, how are you?
+train_custom-1  | I am fine. How about you?
+train_custom-1  | This is a tiny dataset for a tiny transformer.
+train_custom-1  |  ...
+train_custom-1  | 
+train_custom-1  | 🔹 Step 2: Loading tokenizer and encoding text...
+train_custom-1  | 
+train_custom-1  | 🧠 Token IDs:
+train_custom-1  |  tensor([[15496,    11,   703,   389,   345,    30,   198,    40,   716,  3734,
+train_custom-1  |             13,  1374,   546,   345,    30,   198,  1212,   318,   257,  7009,
+train_custom-1  |          27039,   329,   257,  7009, 47385,    13,   198]])
+train_custom-1  | 📏 Shape of input_ids: torch.Size([1, 27])
+train_custom-1  | 
+train_custom-1  | 🔁 Decoded back from tokens:
+train_custom-1  |  Hello, how are you?
+train_custom-1  | I am fine. How about you?
+train_custom-1  | This is a tiny dataset for a tiny transformer.
+train_custom-1  | 
+train_custom-1  | 
+train_custom-1  | 🔹 Step 3: Creating a small GPT-2 model...
+train_custom-1  | 📦 Model loaded on: cpu
+train_custom-1  | 
+train_custom-1  | 🔹 Step 4: Starting training...
+train_custom-1  | `loss_type=None` was set in the config but it is unrecognised.Using the default loss: `ForCausalLMLoss`.
+train_custom-1  | ✅ Epoch 1/5, Loss: 10.8295
+train_custom-1  | ✅ Epoch 2/5, Loss: 10.0888
+train_custom-1  | ✅ Epoch 3/5, Loss: 9.6863
+train_custom-1  | ✅ Epoch 4/5, Loss: 9.3839
+train_custom-1  | ✅ Epoch 5/5, Loss: 9.0789
+train_custom-1  | 
+train_custom-1  | 🔹 Step 5: Saving model and tokenizer to `output_model/` ...
+train_custom-1  | 📁 Saved files:
+train_custom-1  |    - model.safetensors
+train_custom-1  |    - tokenizer_config.json
+train_custom-1  |    - special_tokens_map.json
+train_custom-1  |    - config.json
+train_custom-1  |    - tokenizer.json
+train_custom-1  |    - generation_config.json
+train_custom-1  |    - merges.txt
+train_custom-1  |    - vocab.json
+train_custom-1  | 
+train_custom-1  | 🔍 Peek into config.json:
+train_custom-1  | {
+train_custom-1  |   "activation_function": "gelu_new",
+train_custom-1  |   "architectures": [
+train_custom-1  |     "GPT2LMHeadModel"
+train_custom-1  |   ],
+train_custom-1  |   "attn_pdrop": 0.1,
+train_custom-1  |   "bos_token_id": 50256,
+train_custom-1  |   "embd_pdrop": 0.1,
+train_custom-1  |   "eos_token_id": 50256,
+train_custom-1  |   "initializer_range": 0.02,
+train_custom-1  |   "layer_norm_epsilon": 1e-05,
+train_custom-1  |   "model_type": "gpt2",
+train_custom-1  |   "n_ctx": 1024,
+train_custom-1  |   "n_embd": 128,
+train_custom-1  |   "n_head": 2,
+train_custom-1  |   "n_inner": null,
+train_custom-1  |   "n_layer": 2,
+train_custom-1  |   "n_positions": 1024,
+train_custom-1  |   "reorder_and_upcast_attn": false,
+train_custom-1  |   "resid_pdrop": 0.1,
+train_custom-1  |   "scale_attn_by_inverse_layer_idx": false,
+train_custom-1  |   "scale_attn_weights": true ...
+train_custom-1  | 
+train_custom-1  | ✅ Done! Your trained model is ready in the 'output_model/' folder.
+train_custom-1 exited with code 0
+
+
+tree output_model/
+output_model/
+├── config.json
+├── generation_config.json
+├── merges.txt
+├── model.safetensors
+├── special_tokens_map.json
+├── tokenizer_config.json
+├── tokenizer.json
+└── vocab.json
+
+File | Description
+pytorch_model.bin | The trained weights of your tiny GPT-2 model.
+config.json | The model architecture (layers, heads, hidden size, etc.).
+tokenizer.json | Tokenizer structure in JSON format.
+tokenizer_config.json | Metadata about the tokenizer.
+vocab.json | Maps tokens to their string representation.
+merges.txt | The byte pair encoding (BPE) merge rules.
+special_tokens_map.json | Which tokens are considered pad, eos, etc.
+
+
