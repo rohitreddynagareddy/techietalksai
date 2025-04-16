@@ -1,0 +1,22 @@
+# Explicitly use ARM64 architecture
+FROM --platform=linux/arm64 python:3.11-slim
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    libgmp10 \
+    zlib1g \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install solc using py-solc-x's source compilation
+RUN pip install --no-cache-dir py-solc-x && \
+    python -c "from solcx import compile_solc; compile_solc('v0.8.9')"
+
+# Set working directory
+WORKDIR /app
+
+# Copy project files
+COPY . .
+
+# Set entrypoint
+CMD ["python", "compile.py"]

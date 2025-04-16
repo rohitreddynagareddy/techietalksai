@@ -1,0 +1,55 @@
+ ✔ compiler                          Built                                                                                             0.0s 
+ ✔ Container voting-dapp-ganache-1   Running                                                                                           0.0s 
+ ✔ Container voting-dapp-compiler-1  Started                                                                                           0.1s 
+(base) Sreeprakashs-MacBook-Pro:voting-dapp sree$ curl http://localhost:8545
+400 Bad Request(base) Sreeprakashs-MacBook-Pro:voting-dapp sree$ docker compose logs ganache
+ganache-1  | Ganache CLI v6.12.2 (ganache-core: 2.13.2)
+ganache-1  | (node:1) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+ganache-1  | (Use `node --trace-deprecation ...` to show where the warning was created)
+ganache-1  | 
+ganache-1  | Available Accounts
+ganache-1  | ==================
+ganache-1  | (0) 0xbc96a28672352Df3987e877230496Fae86feDD81 (1000 ETH)
+ganache-1  | (1) 0x8ee8Ab3462D87dAefa6FD79F4c4CDeE6fB02c185 (1000 ETH)
+ganache-1  | (2) 0x5A320c1E4539854e50F56399e866F909fb326FF3 (1000 ETH)
+ganache-1  | (3) 0xBC17eEC08620736Ba4E612C3b21a1deC027edcFB (1000 ETH)
+ganache-1  | (4) 0x4cD56f8d78651F93d9DFAb9062024C9d9bA56c0b (1000 ETH)
+ganache-1  | (5) 0xBD7053Df2a1083c7f684E7AD7C3F93671CE8d018 (1000 ETH)
+ganache-1  | (6) 0xe8988ed0A90d142B2eC2BC6A9BeC54A649d32b13 (1000 ETH)
+ganache-1  | (7) 0xDf8D84fEc47f0984824DAf3D500731D81AccA098 (1000 ETH)
+ganache-1  | (8) 0xf0B57558B0C07838d936cc10F62B758fe273f880 (1000 ETH)
+ganache-1  | (9) 0x30dB10142901e2D40e17Cf0Fc524288dDf94089F (1000 ETH)
+ganache-1  | 
+ganache-1  | Private Keys
+ganache-1  | ==================
+ganache-1  | (0) 0x4159eb7e71ccb80e1cb25674fe313b090afaaa913cf7de4e7ab96654c59f088b
+ganache-1  | (1) 0x589c8009b5181c32a68897180f10038b01c3ca2506e3d1d30ab8f4aabe106c07
+ganache-1  | (2) 0x4453c88659044fc2fe6908db29e20642e04383e4a3ce50096f104bd734ce34de
+ganache-1  | (3) 0xb03fa2a4069aac07ad118e4fd698530f6b0eed10045a180f3d9225987333ee78
+ganache-1  | (4) 0x9c1d077ec272f7bd739b4b24cc1c4a849d34c3b33d165a81486ba52641b6c589
+ganache-1  | (5) 0x3f705c5599d01fbbef909d641b9bedad8a7d279a11c458570eb51c18b0530999
+ganache-1  | (6) 0xef2a92922d85bcd9bdbee2fb7a3795be213531c166d07599484aa893912b0672
+ganache-1  | (7) 0x4eb8ac18c0d830484838ae69a5836140c48e95c69cefaea916d09ad8efc972a3
+ganache-1  | (8) 0x407d2f0fbe1323b8f0ac711cb68579f20cfc9cb735fd5d78ae89e4473d10796d
+ganache-1  | (9) 0xc35cb344754db96ea1ac71407e385450a1a894c31f35836e8c29be0c91f9f496
+ganache-1  | 
+ganache-1  | HD Wallet
+ganache-1  | ==================
+ganache-1  | Mnemonic:      toward arrow crunch search glory result young allow horn bacon lift display
+ganache-1  | Base HD Path:  m/44'/60'/0'/0/{account_index}
+ganache-1  | 
+ganache-1  | Gas Price
+ganache-1  | ==================
+ganache-1  | 20000000000
+ganache-1  | 
+ganache-1  | Gas Limit
+ganache-1  | ==================
+ganache-1  | 6721975
+ganache-1  | 
+ganache-1  | Call Gas Limit
+ganache-1  | ==================
+ganache-1  | 9007199254740991
+ganache-1  | 
+ganache-1  | Listening on 0.0.0.0:8545
+
+

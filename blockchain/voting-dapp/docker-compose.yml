@@ -1,0 +1,20 @@
+services:
+  ganache:
+    image: trufflesuite/ganache-cli
+    ports:
+      - "8545:8545"
+    # command: --chain.chainId 1337 --wallet.totalAccounts 10 --wallet.defaultBalance 1000
+    command: >
+      -p 8545
+      -a 10
+      -e 1000
+      -i 1337
+
+  compiler:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile-c
+    volumes:
+      - .:/app
+    depends_on:
+      - ganache
