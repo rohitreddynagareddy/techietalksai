@@ -119,3 +119,4 @@ sree/
 
 node_modules/
 
+llm/pipeline/llm-pipeline/step1_train_custom/output_model/
