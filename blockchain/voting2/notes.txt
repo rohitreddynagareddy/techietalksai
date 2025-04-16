@@ -1,0 +1,712 @@
+
+
+docker compose up
+
+
+ganache-1  | ganache v7.9.2 (@ganache/cli: 0.10.2, @ganache/core: 0.10.2)
+ganache-1  | Starting RPC server
+ganache-1  | (node:1) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+ganache-1  | (Use `node --trace-deprecation ...` to show where the warning was created)
+ganache-1  | 
+ganache-1  | Available Accounts
+ganache-1  | ==================
+ganache-1  | (0) 0x627306090abaB3A6e1400e9345bC60c78a8BEf57 (1000 ETH)
+ganache-1  | (1) 0xf17f52151EbEF6C7334FAD080c5704D77216b732 (1000 ETH)
+ganache-1  | (2) 0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef (1000 ETH)
+ganache-1  | (3) 0x821aEa9a577a9b44299B9c15c88cf3087F3b5544 (1000 ETH)
+ganache-1  | (4) 0x0d1d4e623D10F9FBA5Db95830F7d3839406C6AF2 (1000 ETH)
+ganache-1  | (5) 0x2932b7A2355D6fecc4b5c0B6BD44cC31df247a2e (1000 ETH)
+ganache-1  | (6) 0x2191eF87E392377ec08E7c08Eb105Ef5448eCED5 (1000 ETH)
+ganache-1  | (7) 0x0F4F2Ac550A1b4e2280d04c21cEa7EBD822934b5 (1000 ETH)
+ganache-1  | (8) 0x6330A553Fc93768F612722BB8c2eC78aC90B3bbc (1000 ETH)
+ganache-1  | (9) 0x5AEDA56215b167893e80B4fE645BA6d5Bab767DE (1000 ETH)
+ganache-1  | 
+ganache-1  | Private Keys
+ganache-1  | ==================
+ganache-1  | (0) 0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3
+ganache-1  | (1) 0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f
+ganache-1  | (2) 0x0dbbe8e4ae425a6d2687f1a7e3ba17bc98c673636790f1b8ad91193c05875ef1
+ganache-1  | (3) 0xc88b703fb08cbea894b6aeff5a544fb92e78a18e19814cd85da83b71f772aa6c
+ganache-1  | (4) 0x388c684f0ba1ef5017716adb5d21a053ea8e90277d0868337519f97bede61418
+ganache-1  | (5) 0x659cbb0e2411a44db63778987b1e22153c086a95eb6b18bdf89de078917abc63
+ganache-1  | (6) 0x82d052c865f5763aad42add438569276c00d3d88a2d062d36b2bae914d58b8c8
+ganache-1  | (7) 0xaa3680d5d48a8283413f7a108367c7299ca73f553735860a87b08f39395618b7
+ganache-1  | (8) 0x0f62d96d6675f32685bbdb8ac13cda7c23436f63efbb9d07700d8669ff12b7c4
+ganache-1  | (9) 0x8d5366123cb560bb606379f90a0bfd4769eecc0557f1b362dcae9012b548b1e5
+ganache-1  | 
+ganache-1  | HD Wallet
+ganache-1  | ==================
+ganache-1  | Mnemonic:      candy maple cake sugar pudding cream honey rich smooth crumble sweet treat
+ganache-1  | Base HD Path:  m/44'/60'/0'/0/{account_index}
+ganache-1  | 
+ganache-1  | Default Gas Price
+ganache-1  | ==================
+ganache-1  | 2000000000
+ganache-1  | 
+ganache-1  | BlockGas Limit
+ganache-1  | ==================
+ganache-1  | 30000000
+ganache-1  | 
+ganache-1  | Call Gas Limit
+ganache-1  | ==================
+ganache-1  | 50000000
+ganache-1  | 
+ganache-1  | Chain
+ganache-1  | ==================
+ganache-1  | Hardfork: shanghai
+ganache-1  | Id:       1337
+ganache-1  | 
+ganache-1  | RPC Listening on 0.0.0.0:8545
+
+
+
+This will:
+Start Ganache on localhost:8545.
+Compile the Voting.sol contract.
+Deploy it to Ganache with candidates ["Alice", "Bob", "Charlie"] (configured in the migration script below).
+
+
+
+curl -X POST -H "Content-Type: application/json" --data '{
+  "jsonrpc": "2.0",
+  "method": "eth_call",
+  "params": [{
+    "to": "<CONTRACT_ADDRESS>",
+    "data": "0xc89efdaa"
+  }, "latest"],
+  "id": 1
+}' http://localhost:8545
+
+curl -X POST -H "Content-Type: application/json" --data '{
+  "jsonrpc": "2.0",
+  "method": "eth_call",
+  "params": [{
+    "to": "0x627306090abaB3A6e1400e9345bC60c78a8BEf57",
+    "data": "0xc89efdaa"
+  }, "latest"],
+  "id": 1
+}' http://localhost:8545 | jq
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": "0x"
+}
+
+
+curl -X POST -H "Content-Type: application/json" --data '{
+  "jsonrpc": "2.0",
+  "method": "eth_call",
+  "params": [{
+    "to": "0x627306090abaB3A6e1400e9345bC60c78a8BEf57",
+    "data": "0xc89efdaa"
+  }, "latest"],
+  "id": 1
+}' http://localhost:8545 | jq
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": "0x"
+}
+
+(base) Sreeprakashs-MacBook-Pro:voting2 sree$ docker compose up --build
+WARN[0000] Found orphan containers ([voting2-truffle-run-025a4cb959f3 voting2-truffle-run-43fffa4d662d]) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up. 
+[+] Running 3/3
+ ✔ Network voting2_blockchain-net  Created                                                                                             0.0s 
+ ✔ Container voting2-ganache-1     Created                                                                                             0.0s 
+ ✔ Container voting2-truffle-1     Created                                                                                             0.0s 
+Attaching to ganache-1, truffle-1
+ganache-1  | ganache v7.9.2 (@ganache/cli: 0.10.2, @ganache/core: 0.10.2)
+ganache-1  | Starting RPC server
+ganache-1  | (node:1) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+ganache-1  | (Use `node --trace-deprecation ...` to show where the warning was created)
+ganache-1  | 
+ganache-1  | Available Accounts
+ganache-1  | ==================
+ganache-1  | (0) 0x627306090abaB3A6e1400e9345bC60c78a8BEf57 (1000 ETH)
+ganache-1  | (1) 0xf17f52151EbEF6C7334FAD080c5704D77216b732 (1000 ETH)
+ganache-1  | (2) 0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef (1000 ETH)
+ganache-1  | (3) 0x821aEa9a577a9b44299B9c15c88cf3087F3b5544 (1000 ETH)
+ganache-1  | (4) 0x0d1d4e623D10F9FBA5Db95830F7d3839406C6AF2 (1000 ETH)
+ganache-1  | (5) 0x2932b7A2355D6fecc4b5c0B6BD44cC31df247a2e (1000 ETH)
+ganache-1  | (6) 0x2191eF87E392377ec08E7c08Eb105Ef5448eCED5 (1000 ETH)
+ganache-1  | (7) 0x0F4F2Ac550A1b4e2280d04c21cEa7EBD822934b5 (1000 ETH)
+ganache-1  | (8) 0x6330A553Fc93768F612722BB8c2eC78aC90B3bbc (1000 ETH)
+ganache-1  | (9) 0x5AEDA56215b167893e80B4fE645BA6d5Bab767DE (1000 ETH)
+ganache-1  | 
+ganache-1  | Private Keys
+ganache-1  | ==================
+ganache-1  | (0) 0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3
+ganache-1  | (1) 0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f
+ganache-1  | (2) 0x0dbbe8e4ae425a6d2687f1a7e3ba17bc98c673636790f1b8ad91193c05875ef1
+ganache-1  | (3) 0xc88b703fb08cbea894b6aeff5a544fb92e78a18e19814cd85da83b71f772aa6c
+ganache-1  | (4) 0x388c684f0ba1ef5017716adb5d21a053ea8e90277d0868337519f97bede61418
+ganache-1  | (5) 0x659cbb0e2411a44db63778987b1e22153c086a95eb6b18bdf89de078917abc63
+ganache-1  | (6) 0x82d052c865f5763aad42add438569276c00d3d88a2d062d36b2bae914d58b8c8
+ganache-1  | (7) 0xaa3680d5d48a8283413f7a108367c7299ca73f553735860a87b08f39395618b7
+ganache-1  | (8) 0x0f62d96d6675f32685bbdb8ac13cda7c23436f63efbb9d07700d8669ff12b7c4
+ganache-1  | (9) 0x8d5366123cb560bb606379f90a0bfd4769eecc0557f1b362dcae9012b548b1e5
+ganache-1  | 
+ganache-1  | HD Wallet
+ganache-1  | ==================
+ganache-1  | Mnemonic:      candy maple cake sugar pudding cream honey rich smooth crumble sweet treat
+ganache-1  | Base HD Path:  m/44'/60'/0'/0/{account_index}
+ganache-1  | 
+ganache-1  | Default Gas Price
+ganache-1  | ==================
+ganache-1  | 2000000000
+ganache-1  | 
+ganache-1  | BlockGas Limit
+ganache-1  | ==================
+ganache-1  | 30000000
+ganache-1  | 
+ganache-1  | Call Gas Limit
+ganache-1  | ==================
+ganache-1  | 50000000
+ganache-1  | 
+ganache-1  | Chain
+ganache-1  | ==================
+ganache-1  | Hardfork: shanghai
+ganache-1  | Id:       1337
+ganache-1  | 
+ganache-1  | RPC Listening on 0.0.0.0:8545
+
+truffle-1  | npm WARN deprecated rimraf@2.7.1: Rimraf versions prior to v4 are no longer supported
+truffle-1  | npm WARN deprecated yaeti@0.0.6: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated har-validator@5.1.5: this library is no longer supported
+truffle-1  | npm WARN deprecated mkdirp-promise@5.0.1: This package is broken and no longer maintained. 'mkdirp' itself supports promises now, please switch to that.
+truffle-1  | npm WARN deprecated request@2.88.2: request has been deprecated, see https://github.com/request/request/issues/3142
+truffle-1  | npm WARN deprecated memdown@1.4.1: Superseded by memory-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated deferred-leveldown@5.3.0: Superseded by abstract-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated level-js@5.0.2: Superseded by browser-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated encoding-down@6.3.0: Superseded by abstract-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated level-errors@2.0.1: Superseded by abstract-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated level-packager@5.1.1: Superseded by abstract-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated levelup@4.4.0: Superseded by abstract-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated level-codec@9.0.2: Superseded by level-transcoder (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+truffle-1  | npm WARN deprecated leveldown@5.6.0: Superseded by classic-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated glob@7.2.0: Glob versions prior to v9 are no longer supported
+truffle-1  | npm WARN deprecated multicodec@0.5.7: This module has been superseded by the multiformats module
+truffle-1  | npm WARN deprecated multibase@0.6.1: This module has been superseded by the multiformats module
+truffle-1  | npm WARN deprecated cids@0.7.5: This module has been superseded by the multiformats module
+truffle-1  | npm WARN deprecated apollo-server-errors@3.3.1: The `apollo-server-errors` package is part of Apollo Server v2 and v3, which are now end-of-life (as of October 22nd 2023 and October 22nd 2024, respectively). This package's functionality is now found in the `@apollo/server` package. See https://www.apollographql.com/docs/apollo-server/previous-versions/ for more details.
+truffle-1  | npm WARN deprecated apollo-datasource@3.3.2: The `apollo-datasource` package is part of Apollo Server v2 and v3, which are now end-of-life (as of October 22nd 2023 and October 22nd 2024, respectively). See https://www.apollographql.com/docs/apollo-server/previous-versions/ for more details.
+truffle-1  | npm WARN deprecated apollo-server-env@4.2.1: The `apollo-server-env` package is part of Apollo Server v2 and v3, which are now end-of-life (as of October 22nd 2023 and October 22nd 2024, respectively). This package's functionality is now found in the `@apollo/utils.fetcher` package. See https://www.apollographql.com/docs/apollo-server/previous-versions/ for more details.
+truffle-1  | npm WARN deprecated apollo-reporting-protobuf@3.4.0: The `apollo-reporting-protobuf` package is part of Apollo Server v2 and v3, which are now end-of-life (as of October 22nd 2023 and October 22nd 2024, respectively). This package's functionality is now found in the `@apollo/usage-reporting-protobuf` package. See https://www.apollographql.com/docs/apollo-server/previous-versions/ for more details.
+truffle-1  | npm WARN deprecated apollo-server-plugin-base@3.7.2: The `apollo-server-plugin-base` package is part of Apollo Server v2 and v3, which are now end-of-life (as of October 22nd 2023 and October 22nd 2024, respectively). This package's functionality is now found in the `@apollo/server` package. See https://www.apollographql.com/docs/apollo-server/previous-versions/ for more details.
+truffle-1  | npm WARN deprecated apollo-server-types@3.8.0: The `apollo-server-types` package is part of Apollo Server v2 and v3, which are now end-of-life (as of October 22nd 2023 and October 22nd 2024, respectively). This package's functionality is now found in the `@apollo/server` package. See https://www.apollographql.com/docs/apollo-server/previous-versions/ for more details.
+truffle-1  | npm WARN deprecated apollo-server-express@3.13.0: The `apollo-server-express` package is part of Apollo Server v2 and v3, which are now end-of-life (as of October 22nd 2023 and October 22nd 2024, respectively). This package's functionality is now found in the `@apollo/server` package. See https://www.apollographql.com/docs/apollo-server/previous-versions/ for more details.
+truffle-1  | npm WARN deprecated level-concat-iterator@3.1.0: Superseded by abstract-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated apollo-server-core@3.13.0: The `apollo-server-core` package is part of Apollo Server v2 and v3, which are now end-of-life (as of October 22nd 2023 and October 22nd 2024, respectively). This package's functionality is now found in the `@apollo/server` package. See https://www.apollographql.com/docs/apollo-server/previous-versions/ for more details.
+truffle-1  | npm WARN deprecated @truffle/spinners@0.2.5: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated @truffle/dashboard-message-bus-common@0.1.7: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated @truffle/interface-adapter@0.5.37: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated @truffle/dashboard-message-bus-client@0.1.12: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated testrpc@0.0.1: testrpc has been renamed to ganache-cli, please use this package from now on.
+truffle-1  | npm WARN deprecated @truffle/promise-tracker@0.1.7: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated @truffle/compile-common@0.9.8: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated @ensdomains/resolver@0.2.4: Please use @ensdomains/ens-contracts
+truffle-1  | npm WARN deprecated @truffle/source-map-utils@1.3.119: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated @truffle/error@0.2.2: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated @truffle/provider@0.3.13: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated @truffle/events@0.1.25: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated apollo-server@3.13.0: The `apollo-server` package is part of Apollo Server v2 and v3, which are now end-of-life (as of October 22nd 2023 and October 22nd 2024, respectively). This package's functionality is now found in the `@apollo/server` package. See https://www.apollographql.com/docs/apollo-server/previous-versions/ for more details.
+truffle-1  | npm WARN deprecated @truffle/config@1.3.61: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated abstract-leveldown@7.2.0: Superseded by abstract-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated @ensdomains/ens@0.4.5: Please use @ensdomains/ens-contracts
+truffle-1  | npm WARN deprecated @truffle/code-utils@3.0.4: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated @truffle/abi-utils@1.0.3: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated @truffle/db-loader@0.2.36: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated @truffle/debugger@12.1.5: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+truffle-1  | npm WARN deprecated abstract-leveldown@2.7.2: Superseded by abstract-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated level-concat-iterator@2.0.1: Superseded by abstract-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated level-concat-iterator@2.0.1: Superseded by abstract-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated abstract-leveldown@6.2.3: Superseded by abstract-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated abstract-leveldown@6.3.0: Superseded by abstract-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated level-concat-iterator@2.0.1: Superseded by abstract-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated abstract-leveldown@6.2.3: Superseded by abstract-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated level-concat-iterator@2.0.1: Superseded by abstract-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated @truffle/db@2.0.36: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated abstract-leveldown@6.2.3: Superseded by abstract-level (https://github.com/Level/community#faq)
+truffle-1  | npm WARN deprecated @truffle/codec@0.17.3: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+truffle-1  | npm WARN deprecated multibase@0.7.0: This module has been superseded by the multiformats module
+truffle-1  | npm WARN deprecated multicodec@1.0.4: This module has been superseded by the multiformats module
+truffle-1  | npm WARN deprecated uuid@2.0.1: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+
+truffle-1  | added 1168 packages, and audited 1198 packages in 53s
+truffle-1  | 
+truffle-1  | 123 packages are looking for funding
+truffle-1  |   run `npm fund` for details
+truffle-1  | 
+truffle-1  | 43 vulnerabilities (1 low, 17 moderate, 23 high, 2 critical)
+truffle-1  | 
+truffle-1  | To address all issues, run:
+truffle-1  |   npm audit fix
+truffle-1  | 
+truffle-1  | Run `npm audit` for details.
+truffle-1  | npm notice 
+truffle-1  | npm notice New major version of npm available! 8.19.4 -> 11.3.0
+truffle-1  | npm notice Changelog: <https://github.com/npm/cli/releases/tag/v11.3.0>
+truffle-1  | npm notice Run `npm install -g npm@11.3.0` to update!
+truffle-1  | npm notice 
+truffle-1  | 
+truffle-1  | Compiling your contracts...
+truffle-1  | ===========================
+truffle-1  | - Fetching solc version list from solc-bin. Attempt #1
+truffle-1  | - Fetching solc version list from solc-bin. Attempt #1
+truffle-1  | - Fetching solc version list from solc-bin. Attempt #1
+truffle-1  | - Downloading compiler. Attempt #1.
+truffle-1  | - Fetching solc version list from solc-bin. Attempt #1
+truffle-1  | - Downloading compiler. Attempt #1.
+truffle-1  | > Everything is up to date, there is nothing to compile.
+truffle-1  | 
+truffle-1  | Compiling your contracts...
+truffle-1  | ===========================
+truffle-1  | > Everything is up to date, there is nothing to compile.
+ganache-1  | eth_blockNumber
+ganache-1  | net_version
+ganache-1  | eth_accounts
+truffle-1  | 
+ganache-1  | eth_getBlockByNumber
+truffle-1  | 
+truffle-1  | Starting migrations...
+truffle-1  | ======================
+truffle-1  | > Network name:    'ganache'
+truffle-1  | > Network id:      1744801228232
+truffle-1  | > Block gas limit: 30000000 (0x1c9c380)
+ganache-1  | eth_accounts
+truffle-1  | 
+truffle-1  | 
+truffle-1  | 1_deploy_voting.js
+truffle-1  | ==================
+ganache-1  | net_version
+ganache-1  | eth_getBlockByNumber
+ganache-1  | eth_getBlockByNumber
+ganache-1  | net_version
+ganache-1  | eth_getBlockByNumber
+ganache-1  | eth_estimateGas
+truffle-1  | 
+truffle-1  |    Deploying 'Voting'
+truffle-1  |    ------------------
+ganache-1  | net_version
+ganache-1  | eth_blockNumber
+ganache-1  | eth_getBlockByNumber
+ganache-1  | eth_estimateGas
+ganache-1  | eth_getBlockByNumber
+ganache-1  | eth_gasPrice
+ganache-1  | eth_sendTransaction
+ganache-1  | 
+ganache-1  |   Transaction: 0xd1deae3db2c602978ed0eb2091d2ab7fae5694d4bcb1af73618b3cf76a680deb
+ganache-1  |   Contract created: 0x8cdaf0cd259887258bc13a92c0a6da92698644c0
+ganache-1  |   Gas usage: 917276
+ganache-1  |   Block number: 1
+ganache-1  |   Block time: Wed Apr 16 2025 11:01:32 GMT+0000 (Coordinated Universal Time)
+ganache-1  | 
+truffle-1  |    > transaction hash:    0xd1deae3db2c602978ed0eb2091d2ab7fae5694d4bcb1af73618b3cf76a680deb
+truffle-1  | - Blocks: 0            Seconds: 0
+ganache-1  | eth_getTransactionReceipt
+ganache-1  | eth_getCode
+ganache-1  | eth_getTransactionByHash
+ganache-1  | eth_getBlockByNumber
+ganache-1  | eth_getBalance
+truffle-1  |    > Blocks: 0            Seconds: 0
+truffle-1  |    > contract address:    0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0
+truffle-1  |    > block number:        1
+truffle-1  |    > block timestamp:     1744801292
+truffle-1  |    > account:             0x627306090abaB3A6e1400e9345bC60c78a8BEf57
+truffle-1  |    > balance:             999.9969041935
+truffle-1  |    > gas used:            917276 (0xdff1c)
+truffle-1  |    > gas price:           3.375 gwei
+truffle-1  |    > value sent:          0 ETH
+truffle-1  |    > total cost:          0.0030958065 ETH
+truffle-1  | 
+truffle-1  |    > Saving artifacts
+truffle-1  |    -------------------------------------
+truffle-1  |    > Total cost:        0.0030958065 ETH
+truffle-1  | 
+truffle-1  | Summary
+truffle-1  | =======
+truffle-1  | > Total deployments:   1
+truffle-1  | > Final cost:          0.0030958065 ETH
+truffle-1  | 
+truffle-1  | 
+truffle-1 exited with code 0
+
+curl -X POST -H "Content-Type: application/json" --data '{
+  "jsonrpc": "2.0",
+  "method": "eth_call",
+  "params": [{
+    "to": "0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0",
+    "data": "0xc89efdaa"
+  }, "latest"],
+  "id": 1
+}' http://localhost:8545 | jq
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "error": {
+    "message": "VM Exception while processing transaction: revert",
+    "stack": "CallError: VM Exception while processing transaction: revert\n    at Blockchain.simulateTransaction (/app/dist/node/1.js:2:100650)",
+    "code": -32000,
+    "name": "CallError",
+    "data": "0x"
+  }
+}
+
+
+curl -X POST -H "Content-Type: application/json" --data '{
+  "jsonrpc": "2.0",
+  "method": "eth_getCode",
+  "params": ["0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0", "latest"],
+  "id": 1
+}' http://localhost:8545 | jq
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": "0x608060405234801561001057600080fd5b50600436106100625760003560e01c806306a49fce146100675780633477ee2e14610085578063805265e5146100b5578063a3ec138d146100e5578063b99ef1fa14610115578063fc36e15b14610145575b600080fd5b61006f610161565b60405161007c9190610977565b60405180910390f35b61009f600480360381019061009a91906106d7565b61023a565b6040516100ac91906109b4565b60405180910390f35b6100cf60048036038101906100ca9190610696565b6102e6565b6040516100dc9190610a16565b60405180910390f35b6100ff60048036038101906100fa919061066d565b610356565b60405161010c9190610999565b60405180910390f35b61012f600480360381019061012a9190610696565b610376565b60405161013c9190610a16565b60405180910390f35b61015f600480360381019061015a9190610696565b6103a4565b005b60606002805480602002602001604051908101604052809291908181526020016000905b828210156102315783829060005260206000200180546101a490610bf8565b80601f01602080910402602001604051908101604052809291908181526020018280546101d090610bf8565b801561021d5780601f106101f25761010080835404028352916020019161021d565b820191906000526020600020905b81548152906001019060200180831161020057829003601f168201915b505050505081526020019060010190610185565b50505050905090565b6002818154811061024a57600080fd5b90600052602060002001600091509050805461026590610bf8565b80601f016020809104026020016040519081016040528092919081815260200182805461029190610bf8565b80156102de5780601f106102b3576101008083540402835291602001916102de565b820191906000526020600020905b8154815290600101906020018083116102c157829003601f168201915b505050505081565b60006102f182610507565b610330576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401610327906109f6565b60405180910390fd5b6001826040516103409190610949565b9081526020016040518091039020549050919050565b60006020528060005260406000206000915054906101000a900460ff1681565b6001818051602081018201805184825260208301602085012081835280955050505050506000915090505481565b6000803373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900460ff1615610430576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401610427906109d6565b60405180910390fd5b61043981610507565b610478576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161046f906109f6565b60405180910390fd5b60016000803373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff021916908315150217905550600180826040516104e09190610949565b908152602001604051809103902060008282546104fd9190610b18565b9250508190555050565b600080600090505b6002805490508110156105d0578260405160200161052d9190610949565b604051602081830303815290604052805190602001206002828154811061057d577f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fd5b906000526020600020016040516020016105979190610960565b6040516020818303038152906040528051906020012014156105bd5760019150506105d6565b80806105c890610c2a565b91505061050f565b50600090505b919050565b60006105ee6105e984610a62565b610a31565b90508281526020810184848401111561060657600080fd5b610611848285610bb6565b509392505050565b60008135905061062881610d11565b92915050565b600082601f83011261063f57600080fd5b813561064f8482602086016105db565b91505092915050565b60008135905061066781610d28565b92915050565b60006020828403121561067f57600080fd5b600061068d84828501610619565b91505092915050565b6000602082840312156106a857600080fd5b600082013567ffffffffffffffff8111156106c257600080fd5b6106ce8482850161062e565b91505092915050565b6000602082840312156106e957600080fd5b60006106f784828501610658565b91505092915050565b600061070c8383610798565b905092915050565b600061071f82610ab7565b6107298185610ada565b93508360208202850161073b85610a92565b8060005b8581101561077757848403895281516107588582610700565b945061076383610acd565b925060208a0199505060018101905061073f565b50829750879550505050505092915050565b61079281610b80565b82525050565b60006107a382610ac2565b6107ad8185610aeb565b93506107bd818560208601610bc5565b6107c681610d00565b840191505092915050565b60006107dc82610ac2565b6107e68185610afc565b93506107f6818560208601610bc5565b6107ff81610d00565b840191505092915050565b600061081582610ac2565b61081f8185610b0d565b935061082f818560208601610bc5565b80840191505092915050565b6000815461084881610bf8565b6108528186610b0d565b9450600182166000811461086d576001811461087e576108b1565b60ff198316865281860193506108b1565b61088785610aa2565b60005b838110156108a95781548189015260018201915060208101905061088a565b838801955050505b50505092915050565b60006108c7600d83610afc565b91507f416c726561647920766f746564000000000000000000000000000000000000006000830152602082019050919050565b6000610907601183610afc565b91507f496e76616c69642063616e6469646174650000000000000000000000000000006000830152602082019050919050565b61094381610bac565b82525050565b6000610955828461080a565b915081905092915050565b600061096c828461083b565b915081905092915050565b600060208201905081810360008301526109918184610714565b905092915050565b60006020820190506109ae6000830184610789565b92915050565b600060208201905081810360008301526109ce81846107d1565b905092915050565b600060208201905081810360008301526109ef816108ba565b9050919050565b60006020820190508181036000830152610a0f816108fa565b9050919050565b6000602082019050610a2b600083018461093a565b92915050565b6000604051905081810181811067ffffffffffffffff82111715610a5857610a57610cd1565b5b8060405250919050565b600067ffffffffffffffff821115610a7d57610a7c610cd1565b5b601f19601f8301169050602081019050919050565b6000819050602082019050919050565b60008190508160005260206000209050919050565b600081519050919050565b600081519050919050565b6000602082019050919050565b600082825260208201905092915050565b600082825260208201905092915050565b600082825260208201905092915050565b600081905092915050565b6000610b2382610bac565b9150610b2e83610bac565b9250827fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff03821115610b6357610b62610c73565b5b828201905092915050565b6000610b7982610b8c565b9050919050565b60008115159050919050565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b6000819050919050565b82818337600083830152505050565b60005b83811015610be3578082015181840152602081019050610bc8565b83811115610bf2576000848401525b50505050565b60006002820490506001821680610c1057607f821691505b60208210811415610c2457610c23610ca2565b5b50919050565b6000610c3582610bac565b91507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff821415610c6857610c67610c73565b5b600182019050919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052602260045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b6000601f19601f8301169050919050565b610d1a81610b6e565b8114610d2557600080fd5b50565b610d3181610bac565b8114610d3c57600080fd5b5056fea26469706673582212207f5c9350da9c96a05530aab20e986c0bd52278f42f82c240f97d48322ed8f29b64736f6c63430008000033"
+}
+
+
+
+ganache-1  | Available Accounts
+ganache-1  | ==================
+ganache-1  | (0) 0x627306090abaB3A6e1400e9345bC60c78a8BEf57 (1000 ETH)
+ganache-1  | (1) 0xf17f52151EbEF6C7334FAD080c5704D77216b732 (1000 ETH)
+ganache-1  | (2) 0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef (1000 ETH)
+ganache-1  | (3) 0x821aEa9a577a9b44299B9c15c88cf3087F3b5544 (1000 ETH)
+ganache-1  | (4) 0x0d1d4e623D10F9FBA5Db95830F7d3839406C6AF2 (1000 ETH)
+ganache-1  | (5) 0x2932b7A2355D6fecc4b5c0B6BD44cC31df247a2e (1000 ETH)
+ganache-1  | (6) 0x2191eF87E392377ec08E7c08Eb105Ef5448eCED5 (1000 ETH)
+ganache-1  | (7) 0x0F4F2Ac550A1b4e2280d04c21cEa7EBD822934b5 (1000 ETH)
+ganache-1  | (8) 0x6330A553Fc93768F612722BB8c2eC78aC90B3bbc (1000 ETH)
+ganache-1  | (9) 0x5AEDA56215b167893e80B4fE645BA6d5Bab767DE (1000 ETH)
+ganache-1  | 
+ganache-1  | Private Keys
+ganache-1  | ==================
+ganache-1  | (0) 0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3
+ganache-1  | (1) 0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f
+ganache-1  | (2) 0x0dbbe8e4ae425a6d2687f1a7e3ba17bc98c673636790f1b8ad91193c05875ef1
+ganache-1  | (3) 0xc88b703fb08cbea894b6aeff5a544fb92e78a18e19814cd85da83b71f772aa6c
+ganache-1  | (4) 0x388c684f0ba1ef5017716adb5d21a053ea8e90277d0868337519f97bede61418
+ganache-1  | (5) 0x659cbb0e2411a44db63778987b1e22153c086a95eb6b18bdf89de078917abc63
+ganache-1  | (6) 0x82d052c865f5763aad42add438569276c00d3d88a2d062d36b2bae914d58b8c8
+ganache-1  | (7) 0xaa3680d5d48a8283413f7a108367c7299ca73f553735860a87b08f39395618b7
+ganache-1  | (8) 0x0f62d96d6675f32685bbdb8ac13cda7c23436f63efbb9d07700d8669ff12b7c4
+ganache-1  | (9) 0x8d5366123cb560bb606379f90a0bfd4769eecc0557f1b362dcae9012b548b1e5
+ganache-1  | 
+ganache-1  | HD Wallet
+ganache-1  | ==================
+ganache-1  | Mnemonic:      candy maple cake sugar pudding cream honey rich smooth crumble sweet treat
+ganache-1  | Base HD Path:  m/44'/60'/0'/0/{account_index}
+ganache-1  | 
+ganache-1  | Default Gas Price
+ganache-1  | ==================
+ganache-1  | 2000000000
+ganache-1  | 
+ganache-1  | BlockGas Limit
+ganache-1  | ==================
+ganache-1  | 30000000
+ganache-1  | 
+ganache-1  | Call Gas Limit
+ganache-1  | ==================
+ganache-1  | 50000000
+ganache-1  | 
+ganache-1  | Chain
+ganache-1  | ==================
+ganache-1  | Hardfork: shanghai
+ganache-1  | Id:       1337
+ganache-1  | 
+ganache-1  | RPC Listening on 0.0.0.0:8545
+truffle-1  | 
+truffle-1  | up to date, audited 1198 packages in 9s
+truffle-1  | 
+truffle-1  | 123 packages are looking for funding
+truffle-1  |   run `npm fund` for details
+truffle-1  | 
+truffle-1  | 43 vulnerabilities (1 low, 17 moderate, 23 high, 2 critical)
+truffle-1  | 
+truffle-1  | To address issues that do not require attention, run:
+truffle-1  |   npm audit fix
+truffle-1  | 
+truffle-1  | To address all issues (including breaking changes), run:
+truffle-1  |   npm audit fix --force
+truffle-1  | 
+truffle-1  | Run `npm audit` for details.
+truffle-1  | npm notice 
+truffle-1  | npm notice New major version of npm available! 8.19.4 -> 11.3.0
+truffle-1  | npm notice Changelog: <https://github.com/npm/cli/releases/tag/v11.3.0>
+truffle-1  | npm notice Run `npm install -g npm@11.3.0` to update!
+truffle-1  | npm n
+
+truffle-1  |    > transaction hash:    0xd1deae3db2c602978ed0eb2091d2ab7fae5694d4bcb1af73618b3cf76a680deb
+truffle-1  | - Blocks: 0            Seconds: 0
+ganache-1  | eth_getTransactionReceipt
+ganache-1  | eth_getCode
+ganache-1  | eth_getTransactionByHash
+ganache-1  | eth_getBlockByNumber
+ganache-1  | eth_getBalance
+truffle-1  |    > Blocks: 0            Seconds: 0
+truffle-1  |    > contract address:    0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0
+truffle-1  |    > block number:        1
+truffle-1  |    > block timestamp:     1744801651
+truffle-1  |    > account:             0x627306090abaB3A6e1400e9345bC60c78a8BEf57
+truffle-1  |    > balance:             999.9969041935
+truffle-1  |    > gas used:            917276 (0xdff1c)
+truffle-1  |    > gas price:           3.375 gwei
+truffle-1  |    > value sent:          0 ETH
+truffle-1  |    > total cost:          0.0030958065 ETH
+truffle-1  | 
+truffle-1  |    > Saving artifacts
+truffle-1  |    -------------------------------------
+truffle-1  |    > Total cost:        0.0030958065 ETH
+truffle-1  | 
+truffle-1  | Summary
+truffle-1  | =======
+truffle-1  | > Total deployments:   1
+truffle-1  | > Final cost:          0.0030958065 ETH
+truffle-1  | 
+
+
+curl -X POST -H "Content-Type: application/json" --data '{
+  "jsonrpc": "2.0",
+  "method": "eth_call",
+  "params": [{
+    "to": "0xNewAddress",
+    "data": "0xc89efdaa"
+  }, "latest"],
+  "id": 1
+}' http://localhost:8545 | jq
+
+
+
+curl -X POST -H "Content-Type: application/json" --data '{
+  "jsonrpc": "2.0",
+  "method": "eth_call",
+  "params": [{
+    "to": "0x627306090abaB3A6e1400e9345bC60c78a8BEf57",
+    "data": "0xc89efdaa"
+  }, "latest"],
+  "id": 1
+}' http://localhost:8545 | jq
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": "0x"
+}
+
+
+docker compose run truffle bash -c "npm install truffle && npx truffle migrate --network ganache"
+[+] Creating 1/1
+ ✔ Container voting2-ganache-1  Running                                                                                                0.0s 
+
+up to date, audited 1198 packages in 10s
+
+123 packages are looking for funding
+  run `npm fund` for details
+
+43 vulnerabilities (1 low, 17 moderate, 23 high, 2 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+npm notice 
+npm notice New major version of npm available! 8.19.4 -> 11.3.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.3.0
+npm notice Run npm install -g npm@11.3.0 to update!
+npm notice 
+
+Compiling your contracts...
+===========================
+✓ Fetching solc version list from solc-bin. Attempt #1
+✓ Downloading compiler. Attempt #1.
+> Everything is up to date, there is nothing to compile.
+
+
+Starting migrations...
+======================
+> Network name:    'ganache'
+> Network id:      1744801631229
+> Block gas limit: 30000000 (0x1c9c380)
+
+
+1_deploy_voting.js
+==================
+
+   Replacing 'Voting'
+   ------------------
+   > transaction hash:    0xa7d6b95972aee7df842c7ec4fb21cb316488eb97187be695f21c34c3bc553aa6
+   > Blocks: 0            Seconds: 0
+   > contract address:    0xF12b5dd4EAD5F743C6BaA640B0216200e89B60Da
+   > block number:        2
+   > block timestamp:     1744801986
+   > account:             0x627306090abaB3A6e1400e9345bC60c78a8BEf57
+   > balance:             999.993902578888575004
+   > gas used:            917276 (0xdff1c)
+   > gas price:           3.272313471 gwei
+   > value sent:          0 ETH
+   > total cost:          0.003001614611424996 ETH
+
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:     0.003001614611424996 ETH
+
+
+2_deploy_voting.js
+==================
+
+   Replacing 'Voting'
+   ------------------
+   > transaction hash:    0x85b7c3c517e77484a5feb5fedcf971ab741af66d0930ad088146bbe3ed79c3f3
+   > Blocks: 0            Seconds: 0
+   > contract address:    0x345cA3e014Aaf5dcA488057592ee47305D9B3e10
+   > block number:        3
+   > block timestamp:     1744801986
+   > account:             0x627306090abaB3A6e1400e9345bC60c78a8BEf57
+   > balance:             999.990984102179053028
+   > gas used:            917276 (0xdff1c)
+   > gas price:           3.181677826 gwei
+   > value sent:          0 ETH
+   > total cost:          0.002918476709521976 ETH
+
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:     0.002918476709521976 ETH
+
+Summary
+=======
+> Total deployments:   2
+> Final cost:          0.005920091320946972 ETH
+
+
+
+curl -X POST -H "Content-Type: application/json" --data '{
+  "jsonrpc": "2.0",
+  "method": "eth_call",
+  "params": [{
+    "to": "0x627306090abaB3A6e1400e9345bC60c78a8BEf57",
+    "data": "0xc89efdaa"
+  }, "latest"],
+  "id": 1
+}' http://localhost:8545 | jq
+
+curl -X POST -H "Content-Type: application/json" --data '{
+  "jsonrpc": "2.0",
+  "method": "eth_getCode",
+  "params": ["0x345cA3e014Aaf5dcA488057592ee47305D9B3e10", "latest"],
+  "id": 1
+}' http://localhost:8545 | jq
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": "0x608060405234801561001057600080fd5b50600436106100625760003560e01c806306a49fce146100675780633477ee2e14610085578063805265e5146100b5578063a3ec138d146100e5578063b99ef1fa14610115578063fc36e15b14610145575b600080fd5b61006f610161565b60405161007c9190610977565b60405180910390f35b61009f600480360381019061009a91906106d7565b61023a565b6040516100ac91906109b4565b60405180910390f35b6100cf60048036038101906100ca9190610696565b6102e6565b6040516100dc9190610a16565b60405180910390f35b6100ff60048036038101906100fa919061066d565b610356565b60405161010c9190610999565b60405180910390f35b61012f600480360381019061012a9190610696565b610376565b60405161013c9190610a16565b60405180910390f35b61015f600480360381019061015a9190610696565b6103a4565b005b60606002805480602002602001604051908101604052809291908181526020016000905b828210156102315783829060005260206000200180546101a490610bf8565b80601f01602080910402602001604051908101604052809291908181526020018280546101d090610bf8565b801561021d5780601f106101f25761010080835404028352916020019161021d565b820191906000526020600020905b81548152906001019060200180831161020057829003601f168201915b505050505081526020019060010190610185565b50505050905090565b6002818154811061024a57600080fd5b90600052602060002001600091509050805461026590610bf8565b80601f016020809104026020016040519081016040528092919081815260200182805461029190610bf8565b80156102de5780601f106102b3576101008083540402835291602001916102de565b820191906000526020600020905b8154815290600101906020018083116102c157829003601f168201915b505050505081565b60006102f182610507565b610330576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401610327906109f6565b60405180910390fd5b6001826040516103409190610949565b9081526020016040518091039020549050919050565b60006020528060005260406000206000915054906101000a900460ff1681565b6001818051602081018201805184825260208301602085012081835280955050505050506000915090505481565b6000803373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900460ff1615610430576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401610427906109d6565b60405180910390fd5b61043981610507565b610478576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161046f906109f6565b60405180910390fd5b60016000803373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff021916908315150217905550600180826040516104e09190610949565b908152602001604051809103902060008282546104fd9190610b18565b9250508190555050565b600080600090505b6002805490508110156105d0578260405160200161052d9190610949565b604051602081830303815290604052805190602001206002828154811061057d577f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fd5b906000526020600020016040516020016105979190610960565b6040516020818303038152906040528051906020012014156105bd5760019150506105d6565b80806105c890610c2a565b91505061050f565b50600090505b919050565b60006105ee6105e984610a62565b610a31565b90508281526020810184848401111561060657600080fd5b610611848285610bb6565b509392505050565b60008135905061062881610d11565b92915050565b600082601f83011261063f57600080fd5b813561064f8482602086016105db565b91505092915050565b60008135905061066781610d28565b92915050565b60006020828403121561067f57600080fd5b600061068d84828501610619565b91505092915050565b6000602082840312156106a857600080fd5b600082013567ffffffffffffffff8111156106c257600080fd5b6106ce8482850161062e565b91505092915050565b6000602082840312156106e957600080fd5b60006106f784828501610658565b91505092915050565b600061070c8383610798565b905092915050565b600061071f82610ab7565b6107298185610ada565b93508360208202850161073b85610a92565b8060005b8581101561077757848403895281516107588582610700565b945061076383610acd565b925060208a0199505060018101905061073f565b50829750879550505050505092915050565b61079281610b80565b82525050565b60006107a382610ac2565b6107ad8185610aeb565b93506107bd818560208601610bc5565b6107c681610d00565b840191505092915050565b60006107dc82610ac2565b6107e68185610afc565b93506107f6818560208601610bc5565b6107ff81610d00565b840191505092915050565b600061081582610ac2565b61081f8185610b0d565b935061082f818560208601610bc5565b80840191505092915050565b6000815461084881610bf8565b6108528186610b0d565b9450600182166000811461086d576001811461087e576108b1565b60ff198316865281860193506108b1565b61088785610aa2565b60005b838110156108a95781548189015260018201915060208101905061088a565b838801955050505b50505092915050565b60006108c7600d83610afc565b91507f416c726561647920766f746564000000000000000000000000000000000000006000830152602082019050919050565b6000610907601183610afc565b91507f496e76616c69642063616e6469646174650000000000000000000000000000006000830152602082019050919050565b61094381610bac565b82525050565b6000610955828461080a565b915081905092915050565b600061096c828461083b565b915081905092915050565b600060208201905081810360008301526109918184610714565b905092915050565b60006020820190506109ae6000830184610789565b92915050565b600060208201905081810360008301526109ce81846107d1565b905092915050565b600060208201905081810360008301526109ef816108ba565b9050919050565b60006020820190508181036000830152610a0f816108fa565b9050919050565b6000602082019050610a2b600083018461093a565b92915050565b6000604051905081810181811067ffffffffffffffff82111715610a5857610a57610cd1565b5b8060405250919050565b600067ffffffffffffffff821115610a7d57610a7c610cd1565b5b601f19601f8301169050602081019050919050565b6000819050602082019050919050565b60008190508160005260206000209050919050565b600081519050919050565b600081519050919050565b6000602082019050919050565b600082825260208201905092915050565b600082825260208201905092915050565b600082825260208201905092915050565b600081905092915050565b6000610b2382610bac565b9150610b2e83610bac565b9250827fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff03821115610b6357610b62610c73565b5b828201905092915050565b6000610b7982610b8c565b9050919050565b60008115159050919050565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b6000819050919050565b82818337600083830152505050565b60005b83811015610be3578082015181840152602081019050610bc8565b83811115610bf2576000848401525b50505050565b60006002820490506001821680610c1057607f821691505b60208210811415610c2457610c23610ca2565b5b50919050565b6000610c3582610bac565b91507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff821415610c6857610c67610c73565b5b600182019050919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052602260045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b6000601f19601f8301169050919050565b610d1a81610b6e565b8114610d2557600080fd5b50565b610d3181610bac565b8114610d3c57600080fd5b5056fea26469706673582212207f5c9350da9c96a05530aab20e986c0bd52278f42f82c240f97d48322ed8f29b64736f6c63430008000033"
+}
+
+
+docker compose run truffle bash -c "npm install truffle && npx truffle console --network ganache"
+
+truffle(ganache)>
+
+let voting = await Voting.deployed();
+await voting.getCandidates();
+
+truffle(ganache)> let voting = await Voting.deployed();
+await voting.getCandidates();undefined
+truffle(ganache)> await voting.getCandidates();
+[ 'Alice', 'Bob', 'Charlie' ]
+truffle(ganache)> 
+
+let voting = await Voting.deployed();
+voting.address;
+
+voting.address;Uncaught SyntaxError: Identifier 'voting' has already been declared
+truffle(ganache)> voting.address;
+'0x345cA3e014Aaf5dcA488057592ee47305D9B3e10'
+truffle(ganache)> 
+
+let voting = await Voting.deployed();
+await voting.vote("Alice", { from: "0x627306090abaB3A6e1400e9345bC60c78a8BEf57" });
+let votes = await voting.getVotes("Alice");
+votes.toString(); // Should be "1"
+
+truffle(ganache)> undefinedtring(); // Should be "1"
+truffle(ganache)> {otes.toString(); // Should be "1"
+  tx: '0x49fb4dbe15f28285dc6a56c20cf37c5412b2c9c4c8a0153c40b6c80ee506edd9',
+  receipt: {
+    transactionHash: '0x49fb4dbe15f28285dc6a56c20cf37c5412b2c9c4c8a0153c40b6c80ee506edd9',
+    transactionIndex: 0,
+    blockNumber: 4,
+    blockHash: '0x8eb6d26d2835159ac4a7852878b205ad342780be5e79d802d15ef24b9f1a1160',
+    from: '0x627306090abab3a6e1400e9345bc60c78a8bef57',
+    to: '0x345ca3e014aaf5dca488057592ee47305d9b3e10',
+    cumulativeGasUsed: 73225,
+    gasUsed: 73225,
+    contractAddress: null,
+    logs: [],
+    logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+    status: true,
+    effectiveGasPrice: 3101678821,
+    type: '0x2',
+    rawLogs: []
+  },
+  logs: []
+}
+
+ganache-1  | Available Accounts
+ganache-1  | ==================
+ganache-1  | (0) 0x627306090abaB3A6e1400e9345bC60c78a8BEf57 (1000 ETH)
+ganache-1  | (1) 0xf17f52151EbEF6C7334FAD080c5704D77216b732 (1000 ETH)
+ganache-1  | (2) 0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef (1000 ETH)
+ganache-1  | (3) 0x821aEa9a577a9b44299B9c15c88cf3087F3b5544 (1000 ETH)
+ganache-1  | (4) 0x0d1d4e623D10F9FBA5Db95830F7d3839406C6AF2 (1000 ETH)
+ganache-1  | (5) 0x2932b7A2355D6fecc4b5c0B6BD44cC31df247a2e (1000 ETH)
+ganache-1  | (6) 0x2191eF87E392377ec08E7c08Eb105Ef5448eCED5 (1000 ETH)
+ganache-1  | (7) 0x0F4F2Ac550A1b4e2280d04c21cEa7EBD822934b5 (1000 ETH)
+ganache-1  | (8) 0x6330A553Fc93768F612722BB8c2eC78aC90B3bbc (1000 ETH)
+ganache-1  | (9) 0x5AEDA56215b167893e80B4fE645BA6d5Bab767DE (1000 ETH)
+ganache-1  | 
+ganache-1  | Private Keys
+ganache-1  | ==================
+ganache-1  | (0) 0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3
+ganache-1  | (1) 0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f
+ganache-1  | (2) 0x0dbbe8e4ae425a6d2687f1a7e3ba17bc98c673636790f1b8ad91193c05875ef1
+ganache-1  | (3) 0xc88b703fb08cbea894b6aeff5a544fb92e78a18e19814cd85da83b71f772aa6c
+ganache-1  | (4) 0x388c684f0ba1ef5017716adb5d21a053ea8e90277d0868337519f97bede61418
+ganache-1  | (5) 0x659cbb0e2411a44db63778987b1e22153c086a95eb6b18bdf89de078917abc63
+ganache-1  | (6) 0x82d052c865f5763aad42add438569276c00d3d88a2d062d36b2bae914d58b8c8
+ganache-1  | (7) 0xaa3680d5d48a8283413f7a108367c7299ca73f553735860a87b08f39395618b7
+ganache-1  | (8) 0x0f62d96d6675f32685bbdb8ac13cda7c23436f63efbb9d07700d8669ff12b7c4
+ganache-1  | (9) 0x8d5366123cb560bb606379f90a0bfd4769eecc0557f1b362dcae9012b548b1e5
+
+
+
+docker compose run truffle bash -c "npm install truffle && npx truffle console --network ganache"
+truffle(ganache)> let voting = await Voting.deployed();
+voting.address;undefined
+truffle(ganache)> voting.address;
+'0x345cA3e014Aaf5dcA488057592ee47305D9B3e10'
+
+
+pip install web3
+python3 vote_alice.py
+
+python3 vote_alice.py
+Voted for Alice
+Votes for Alice: 1
+
+docker compose down --remove-orphans
+
+https://grok.com/share/bGVnYWN5_e8828124-3d32-4210-b4fd-48658b99fcbc
+
+
+
+

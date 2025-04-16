@@ -4,4 +4,5 @@ RUN pip install torch transformers safetensors
 WORKDIR /app
 COPY generate.py .
 # We assume the model will be mounted at /app/model
-CMD ["python", "generate.py"]
+ENTRYPOINT ["python"]
+CMD ["generate.py"]

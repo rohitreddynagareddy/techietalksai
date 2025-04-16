@@ -1,0 +1,8 @@
+services:
+  base-model-trainer:
+    build: .
+    container_name: gpt2-base-builder
+    volumes:
+      - .:/app
+      - ./tiny_gpt2_model:/app/tiny_gpt2_model
+    command: python train_base_model.py

@@ -1,0 +1,26 @@
+services:
+  ganache:
+    image: trufflesuite/ganache:latest
+    ports:
+      - "8545:8545"
+    command: --host 0.0.0.0 --mnemonic "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat"
+    networks:
+      - blockchain-net
+
+  truffle:
+    image: node:16
+    working_dir: /app
+    volumes:
+      - .:/app
+    depends_on:
+      - ganache
+    command: >
+      bash -c "npm install truffle &&
+               npx truffle compile &&
+               npx truffle migrate --network ganache"
+    networks:
+      - blockchain-net
+
+networks:
+  blockchain-net:
+    driver: bridge
