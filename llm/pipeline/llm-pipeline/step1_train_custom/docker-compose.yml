@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 services:
   train_custom:
     build: .
@@ -15,3 +16,13 @@ services:
     volumes:
       - ./:/app
       - ../step0_building_base_model/tiny_gpt2_model:/app/tiny_gpt2_model
+=======
+# version: "3.8"
+services:
+  train_custom:
+    build: .
+    platform: linux/arm64  # ensure ARM architecture
+    volumes:
+      - ./:/app            # mount current directory into container (read-write)
+      - ./output_model:/app/output_model   # mount output dir to get saved model
+>>>>>>> cb7769eceecd169c19534ed4e09ae8b48ac3e8a8
