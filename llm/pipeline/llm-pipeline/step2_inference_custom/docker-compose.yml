@@ -6,6 +6,7 @@ services:
     platform: linux/arm64
     volumes:
       - ../step1_train_custom/output_model/:/app/model  # mount the trained model from step1
+<<<<<<< HEAD
     entrypoint: python
     command: generate.py   
   infer_tiny:
@@ -16,3 +17,5 @@ services:
       - ../step0_building_base_model/tiny_gpt2_model:/app/tiny_gpt2_model  # mount the trained model from step1
     entrypoint: python
     command: generate_tiny.py 
+=======
+>>>>>>> cb7769eceecd169c19534ed4e09ae8b48ac3e8a8

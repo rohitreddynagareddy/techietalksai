@@ -2,6 +2,7 @@
 FROM python:3.13-slim
 
 # Install necessary packages
+<<<<<<< HEAD
 RUN pip install --upgrade pip && pip install torch torchvision torchaudio transformers datasets safetensors \
 streamlit accelerate hf_xet
 
@@ -18,6 +19,9 @@ streamlit accelerate hf_xet
 # For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
 
 
+=======
+RUN pip install torch torchvision torchaudio transformers datasets safetensors
+>>>>>>> cb7769eceecd169c19534ed4e09ae8b48ac3e8a8
 
 # Copy training script and data
 WORKDIR /app
@@ -27,8 +31,13 @@ COPY data/ ./data/
 # Set environment to avoid any interactive prompts
 ENV PYTHONUNBUFFERED=1
 
+<<<<<<< HEAD
 EXPOSE 8501
 
 # Command to run training
 # CMD ["python", "train.py"]
 CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.enableCORS=false"]
+=======
+# Command to run training
+CMD ["python", "train.py"]
+>>>>>>> cb7769eceecd169c19534ed4e09ae8b48ac3e8a8
