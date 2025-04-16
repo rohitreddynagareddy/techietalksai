@@ -12,3 +12,6 @@ https://huggingface.co/docs/transformers/en/model_doc/gpt2
 
 https://platform.openai.com/tokenizer
 
+
+BLOG
+https://blog.schogini.com/html_files/tutorial-building-and-running-your-own-tiny-llm-pipeline.html
