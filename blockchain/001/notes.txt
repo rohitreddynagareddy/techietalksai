@@ -1,0 +1,274 @@
+
+
+docker run -d -p 8545:8545 trufflesuite/ganache-cli -h 0.0.0.0 -i 1337 -a 10 -e 1000
+
+
+docker compose up
+
+
+(base) Sreeprakashs-MacBook-Pro:docker sree$ curl localhost:5001/chain| jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   116  100   116    0     0  14312      0 --:--:-- --:--:-- --:--:-- 23200
+{
+  "chain": [
+    {
+      "index": 1,
+      "previous_hash": "1",
+      "proof": 100,
+      "timestamp": 1744773358.7895796,
+      "transactions": []
+    }
+  ],
+  "length": 1
+}
+(base) Sreeprakashs-MacBook-Pro:docker sree$ curl localhost:5001/mine| jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   199  100   199    0     0   6880      0 --:--:-- --:--:-- --:--:--  7653
+{
+  "index": 2,
+  "message": "New Block Forged",
+  "previous_hash": "769152f0f26b7273598f9ab68ffd100d9e802ed4a08fb4b82e8a954ebefa5df8",
+  "proof": 35293,
+  "transactions": [
+    {
+      "amount": 1,
+      "recipient": "you",
+      "sender": "0"
+    }
+  ]
+}
+(base) Sreeprakashs-MacBook-Pro:docker sree$ curl localhost:5001/chain| jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   316  100   316    0     0  30560      0 --:--:-- --:--:-- --:--:-- 45142
+{
+  "chain": [
+    {
+      "index": 1,
+      "previous_hash": "1",
+      "proof": 100,
+      "timestamp": 1744773358.7895796,
+      "transactions": []
+    },
+    {
+      "index": 2,
+      "previous_hash": "769152f0f26b7273598f9ab68ffd100d9e802ed4a08fb4b82e8a954ebefa5df8",
+      "proof": 35293,
+      "timestamp": 1744773385.812489,
+      "transactions": [
+        {
+          "amount": 1,
+          "recipient": "you",
+          "sender": "0"
+        }
+      ]
+    }
+  ],
+  "length": 2
+}
+(base) Sreeprakashs-MacBook-Pro:docker sree$ curl localhost:5001/mine| jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   199  100   199    0     0   6602      0 --:--:-- --:--:-- --:--:--  7107
+{
+  "index": 3,
+  "message": "New Block Forged",
+  "previous_hash": "87fed6e4df2e6ee755d476fcb775b8aee8c3ac9c3264f3ef5a021965c158bdce",
+  "proof": 35089,
+  "transactions": [
+    {
+      "amount": 1,
+      "recipient": "you",
+      "sender": "0"
+    }
+  ]
+}
+(base) Sreeprakashs-MacBook-Pro:docker sree$ curl localhost:5001/chain| jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   515  100   515    0     0  83414      0 --:--:-- --:--:-- --:--:--  167k
+{
+  "chain": [
+    {
+      "index": 1,
+      "previous_hash": "1",
+      "proof": 100,
+      "timestamp": 1744773358.7895796,
+      "transactions": []
+    },
+    {
+      "index": 2,
+      "previous_hash": "769152f0f26b7273598f9ab68ffd100d9e802ed4a08fb4b82e8a954ebefa5df8",
+      "proof": 35293,
+      "timestamp": 1744773385.812489,
+      "transactions": [
+        {
+          "amount": 1,
+          "recipient": "you",
+          "sender": "0"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "previous_hash": "87fed6e4df2e6ee755d476fcb775b8aee8c3ac9c3264f3ef5a021965c158bdce",
+      "proof": 35089,
+      "timestamp": 1744773393.23787,
+      "transactions": [
+        {
+          "amount": 1,
+          "recipient": "you",
+          "sender": "0"
+        }
+      ]
+    }
+  ],
+  "length": 3
+}
+
+
+curl -X POST http://localhost:5001/transactions/new \
+  -H "Content-Type: application/json" \
+  -d '{"sender": "address1", "recipient": "address2", "amount": 100}'
+
+
+
+curl -X POST http://localhost:5001/transactions/new \
+  -H "Content-Type: application/json" \
+  -d '{"sender": "769152f0f26b7273598f9ab68ffd100d9e802ed4a08fb4b82e8a954ebefa5df8", "recipient": "87fed6e4df2e6ee755d476fcb775b8aee8c3ac9c3264f3ef5a021965c158bdce", "amount": 100}'
+
+(base) Sreeprakashs-MacBook-Pro:001 sree$ curl -X POST http://localhost:5001/transactions/new \
+>   -H "Content-Type: application/json" \
+>   -d '{"sender": "769152f0f26b7273598f9ab68ffd100d9e802ed4a08fb4b82e8a954ebefa5df8", "recipient": "87fed6e4df2e6ee755d476fcb775b8aee8c3ac9c3264f3ef5a021965c158bdce", "amount": 100}'| jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   225  100    51  100   174   2224   7587 --:--:-- --:--:-- --:--:-- 11250
+{
+  "message": "Transaction will be added to Block 4"
+}
+(base) Sreeprakashs-MacBook-Pro:001 sree$ curl localhost:5001/chain| jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   515  100   515    0     0  54595      0 --:--:-- --:--:-- --:--:-- 73571
+{
+  "chain": [
+    {
+      "index": 1,
+      "previous_hash": "1",
+      "proof": 100,
+      "timestamp": 1744773358.7895796,
+      "transactions": []
+    },
+    {
+      "index": 2,
+      "previous_hash": "769152f0f26b7273598f9ab68ffd100d9e802ed4a08fb4b82e8a954ebefa5df8",
+      "proof": 35293,
+      "timestamp": 1744773385.812489,
+      "transactions": [
+        {
+          "amount": 1,
+          "recipient": "you",
+          "sender": "0"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "previous_hash": "87fed6e4df2e6ee755d476fcb775b8aee8c3ac9c3264f3ef5a021965c158bdce",
+      "proof": 35089,
+      "timestamp": 1744773393.23787,
+      "transactions": [
+        {
+          "amount": 1,
+          "recipient": "you",
+          "sender": "0"
+        }
+      ]
+    }
+  ],
+  "length": 3
+}
+(base) Sreeprakashs-MacBook-Pro:001 sree$ curl localhost:5001/mine| jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   370  100   370    0     0   5831      0 --:--:-- --:--:-- --:--:--  6065
+{
+  "index": 4,
+  "message": "New Block Forged",
+  "previous_hash": "3433f722e018eee5c5fc432c5e56f0490bc8eee368dca5a3dce3fb5e0ed7becb",
+  "proof": 119678,
+  "transactions": [
+    {
+      "amount": 100,
+      "recipient": "87fed6e4df2e6ee755d476fcb775b8aee8c3ac9c3264f3ef5a021965c158bdce",
+      "sender": "769152f0f26b7273598f9ab68ffd100d9e802ed4a08fb4b82e8a954ebefa5df8"
+    },
+    {
+      "amount": 1,
+      "recipient": "you",
+      "sender": "0"
+    }
+  ]
+}
+(base) Sreeprakashs-MacBook-Pro:001 sree$ curl localhost:5001/chain| jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   887  100   887    0     0   143k      0 --:--:-- --:--:-- --:--:--  288k
+{
+  "chain": [
+    {
+      "index": 1,
+      "previous_hash": "1",
+      "proof": 100,
+      "timestamp": 1744773358.7895796,
+      "transactions": []
+    },
+    {
+      "index": 2,
+      "previous_hash": "769152f0f26b7273598f9ab68ffd100d9e802ed4a08fb4b82e8a954ebefa5df8",
+      "proof": 35293,
+      "timestamp": 1744773385.812489,
+      "transactions": [
+        {
+          "amount": 1,
+          "recipient": "you",
+          "sender": "0"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "previous_hash": "87fed6e4df2e6ee755d476fcb775b8aee8c3ac9c3264f3ef5a021965c158bdce",
+      "proof": 35089,
+      "timestamp": 1744773393.23787,
+      "transactions": [
+        {
+          "amount": 1,
+          "recipient": "you",
+          "sender": "0"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "previous_hash": "3433f722e018eee5c5fc432c5e56f0490bc8eee368dca5a3dce3fb5e0ed7becb",
+      "proof": 119678,
+      "timestamp": 1744773716.0640686,
+      "transactions": [
+        {
+          "amount": 100,
+          "recipient": "87fed6e4df2e6ee755d476fcb775b8aee8c3ac9c3264f3ef5a021965c158bdce",
+          "sender": "769152f0f26b7273598f9ab68ffd100d9e802ed4a08fb4b82e8a954ebefa5df8"
+        },
+        {
+          "amount": 1,
+          "recipient": "you",
+          "sender": "0"
+        }
+      ]
+    }
+  ],
+  "length": 4
+}
