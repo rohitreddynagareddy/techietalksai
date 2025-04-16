@@ -2,5 +2,9 @@
   "_from_model_config": true,
   "bos_token_id": 50256,
   "eos_token_id": 50256,
+<<<<<<< HEAD
   "transformers_version": "4.51.3"
+=======
+  "transformers_version": "4.51.2"
+>>>>>>> cb7769eceecd169c19534ed4e09ae8b48ac3e8a8
 }
