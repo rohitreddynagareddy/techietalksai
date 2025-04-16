@@ -1,8 +1,17 @@
-# version: "3.8"
 services:
   train_custom:
     build: .
-    platform: linux/arm64  # ensure ARM architecture
+    platform: linux/arm64
     volumes:
-      - ./:/app            # mount current directory into container (read-write)
-      - ./output_model:/app/output_model   # mount output dir to get saved model
+      - ./:/app
+      - ./output_model:/app/output_model
+      - ../step0_building_base_model/tiny_gpt2_model:/app/tiny_gpt2_model
+    command: python train.py
+
+  llm-ui:
+    build: .
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./:/app
+      - ../step0_building_base_model/tiny_gpt2_model:/app/tiny_gpt2_model
