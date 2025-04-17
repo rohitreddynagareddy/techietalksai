@@ -18,13 +18,14 @@ os.makedirs(MODEL_DIR, exist_ok=True)
 # Load tokenizer and model if available, else fallback to GPT-2
 @st.cache_resource
 def load_model_and_tokenizer():
-    if os.path.exists(os.path.join(MODEL_DIR, "pytorch_model.bin")):
-        tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
-        model = AutoModelForCausalLM.from_pretrained(MODEL_DIR).cpu()
-    else:
-        tokenizer = AutoTokenizer.from_pretrained("gpt2")
-        tokenizer.pad_token = tokenizer.eos_token
-        model = AutoModelForCausalLM.from_pretrained("gpt2").cpu()
+    # if os.path.exists(os.path.join(MODEL_DIR, "pytorch_model.bin")):
+    # if os.path.exists(os.path.join(MODEL_DIR, "model.safetensors")):
+    #     tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
+    #     model = AutoModelForCausalLM.from_pretrained(MODEL_DIR).cpu()
+    # else:
+    tokenizer = AutoTokenizer.from_pretrained("gpt2")
+    tokenizer.pad_token = tokenizer.eos_token
+    model = AutoModelForCausalLM.from_pretrained("gpt2").cpu()
     return tokenizer, model
 
 tokenizer, model = load_model_and_tokenizer()
@@ -42,17 +43,22 @@ if submit_train and corpus_text.strip():
         tokenizer.pad_token = tokenizer.eos_token
         model.resize_token_embeddings(len(tokenizer))
 
-        encodings = tokenizer(corpus_text, return_tensors="pt")
-        input_ids = encodings["input_ids"].to(torch.device("cpu"))
+        device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+
+        inputs = tokenizer(corpus_text, return_tensors="pt")
+        # input_ids = inputs["input_ids"].to(torch.device("cpu"))
+        input_ids = inputs["input_ids"]
 
         st.subheader("🔢 Encoded Tokens")
         st.code(input_ids[0].tolist(), language="json")
 
         optimizer = torch.optim.AdamW(model.parameters(), lr=5e-5)
+
+        model.to(device)
         model.train()
 
         for epoch in range(epochs):
-            outputs = model(input_ids, labels=input_ids)
+            outputs = model(input_ids.to(device), labels=input_ids)
             loss = outputs.loss
             loss.backward()
             optimizer.step()
@@ -60,6 +66,7 @@ if submit_train and corpus_text.strip():
             st.info(f"✅ Epoch {epoch + 1} Loss: {loss.item():.4f}")
 
         # Save model & tokenizer
+        # os.makedirs("output_model", exist_ok=True)
         model.save_pretrained(MODEL_DIR)
         tokenizer.save_pretrained(MODEL_DIR)
 
@@ -162,8 +169,8 @@ def load_model_and_tokenizer(model_choice: str):
 available_models = []
 if os.path.exists(os.path.join(MODEL_DIR, "pytorch_model.bin")) or os.path.exists(os.path.join(MODEL_DIR, "model.safetensors")):
     available_models.append("Fine-tuned")
-if os.path.exists(os.path.join(TINY_MODEL_DIR, "pytorch_model.bin")) or os.path.exists(os.path.join(TINY_MODEL_DIR, "model.safetensors")):
-    available_models.append("Tiny GPT-2")
+# if os.path.exists(os.path.join(TINY_MODEL_DIR, "pytorch_model.bin")) or os.path.exists(os.path.join(TINY_MODEL_DIR, "model.safetensors")):
+#     available_models.append("Tiny GPT-2")
 available_models.append("GPT-2")
 
 st.sidebar.title("🔧 Model Settings")
