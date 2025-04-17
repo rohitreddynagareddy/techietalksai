@@ -10,7 +10,7 @@ TINY_MODEL_DIR = "/app/tiny_gpt2_model"
 
 
 st.set_page_config(page_title="LLM Mini Trainer & Inference", layout="wide")
-st.title("🧠 Fine-Tune & Inference Demo (GPT-2)")
+st.title(f"🧠 Fine-Tune & Inference Demo")
 
 # Ensure model dir exists
 os.makedirs(MODEL_DIR, exist_ok=True)
