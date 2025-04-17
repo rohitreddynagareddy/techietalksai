@@ -9,6 +9,7 @@ cpu_gpu/
 model.safetensors
 # C extensions
 *.so
+*.pth
 
 # Virtual environments
 env/
