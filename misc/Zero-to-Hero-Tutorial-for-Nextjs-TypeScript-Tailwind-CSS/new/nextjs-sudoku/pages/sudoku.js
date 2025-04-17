@@ -74,9 +74,9 @@ function generatePuzzle(fullBoard, holes = 40) {
 }
 
 const TIMER_BY_LEVEL = {
-  easy: 600,
-  medium: 900,
-  hard: 1800,
+  easy: 300,
+  medium: 600,
+  hard: 900,
 }
 
 export default function Sudoku() {
