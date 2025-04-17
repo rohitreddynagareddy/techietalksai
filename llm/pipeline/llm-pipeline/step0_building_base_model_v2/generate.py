@@ -81,5 +81,15 @@ def generate(
 if __name__ == "__main__":
     prompt = "Machine Learning allows"
     print(f"\n--- Generation (prompt: \"{prompt}\") ---\n")
-    sample = generate(prompt, length=100, temperature=0.7, top_k=50, top_p=0.9)
+    sample = generate(prompt, length=100, temperature=0.7, top_k=50, top_p=0.8)
+    print(sample)
+    
+    prompt = "Machine Learning"
+    print(f"\n--- Generation (prompt: \"{prompt}\") ---\n")
+    sample = generate(prompt, length=100, temperature=0.7, top_k=50, top_p=0.8)
+    print(sample)
+
+    prompt = "Machine"
+    print(f"\n--- Generation (prompt: \"{prompt}\") ---\n")
+    sample = generate(prompt, length=100, temperature=0.7, top_k=50, top_p=0.8)
     print(sample)
