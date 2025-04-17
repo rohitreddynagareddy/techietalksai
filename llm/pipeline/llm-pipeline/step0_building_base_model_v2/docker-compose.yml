@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  tinygen:
+    build: .
+    # Mount your local data/ and output/ folders so you can edit code and inspect results
+    volumes:
+      - .:/app
+      - ./data:/app/data
+      - ./output:/app/output
+    # If you want to override the default and jump to generation after training,
+    # you can do: command: ["bash", "-c", "python train.py && python -c \"from train import generate; print(generate('To be', 100, 0.8))\""]
+    command: ["python", "train.py"]
+
