@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  mcp-server:
+    build: .
+    command: python mcp_server.py
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    networks:
+      - app-network
+
+  mcp-client:
+    build: .
+    command: python mcp_client.py
+    depends_on:
+      - mcp-server
+    volumes:
+      - .:/app
+    networks:
+      - app-network
+      
+networks:
+  app-network:
+    driver: bridge

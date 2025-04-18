@@ -1,0 +1,33 @@
+# version: "3.8"
+
+services:
+
+  sse-server:
+    build:
+      context: demo01-mcp-sse-booking # Use the Dockerfile in the current directory
+      dockerfile: Dockerfile
+    # container_name: sse-server-no-agent
+    ports:
+      - "8888:8888"
+    volumes:
+      - ${PWD}/demo01-mcp-sse-booking:/app/app
+    env_file:
+      - .env
+    entrypoint: ["uv","run","sse_server_no_agent.py","--transport", "sse", "--port", "8888"]
+    tty: True
+  app:
+    build: .
+    # working_dir: /app
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+    # depends_on:
+    #   - mcp-playwright
+    # command: >
+    #   sh -c "
+    #     pip install --no-cache-dir mcp-use langchain-openai python-dotenv &&
+    #     python main.py
+    #   "
+    # entrypoint: python
+    command: python main.py

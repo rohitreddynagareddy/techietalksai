@@ -1,0 +1,7 @@
+mcp
+fastapi
+sse-starlette
+uvicorn
+aiohttp
+fastmcp
+

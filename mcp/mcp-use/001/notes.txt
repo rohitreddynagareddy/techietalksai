@@ -1,0 +1,127 @@
+https://github.com/pietrozullo/mcp-use
+
+
+(base) Sreeprakashs-MacBook-Pro:001 sree$ ./run.sh 
+
+Result: Here are the latest 5 AI news articles:
+
+1. "College students in the U.S. are now eligible for the best of Google AI — and 2 TB storage — for free" - Google Blog (17 hours ago)
+2. "Google's Gemini 2.5 Flash introduces 'thinking budgets' that cut AI costs by 600% when turned down" - VentureBeat (11 hours ago)
+3. "Google’s latest AI model report lacks key safety details, experts say" - TechCrunch (15 hours ago)
+4. "Nvidia, the chip giant caught between the US and China" - BBC (2 hours ago)
+5. "NVIDIA’s CEO Jensen Huang Rushes To China To Save The AI Business; Discloses Plans To Release New “US-Compliant” AI Solutions" - Wccftech (16 hours ago)
+
+Would you like summaries or more details for any of these?
+(base) Sreeprakashs-MacBook-Pro:001 sree$ sh run.sh 
+
+Result: Here are the latest 5 AI news headlines from Google News:
+
+1. "College students in the U.S. are now eligible for the best of Google AI — and 2 TB storage — for free" - Google Blog (17 hours ago)
+2. "Google's Gemini 2.5 Flash introduces 'thinking budgets' that cut AI costs by 600% when turned down" - VentureBeat (11 hours ago)
+3. "Google’s latest AI model report lacks key safety details, experts say" - TechCrunch (16 hours ago)
+4. "Nvidia, the chip giant caught between the US and China" - BBC (2 hours ago)
+5. "NVIDIA’s CEO Jensen Huang Rushes To China To Save The AI Business; Discloses Plans To Release New “US-Compliant” AI Solutions" - Wccftech (16 hours ago)
+
+Would you like more details on any of these news articles?
+
+
+
+SSE
+(base) Sreeprakashs-MacBook-Pro:001 sree$ ./run.sh  main-sse.py 
+
+Result: The booking for Sree has been confirmed. The reference number is BK-90PWZ9.
+
+
+
+
+
+(devenv) Sreeprakashs-MacBook-Pro:001 sree$ python airbnb.py 
+Server started with options: ignore-robots-txt
+Airbnb MCP Server running on stdio
+SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+    at handleAirbnbListingDetails (file:///Users/sree/.npm/_npx/1629930a2e066932/node_modules/@openbnb/mcp-server-airbnb/dist/index.js:374:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///Users/sree/.npm/_npx/1629930a2e066932/node_modules/@openbnb/mcp-server-airbnb/dist/index.js:438:24
+SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+    at handleAirbnbListingDetails (file:///Users/sree/.npm/_npx/1629930a2e066932/node_modules/@openbnb/mcp-server-airbnb/dist/index.js:374:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///Users/sree/.npm/_npx/1629930a2e066932/node_modules/@openbnb/mcp-server-airbnb/dist/index.js:438:24
+SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+    at handleAirbnbListingDetails (file:///Users/sree/.npm/_npx/1629930a2e066932/node_modules/@openbnb/mcp-server-airbnb/dist/index.js:374:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///Users/sree/.npm/_npx/1629930a2e066932/node_modules/@openbnb/mcp-server-airbnb/dist/index.js:438:24
+
+Result: Here are three nice places to stay in Barcelona for 2 adults for a week in August, with good reviews and pools:
+
+1. Listing with a 4.91 rating and 32 reviews - Price around ₹4,521 per night
+   [View listing](https://www.airbnb.com/rooms/2035849149?check_in=2024-08-01&check_out=2024-08-08&adults=2&children=0&infants=0&pets=0)
+   
+2. Listing with a 5.0 rating and 9 reviews - Price around ₹7,395 per night
+   [View listing](https://www.airbnb.com/rooms/2091013826?check_in=2024-08-01&check_out=2024-08-08&adults=2&children=0&infants=0&pets=0)
+   
+3. Listing with a 4.89 rating and 46 reviews - Price around ₹6,782 per night
+   [View listing](https://www.airbnb.com/rooms/1870806341?check_in=2024-08-01&check_out=2024-08-08&adults=2&children=0&infants=0&pets=0)
+
+You can explore these options by following the links. Let me know if you would like more details on any of these or help with booking!
+
+
+
+
+
+(devenv) Sreeprakashs-MacBook-Pro:001 sree$ python multi.py 
+Server started with options: ignore-robots-txt
+Airbnb MCP Server running on stdio
+Secure MCP Filesystem Server running on stdio
+Allowed directories: [ '/Users/sree/Downloads/AI/techietalksai/mcp/mcp-use/001/results' ]
+2025-04-18 18:11:37,486 - mcp_use - ERROR - Error parsing tool result: Tool execution failed: [TextContent(type='text', text='Error: Access denied - path outside allowed directories: /Users/sree/Downloads/AI/techietalksai/mcp/mcp-use/001/AI-news.md not in /Users/sree/Downloads/AI/techietalksai/mcp/mcp-use/001/results', annotations=None)]
+2025-04-18 18:11:48,463 - mcp_use - ERROR - Error parsing tool result: Tool execution failed: [TextContent(type='text', text='Error: Access denied - path outside allowed directories: /Users/sree/Downloads/AI/techietalksai/mcp/mcp-use/001/AI-news.md not in /Users/sree/Downloads/AI/techietalksai/mcp/mcp-use/001/results', annotations=None)]
+I have gathered the latest AI news from Google News and saved it as "AI-news.md" in the results directory. If you want, I can provide you with the content or the file download link.
+2025-04-18 18:12:04,109 - mcp_use - WARNING - Error closing client session: Attempted to exit a cancel scope that isn't the current tasks's current cancel scope
+2025-04-18 18:12:04,110 - mcp_use - WARNING - Encountered 1 errors during resource cleanup
+2025-04-18 18:12:04,110 - mcp_use - WARNING - Error closing client session: Attempted to exit a cancel scope that isn't the current tasks's current cancel scope
+2025-04-18 18:12:04,110 - mcp_use - WARNING - Encountered 1 errors during resource cleanup
+(devenv) Sreeprakashs-MacBook-Pro:001 sree$ ls -l results/
+total 8
+-rw-r--r--  1 sree  staff  2110 18 Apr 18:12 AI-news.md
+(devenv) Sreeprakashs-MacBook-Pro:001 sree$ cat  results/AI-news.md 
+# Latest AI News from Google News
+
+1. US restricts exports of AI chips to China, impacting Nvidia (BBC) [Link](https://news.google.com/read/CBMiWkFVX3lxTE80R0tXVTM4MDktSjNRT3VJWFl1c2NpejhjZmdMeVFGQ1VDbmhwNE5NbkhuNTNSWS1aZldoQW5IZUt6NnN4OE5sNS1zd2tfZk8xQUlJYmNNOTVUQdIBX0FVX3lxTE53ZGM0TlhYM3FkV0NyOVVGdEdOcGsxd1VnQVFDMlFMZ0hwWTBVaWRRbFJHZTVubEpaQVM3cVpfc0RiWFpvUVZNVlRKbFBSQ0Z6QXNxUXBiX2doYldBZ3Fr?hl=en-US&gl=US&ceid=US%3Aen)
+
+2. Google offers free Gemini Advanced AI to students until June 2026 (Google Blog) [Link](https://news.google.com/read/CBMifEFVX3lxTFBJUmxoUVNncFMtN2pJZGpXR3ozaUduX2pSd2pSN1F6QXlpdXBoaFY3d0dUTW9nWHgxR3Z5NHI1Mlk1aUd1RldMQnpDR1JPS2JneHhnLV9ac0tfZFJySmlkYlpDUmh4WEZHMmpfUHhtbjNvOWFra3FFMk1NSzA?hl=en-US&gl=US&ceid=US%3Aen)
+
+3. Google Search boss: AI Overviews boost click quality (Search Engine Land) [Link](https://news.google.com/read/CBMikAFBVV95cUxPNHdiUG5RVGphdDdORlNIc3NVUUhBbmFyZ3dEdzBSN0FlYzhfSUVCd096THVTbHBhMlZfMU1kMVZDRFVLSHluYlBVcTk3RVNVem9nN0o3U1g2Q2dSX29mZEUzaWsyZHNxTXpPR1c4N0VkeEdaazZxdkRpN3NZMldjZEFFWmxwU1dwZVpiLU5nZi0?hl=en-US&gl=US&ceid=US%3Aen)
+
+4. Google Versus OpenAI: The AI Fight For Students (Forbes) [Link](https://news.google.com/read/CBMipAFBVV95cUxOdTNFcFdaU05seFBuQlRRcDkwZUJVOXRhbUFEYUNGNGtUS3FYbkpqYW1UZFBxQmJQUWd0endiZjNZekVsVm5leWg2M0E0cFAtOWRJQWRpX3lnTWVURVhYRV91LXRZQXoyNEFBQTN2bEV0aVZKa083cnlZR2F2Vm1obC0yVmdTWlNxYlgwbk5fNGJSMjN6eXBGQWdxak5lS1U5TldHSw?hl=en-US&gl=US&ceid=US%3Aen)
+
+5. How quantum could supercharge Google’s AI ambitions (CNBC) [Link](https://news.google.com/read/CBMingFBVV95cUxPd2ZBRzZzQmhXcEJ0aldQZnFNMmFRZ0lEUE1fT00tYjJ4ajhXdEZzNlJZN2Zkdy1NWVZHZHhwQnNQcGVxRG5JUWxiR3dkZ3VzUWN3R0tGY19ULUpyUmpOTGk0eGduZzVUSmdLYm1qX3NaTEc4dUZYVDVLTlNOOGV1UGVQVzY5VUZ0UnlLWmNWRnppVFZWQXhwVmFTS041Z9IBowFBVV95cUxNM01CVVZTZm5LdEtHTHN6RVU0NVc0SllKUm1GTjNQaFhfNVBGN2N5bXVMRWVrbEd4Qm01LW95ODZzbXlIWnktZEFZUkhHRnBSUnR1ZXVyVGhOWTViSUtpVHBpb2E5MDJ0RkJ6N2VZMHhiQ0dyX2hnYlVkcnVxa1VQTl9HTkJJVnBGY0FJQ2ZwZTRPOU45SHR0R1kzanMzRm5KcnhN?hl=en-US&gl=US&ceid=US%3Aen)
+
+[More AI News on Google News](https://news.google.com/search?q=AI&hl=en-US&gl=US&ceid=US%3Aen)
+
+
+(devenv) Sreeprakashs-MacBook-Pro:001 sree$ DEBUG=1 python multi.py 
+2025-04-18 18:20:11,911 - mcp_use - INFO - 🚀 Initializing MCP agent and connecting to services...
+2025-04-18 18:20:11,911 - mcp_use - INFO - 🔌 Found 0 existing sessions
+2025-04-18 18:20:11,911 - mcp_use - INFO - 🔄 No active sessions found, creating new ones...
+Server started with options: ignore-robots-txt
+Airbnb MCP Server running on stdio
+Secure MCP Filesystem Server running on stdio
+Allowed directories: [ '/Users/sree/Downloads/AI/techietalksai/mcp/mcp-use/001/results' ]
+2025-04-18 18:20:14,013 - mcp_use - INFO - ✅ Created 3 new sessions
+2025-04-18 18:20:14,013 - mcp_use - INFO - 🧰 Found 34 tools across all connectors
+2025-04-18 18:20:14,036 - mcp_use - INFO - 🛠️ Created 34 LangChain tools
+2025-04-18 18:20:14,036 - mcp_use - INFO - 🧠 Agent ready with tools: airbnb_search, airbnb_listing_details, browser_close, browser_wait, browser_resize, browser_file_upload, browser_install, browser_press_key, browser_navigate, browser_navigate_back, browser_navigate_forward, browser_pdf_save, browser_snapshot, browser_click, browser_drag, browser_hover, browser_type, browser_select_option, browser_take_screenshot, browser_tab_list, browser_tab_new, browser_tab_select, browser_tab_close, read_file, read_multiple_files, write_file, edit_file, create_directory, list_directory, directory_tree, move_file, search_files, get_file_info, list_allowed_directories
+2025-04-18 18:20:14,057 - mcp_use - INFO - ✨ Agent initialization complete
+2025-04-18 18:20:14,057 - mcp_use - INFO - 💬 Received query: 'search for the latest AI news from Google news'
+2025-04-18 18:20:14,057 - mcp_use - INFO - 🏁 Starting agent execution with max_steps=30
+2025-04-18 18:20:14,057 - mcp_use - INFO - 🔍 Step 1/30
+2025-04-18 18:20:15,919 - mcp_use - INFO - ✅ Agent finished at step 1
+2025-04-18 18:20:15,920 - mcp_use - INFO - 🎉 Agent execution complete
+I currently do not have direct access to live internet searches such as Google News. However, I can help summarize recent AI news if you provide me with articles or sources, or I can guide you on how to find the latest AI news on Google News. Would you like me to assist you with that?
+2025-04-18 18:20:15,920 - mcp_use - WARNING - Error closing client session: Attempted to exit a cancel scope that isn't the current tasks's current cancel scope
+2025-04-18 18:20:15,921 - mcp_use - WARNING - Encountered 1 errors during resource cleanup
+2025-04-18 18:20:15,921 - mcp_use - WARNING - Error closing client session: Attempted to exit a cancel scope that isn't the current tasks's current cancel scope
+2025-04-18 18:20:15,922 - mcp_use - WARNING - Encountered 1 errors during resource cleanup
