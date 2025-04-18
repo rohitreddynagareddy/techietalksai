@@ -6,7 +6,7 @@
 source ~/anaconda3/etc/profile.d/conda.sh
 
 conda activate devenv
-python $1
+DEBUG=1 python $1
 #main-stdio.py
 #main-sse.py
 conda deactivate

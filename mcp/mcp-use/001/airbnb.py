@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from mcp_use import MCPAgent, MCPClient
 
-mcp_use.set_debug(1)  # INFO level
 
 async def run_airbnb_example():
     # Load environment variables
