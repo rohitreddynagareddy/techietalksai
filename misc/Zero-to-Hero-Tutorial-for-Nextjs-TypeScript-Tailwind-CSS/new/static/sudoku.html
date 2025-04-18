@@ -1,502 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sree's Sudoku Advanced - Static</title>
-<style>
-  body, html {
-    margin: 0; padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(45deg, #74ebd5, #9face6);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    user-select: none;
-  }
-  #app {
-    max-width: 520px;
-    margin: 30px auto;
-    padding: 20px;
-    background: transparent;
-    border-radius: 15px;
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
-    color: #222;
-  }
-  h1 {
-    text-align: center;
-    margin-bottom: 10px;
-    text-shadow: 0 0 1px #aaa;
-    user-select: text;
-  }
-  .timer-bar-container {
-    position: relative;
-    height: 20px;
-    width: 100%;
-    max-width: 520px;
-    margin: 0 auto 15px auto;
-    background: #ddd;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: inset 0 0 5px #aaa;
-  }
-  .timer-bar {
-    height: 100%;
-    background: linear-gradient(90deg, #ff6b6b, #f06595, #ff6b6b);
-    transition: width 1s linear;
-  }
-  .timer-text {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    font-weight: 700;
-    color: #333;
-    text-shadow: 0 0 2px #fff;
-    user-select: none;
-  }
-  .difficulty-selector {
-    margin: 0 auto 10px auto;
-    max-width: 200px;
-    font-size: 18px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #222;
-    font-weight: 600;
-  }
-  .difficulty-selector select {
-    padding: 5px 8px;
-    font-size: 16px;
-    border-radius: 6px;
-    border: 1px solid #444;
-    cursor: pointer;
-    user-select: none;
-    transition: border-color 0.3s ease;
-  }
-  .difficulty-selector select:hover:enabled {
-    border-color: #667eea;
-  }
-  .difficulty-selector select:disabled {
-    background: #eee;
-    cursor: not-allowed;
-  }
-  .number-pad {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-    gap: 10px;
-    flex-wrap: wrap;
-    user-select: none;
-  }
-  .number-button {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 16px;
-    cursor: pointer;
-    font-size: 18px;
-    box-shadow: 0 4px 8px rgba(118, 75, 162, 0.3);
-    transition: background 0.3s ease;
-    user-select: none;
-  }
-  .number-button:disabled {
-    background: #bbb;
-    cursor: not-allowed;
-    box-shadow: none;
-    color: #555;
-  }
-  .number-button:hover:enabled {
-    background: linear-gradient(135deg, #764ba2, #667eea);
-  }
-  .number-button.clear {
-    background: linear-gradient(135deg, #ff6b6b, #f06595);
-    box-shadow: 0 4px 8px rgba(240, 101, 149, 0.5);
-  }
-  .number-button.clear:hover:enabled {
-    background: linear-gradient(135deg, #f06595, #ff6b6b);
-  }
-  .number-button.reveal {
-    background: linear-gradient(135deg, #6bd5ff, #4287f5);
-    box-shadow: 0 4px 8px rgba(66, 135, 245, 0.5);
-  }
-  .number-button.reveal:hover:enabled {
-    background: linear-gradient(135deg, #4287f5, #6bd5ff);
-  }
-  .sudoku-grid {
-    display: grid;
-    grid-template-rows: repeat(9, 1fr);
-    gap: 0;
-    border: 3px solid #333;
-    border-radius: 10px;
-    background: #fdfdfd;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    user-select: none;
-  }
-  .sudoku-row {
-    display: grid;
-    grid-template-columns: repeat(9, 1fr);
-  }
-  .sudoku-cell {
-    border: 1px solid #bbb;
-    width: 52px;
-    height: 52px;
-    line-height: 52px;
-    font-size: 26px;
-    text-align: center;
-    vertical-align: middle;
-    cursor: pointer;
-    position: relative;
-    transition: background 0.3s, box-shadow 0.3s;
-    box-sizing: border-box;
-    box-shadow: inset 1px 1px 3px rgba(255, 255, 255, 0.5);
-  }
-  .sudoku-cell:nth-child(3n) {
-    border-right: 2px solid #444;
-  }
-  .sudoku-row:nth-child(3n) .sudoku-cell {
-    border-bottom: 2px solid #444;
-  }
-  .starting-cell {
-    font-weight: 700;
-    color: #4a90e2;
-    cursor: default;
-    text-shadow: 0 0 3px #bbe1ff;
-  }
-  .starting-number {
-    font-weight: 700;
-    color: #4a90e2;
-    user-select: none;
-    display: inline-block;
-    width: 100%;
-  }
-  .user-number {
-    font-weight: 700;
-    color: #0b3e02;
-    user-select: none;
-    display: inline-block;
-    width: 100%;
-  }
-  .revealed-number {
-    font-weight: 700;
-    color: #d9534f;
-    user-select: none;
-    display: inline-block;
-    width: 100%;
-  }
-  .selected-cell {
-    box-shadow: 0 0 15px 3px #77c;
-    background-color: #ddecff !important;
-    cursor: pointer;
-    user-select: none;
-  }
-  .error-cell {
-    background-color: #f8d7da !important;
-    color: #721c24 !important;
-    font-weight: 900;
-    cursor: pointer;
-    box-shadow: 0 0 15px 3px #ff6f61 !important;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sree's Sudoku Advanced</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </head>
-<body>
-<div id="app">
-  <div class="difficulty-selector">
-    <label for="difficulty">Difficulty:</label>
-    <select id="difficulty" name="difficulty">
-      <option value="easy">Easy</option>
-      <option value="medium" selected>Medium</option>
-      <option value="hard">Hard</option>
-    </select>
+<body class="min-h-screen bg-gradient-to-br from-teal-300 to-purple-300 font-sans antialiased">
+
+  <div id="app" class="max-w-sm md:max-w-lg mx-auto p-6 bg-white/30 backdrop-blur-md rounded-2xl shadow-xl text-gray-900 select-none mt-8">
+
+    <!-- Congratulations Overlay -->
+    <div id="congrats-overlay"
+         class="fixed inset-0 bg-black/75 flex flex-col items-center justify-center text-3xl font-extrabold text-white opacity-0 invisible transition-opacity duration-300">
+      <canvas id="confetti-canvas" class="absolute inset-0 w-full h-full"></canvas>
+      <div class="message z-10 text-center px-4"></div>
+    </div>
+
+    <!-- Difficulty Selector -->
+    <div class="flex justify-center items-center mb-4 space-x-3">
+      <label for="difficulty" class="text-lg font-semibold text-gray-800">Difficulty:</label>
+      <select id="difficulty"
+              class="px-3 py-1 border border-gray-700 rounded-lg bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500">
+        <option value="easy" selected>Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+    </div>
+
+    <!-- Title -->
+    <h1 class="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-4">Sree's Sudoku Advanced</h1>
+
+    <!-- Timer Bar -->
+    <div class="relative w-full h-4 bg-gray-200 rounded-full overflow-hidden mb-6 shadow-inner">
+      <div class="timer-bar absolute left-0 top-0 h-full bg-gradient-to-r from-red-500 via-pink-500 to-red-500 transition-all duration-1000"></div>
+      <span class="timer-text absolute inset-0 flex items-center justify-center text-sm font-semibold text-gray-700">05:00</span>
+    </div>
+
+    <!-- Number Pad -->
+    <div class="number-pad flex flex-wrap justify-center gap-2 mb-6"></div>
+
+    <!-- Sudoku Grid -->
+    <div class="sudoku-grid grid grid-rows-9 grid-cols-9 gap-0 border-4 border-gray-800 rounded-lg bg-white shadow-md"></div>
+
   </div>
-  <h1>Sree's Sudoku Advanced</h1>
-  <div class="timer-bar-container">
-    <div class="timer-bar"></div>
-    <span class="timer-text">05:00</span>
-  </div>
-  <div class="number-pad"></div>
-  <div class="sudoku-grid"></div>
-</div>
 
-<script>
-(() => {
-  const TIMER_BY_LEVEL = { easy: 300, medium: 600, hard: 900 };
+  <script>
+  (() => {
+    const TIMER_BY_LEVEL = { easy: 300, medium: 900, hard: 1200 };
 
-  // State
-  let startingPuzzle = null;
-  let grid = null;
-  let solvedBoard = null;
-  let selected = null;
-  let errorCells = [];
-  let revealedCells = [];
-  let difficulty = 'easy';
-  let timeLeft = TIMER_BY_LEVEL[difficulty];
-  let timerId = null;
+    // State
+    let startingPuzzle, grid, solvedBoard, selected, errorCells = [], revealedCells = [];
+    let difficulty = 'easy', timeLeft = TIMER_BY_LEVEL[difficulty], timerId;
 
-  // DOM Elements
-  const difficultySelect = document.querySelector('#difficulty');
-  const timerBar = document.querySelector('.timer-bar');
-  const timerText = document.querySelector('.timer-text');
-  const numberPad = document.querySelector('.number-pad');
-  const sudokuGrid = document.querySelector('.sudoku-grid');
+    // Elements
+    const difficultySelect = document.getElementById('difficulty');
+    const timerBar = document.querySelector('.timer-bar');
+    const timerText = document.querySelector('.timer-text');
+    const numberPad = document.querySelector('.number-pad');
+    const sudokuGrid = document.querySelector('.sudoku-grid');
+    const overlay = document.getElementById('congrats-overlay');
+    const messageDiv = overlay.querySelector('.message');
+    const confettiCanvas = document.getElementById('confetti-canvas');
 
-  // Functions (converted from React component)
-  function deepCopyGrid(g) { return g.map(r => r.slice()); }
-
-  function isValid(g, row, col, num) {
-    for (let c = 0; c < 9; c++) if (g[row][c] === num) return false;
-    for (let r = 0; r < 9; r++) if (g[r][col] === num) return false;
-    const boxRow = Math.floor(row / 3) * 3;
-    const boxCol = Math.floor(col / 3) * 3;
-    for (let r = boxRow; r < boxRow + 3; r++)
-      for (let c = boxCol; c < boxCol + 3; c++)
-        if (g[r][c] === num) return false;
-    return true;
-  }
-
-  function shuffleArray(arr) {
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
+    // Utils
+    const deepCopy = arr => arr.map(r => r.slice());
+    function isValid(b, r, c, v) {
+      if (b[r].includes(v)) return false;
+      if (b.some(row => row[c] === v)) return false;
+      const br = Math.floor(r/3)*3, bc = Math.floor(c/3)*3;
+      for (let i = br; i < br + 3; i++)
+        for (let j = bc; j < bc + 3; j++)
+          if (b[i][j] === v) return false;
+      return true;
     }
-    return a;
-  }
-
-  function solve(board) {
-    for (let row = 0; row < 9; row++) {
-      for (let col = 0; col < 9; col++) {
-        if (board[row][col] === 0) {
-          const nums = shuffleArray([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-          for (const num of nums) {
-            if (isValid(board, row, col, num)) {
-              board[row][col] = num;
-              if (solve(board)) return true;
-              board[row][col] = 0;
+    function shuffle(a) {
+      const arr = [...a];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+    function solve(b) {
+      for (let r = 0; r < 9; r++) {
+        for (let c = 0; c < 9; c++) {
+          if (b[r][c] === 0) {
+            for (const v of shuffle([1,2,3,4,5,6,7,8,9])) {
+              if (isValid(b, r, c, v)) {
+                b[r][c] = v;
+                if (solve(b)) return true;
+                b[r][c] = 0;
+              }
             }
+            return false;
           }
-          return false;
         }
       }
+      return true;
     }
-    return true;
-  }
-
-  function generateFullBoard() {
-    const board = Array(9).fill(null).map(() => Array(9).fill(0));
-    solve(board);
-    return board;
-  }
-
-  function generatePuzzle(fullBoard, holes) {
-    const puzzle = deepCopyGrid(fullBoard);
-    let removed = 0;
-    while (removed < holes) {
-      const r = Math.floor(Math.random() * 9);
-      const c = Math.floor(Math.random() * 9);
-      if (puzzle[r][c] !== 0) {
-        puzzle[r][c] = 0;
-        removed++;
-      }
+    function genFull() {
+      const b = Array.from({length:9}, ()=>Array(9).fill(0));
+      solve(b);
+      return b;
     }
-    return puzzle;
-  }
-
-  function updateTimerBar() {
-    const total = TIMER_BY_LEVEL[difficulty];
-    const percent = (timeLeft / total) * 100;
-    timerBar.style.width = percent + '%';
-    timerText.textContent = formatTime(timeLeft);
-  }
-
-  function formatTime(seconds) {
-    const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
-    const ss = String(seconds % 60).padStart(2, '0');
-    return `${mm}:${ss}`;
-  }
-
-  function resetTimer() {
-    if (timerId) clearInterval(timerId);
-    timeLeft = TIMER_BY_LEVEL[difficulty];
-    updateTimerBar();
-    timerId = setInterval(() => {
-      timeLeft = Math.max(0, timeLeft - 1);
-      updateTimerBar();
-      if (timeLeft === 0) {
-        clearInterval(timerId);
-        selected = null;
-        renderGrid();
+    function genPuzzle(full, holes) {
+      const p = deepCopy(full);
+      let removed = 0;
+      while (removed < holes) {
+        const r = Math.floor(Math.random() * 9), c = Math.floor(Math.random() * 9);
+        if (p[r][c] !== 0) { p[r][c] = 0; removed++; }
       }
-    }, 1000);
-  }
+      return p;
+    }
+    function formatTime(s) {
+      const m = String(Math.floor(s/60)).padStart(2,'0');
+      const sec = String(s % 60).padStart(2,'0');
+      return `${m}:${sec}`;
+    }
+    function updateTimer() {
+      const pct = (timeLeft / TIMER_BY_LEVEL[difficulty]) * 100;
+      timerBar.style.width = pct + '%';
+      timerText.textContent = formatTime(timeLeft);
+    }
+    function startTimer() {
+      clearInterval(timerId);
+      selected = null; errorCells = []; revealedCells = [];
+      timeLeft = TIMER_BY_LEVEL[difficulty];
+      updateTimer();
+      timerId = setInterval(() => {
+        timeLeft = Math.max(0, timeLeft - 1);
+        updateTimer();
+        if (timeLeft === 0) clearInterval(timerId);
+      }, 1000);
+    }
 
-  // Render functions
-  function renderGrid() {
-    sudokuGrid.innerHTML = '';
-    grid.forEach((row, r) => {
-      const rowDiv = document.createElement('div');
-      rowDiv.className = 'sudoku-row';
-      row.forEach((cell, c) => {
-        const cellDiv = document.createElement('div');
-        cellDiv.className = 'sudoku-cell';
-        if ((c + 1) % 3 === 0) cellDiv.style.borderRight = '2px solid #444';
-        if ((r + 1) % 3 === 0) cellDiv.style.borderBottom = '2px solid #444';
-        cellDiv.style.backgroundColor = blockColor(r, c);
-
-        if (startingPuzzle[r][c] !== 0) {
-          cellDiv.classList.add('starting-cell');
-        }
-        if (selected && selected[0] === r && selected[1] === c) {
-          cellDiv.classList.add('selected-cell');
-        }
-        if (errorCells.some(([er, ec]) => er === r && ec === c)) {
-          cellDiv.classList.add('error-cell');
-        }
-
-        cellDiv.textContent = cell === 0 ? '' : cell;
-        cellDiv.style.fontWeight = '700';
-        if (startingPuzzle[r][c] !== 0) {
-          cellDiv.style.color = '#4a90e2';
-          cellDiv.style.textShadow = '0 0 3px #bbe1ff';
-          cellDiv.style.userSelect = 'none';
-          cellDiv.style.cursor = 'default';
-        } else if (revealedCells.some(([rr, cc]) => rr === r && cc === c)) {
-          cellDiv.style.color = '#d9534f';
-        } else {
-          cellDiv.style.color = '#0b3e02';
-        }
-
-        cellDiv.onclick = () => {
-          if (timeLeft <= 0) return;
-          if (startingPuzzle[r][c] === 0) {
-            selected = [r, c];
-            errorCells = [];
-            renderGrid();
-            renderNumberPad();
-          } else {
-            selected = null;
-            renderGrid();
-            renderNumberPad();
-          }
-        };
-
-        rowDiv.appendChild(cellDiv);
+    // Rendering
+    function renderGrid() {
+      sudokuGrid.innerHTML = '';
+      grid.forEach((row, r) => {
+        row.forEach((val, c) => {
+          const cell = document.createElement('div');
+          cell.className = [
+            'aspect-square flex items-center justify-center text-xl cursor-pointer transition',
+            'border border-gray-300',
+            (c+1)%3===0 ? 'border-r-4' : '',
+            (r+1)%3===0 ? 'border-b-4' : '',
+            startingPuzzle[r][c] ? 'bg-gray-100 font-bold text-blue-600 cursor-default' : '',
+            selected && selected[0]===r && selected[1]===c ? 'ring-4 ring-blue-300' : '',
+            errorCells.some(e => e[0]===r && e[1]===c) ? 'bg-red-200 text-red-800 ring-2 ring-red-400' : ''
+          ].filter(Boolean).join(' ');
+          cell.textContent = val || '';
+          cell.onclick = () => {
+            if (timeLeft===0 || startingPuzzle[r][c]) return;
+            selected = selected && selected[0]===r && selected[1]===c ? null : [r,c];
+            validate(); renderGrid(); renderPad();
+          };
+          sudokuGrid.appendChild(cell);
+        });
       });
-      sudokuGrid.appendChild(rowDiv);
-    });
-  }
+    }
 
-  function renderNumberPad() {
-    numberPad.innerHTML = '';
-    for (let i = 1; i <= 9; i++) {
-      const btn = document.createElement('button');
-      btn.className = 'number-button';
-      btn.textContent = i;
-      btn.disabled = !selected || timeLeft <= 0;
-      btn.onclick = () => {
-        if (!selected) return;
-        const [r, c] = selected;
-        grid[r][c] = i;
-        // Remove from revealed if user changes
-        revealedCells = revealedCells.filter(([rr, cc]) => rr !== r || cc !== c);
-        selected = null;
-        validateGrid();
-        renderGrid();
-        renderNumberPad();
+    function renderPad() {
+      numberPad.innerHTML = '';
+      const makeBtn = (txt, extra='') => {
+        const btn = document.createElement('button');
+        btn.className = [
+          'px-3 py-1 rounded-md font-semibold shadow-md',
+          selected ? extra + ' bg-gradient-to-br from-blue-500 to-purple-500 text-white hover:from-purple-500 hover:to-blue-500'
+                   : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+        ].join(' ');
+        btn.textContent = txt;
+        btn.disabled = !selected;
+        return btn;
       };
-      numberPad.appendChild(btn);
-    }
-    const clearBtn = document.createElement('button');
-    clearBtn.className = 'number-button clear';
-    clearBtn.textContent = 'Clear';
-    clearBtn.disabled = !selected || timeLeft <= 0;
-    clearBtn.onclick = () => {
-      if (!selected) return;
-      const [r, c] = selected;
-      grid[r][c] = 0;
-      revealedCells = revealedCells.filter(([rr, cc]) => rr !== r || cc !== c);
-      selected = null;
-      validateGrid();
-      renderGrid();
-      renderNumberPad();
-    };
-    numberPad.appendChild(clearBtn);
-    const revealBtn = document.createElement('button');
-    revealBtn.className = 'number-button reveal';
-    revealBtn.textContent = 'Reveal';
-    revealBtn.disabled = !selected || timeLeft <= 0;
-    revealBtn.onclick = () => {
-      if (!selected) return;
-      const [r, c] = selected;
-      grid[r][c] = solvedBoard[r][c];
-      if (!revealedCells.some(([rr, cc]) => rr === r && cc === c)) {
-        revealedCells.push([r, c]);
+      for (let i=1; i<=9; i++) {
+        const b = makeBtn(i);
+        b.onclick = () => { if (selected) { grid[selected[0]][selected[1]] = i; selected=null; validate(); renderGrid(); renderPad(); }};
+        numberPad.appendChild(b);
       }
-      selected = null;
-      validateGrid();
-      renderGrid();
-      renderNumberPad();
-    };
-    numberPad.appendChild(revealBtn);
-  }
-
-  function validateGrid() {
-    let errs = [];
-    for (let r = 0; r < 9; r++) {
-      for (let c = 0; c < 9; c++) {
-        const val = grid[r][c];
-        if (val !== 0) {
-          grid[r][c] = 0;
-          if (!isValid(grid, r, c, val)) {
-            errs.push([r, c]);
-          }
-          grid[r][c] = val;
+      const clear = makeBtn('Clear','bg-red-400 hover:bg-red-500');
+      clear.onclick = () => { if (selected) { grid[selected[0]][selected[1]] = 0; selected=null; validate(); renderGrid(); renderPad(); }};
+      numberPad.appendChild(clear);
+      const reveal = makeBtn('Reveal','bg-green-400 hover:bg-green-500');
+      reveal.onclick = () => {
+        if (selected) {
+          grid[selected[0]][selected[1]] = solvedBoard[selected[0]][selected[1]];
+          revealedCells.push(selected);
+          selected=null; validate(); renderGrid(); renderPad();
         }
+      };
+      numberPad.appendChild(reveal);
+    }
+
+    function validate() {
+      errorCells = [];
+      grid.forEach((row,r)=>row.forEach((v,c)=> {
+        if (v && !isValid(grid,r,c,v)) errorCells.push([r,c]);
+      }));
+      if (grid.flat().every(n=>n) && !errorCells.length) {
+        clearInterval(timerId);
+        const taken = TIMER_BY_LEVEL[difficulty] - timeLeft;
+        messageDiv.textContent = `🎉 Completed in ${formatTime(taken)} 🎉`;
+        overlay.classList.replace('invisible','visible');
+        overlay.classList.replace('opacity-0','opacity-100');
+        confetti.create(confettiCanvas, {resize:true})({particleCount:150,spread:60,origin:{y:0.6}});
       }
     }
-    errorCells = errs;
-  }
 
-  function blockColor(row, col) {
-    const blockId = Math.floor(row / 3) + Math.floor(col / 3) * 3;
-    const colors = ['#c9e4ff', '#ffc9de', '#fff1c9'];
-    return colors[blockId % colors.length];
-  }
+    function setup() {
+      difficulty = difficultySelect.value;
+      const holes = difficulty==='easy'?20: difficulty==='hard'?55:45;
+      solvedBoard = genFull();
+      startingPuzzle = genPuzzle(solvedBoard, holes);
+      grid = deepCopy(startingPuzzle);
+      startTimer();
+      renderGrid();
+      renderPad();
+    }
 
-  function onDifficultyChange() {
-    difficulty = difficultySelect.value;
-    let holes = 45;
-    if (difficulty === 'easy') holes = 35;
-    else if (difficulty === 'hard') holes = 55;
-    solvedBoard = generateFullBoard();
-    startingPuzzle = generatePuzzle(solvedBoard, holes);
-    grid = deepCopyGrid(startingPuzzle);
-    selected = null;
-    errorCells = [];
-    revealedCells = [];
-    timeLeft = TIMER_BY_LEVEL[difficulty];
-    updateTimerBar();
-    if (timerId) clearInterval(timerId);
-    timerId = setInterval(() => {
-      timeLeft = Math.max(0, timeLeft - 1);
-      updateTimerBar();
-      if (timeLeft === 0) {
-        clearInterval(timerId);
-        selected = null;
-        renderGrid();
-        renderNumberPad();
-      }
-    }, 1000);
-    renderGrid();
-    renderNumberPad();
-  }
+    difficultySelect.addEventListener('change', setup);
+    setup();
+  })();
+  </script>
 
-  difficultySelect.addEventListener('change', onDifficultyChange);
-
-  // Initial setup
-  onDifficultyChange();
-
-})();
-</script>
 </body>
 </html>
