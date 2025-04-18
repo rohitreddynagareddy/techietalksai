@@ -1,0 +1,1 @@
+import express from 'express';\nimport cors from 'cors';\nconst app = express();\nconst port = 4000;\n\napp.use(cors());\napp.use(express.json());\n\napp.get('/api/message', (req, res) => {\n  res.json({ message: 'Hello from Express backend!' });\n});\n\napp.listen(port, () => {\n  console.log();\n});
