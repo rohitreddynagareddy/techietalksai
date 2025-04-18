@@ -16,14 +16,8 @@ async def run_airbnb_example():
     # Create a configuration with multiple servers
     config = {
         "mcpServers": {
-            "airbnb": {
-                "command": "npx",
-                "args": ["-y", "@openbnb/mcp-server-airbnb", "--ignore-robots-txt"],
-            },
-            "playwright": {
-                "command": "npx",
-                "args": ["@playwright/mcp@latest"],
-                "env": {"DISPLAY": ":1"},
+            "booking": {
+                "url": "http://localhost:8888/sse"
             },
             "filesystem": {
                 "command": "npx",
@@ -94,7 +88,7 @@ async def run_airbnb_example():
             # "Search for a nice place to stay in Barcelona on Airbnb, "
             # "then use Google to find nearby restaurants and attractions."
             # "Write the result in the current directory in restarant.txt",
-            "search for the latest AI news from Google news and save it as new.md",
+            "Book for Sree and save it as booking.md",
             max_steps=30,
         )
         print(result)
