@@ -1,1 +1,54 @@
-import React, { useState, useEffect } from 'react';\n\nexport default function Notes() {\n  const [text, setText] = useState('');\n  const [notes, setNotes] = useState<Array<{ _id: string; text: string }>>([]);\n  const [error, setError] = useState('');\n\n  useEffect(() => {\n    fetch('http://localhost:6000/api/notes')\n      .then(res => res.json())\n      .then(setNotes)\n      .catch(() => setError('Failed to load notes'))\n  }, []);\n\n  const handleSubmit = async (e: React.FormEvent) => {\n    e.preventDefault();\n    setError('');\n    try {\n      const res = await fetch('http://localhost:6000/api/notes', {\n        method: 'POST',\n        headers: { 'Content-Type': 'application/json' },\n        body: JSON.stringify({ text }),\n      });\n      if (!res.ok) throw new Error('Submit failed');\n      const note = await res.json();\n      setNotes([...notes, note]);\n      setText('');\n    } catch (err) {\n      setError((err as Error).message);\n    }\n  };\n\n  return (\n    <div className="max-w-md mx-auto">\n      <form onSubmit={handleSubmit} className="flex flex-col space-y-4">\n        <input\n          type="text"\n          placeholder="New note"\n          className="border border-gray-400 p-2 rounded"\n          value={text}\n          onChange={e => setText(e.target.value)}\n          required\n        />\n        <button type="submit" className="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded">Add Note</button>\n      </form>\n      {error && <p className="text-red-600 mt-2">{error}</p>}\n      <ul className="mt-4 list-disc list-inside">\n        {notes.map(note => (\n          <li key={note._id}>{note.text}</li>\n        ))}\n      </ul>\n    </div>\n  );\n}
+import React, { useState, useEffect } from 'react';
+
+export default function Notes() {
+  const [text, setText] = useState('');
+  const [notes, setNotes] = useState<Array<{ _id: string; text: string }>>([]);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetch('http://localhost:6000/api/notes')
+      .then(res => res.json())
+      .then(setNotes)
+      .catch(() => setError('Failed to load notes'));
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    try {
+      const res = await fetch('http://localhost:6000/api/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      });
+      if (!res.ok) throw new Error('Submit failed');
+      const note = await res.json();
+      setNotes([...notes, note]);
+      setText('');
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  };
+
+  return (
+    <div className="max-w-md mx-auto">
+      <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+        <input
+          type="text"
+          placeholder="New note"
+          className="border border-gray-400 p-2 rounded"
+          value={text}
+          onChange={e => setText(e.target.value)}
+          required
+        />
+        <button type="submit" className="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded">Add Note</button>
+      </form>
+      {error && <p className="text-red-600 mt-2">{error}</p>}
+      <ul className="mt-4 list-disc list-inside">
+        {notes.map(note => (
+          <li key={note._id}>{note.text}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}

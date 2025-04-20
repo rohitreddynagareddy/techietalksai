@@ -1,1 +1,11 @@
-FROM node:18\nWORKDIR /app\nCOPY package*.json ./\nRUN npm install\nCOPY . .\nEXPOSE 3000 5000\nCMD [ "bash", "-c", "npm run backend & npm run dev" ]
+FROM node:18
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+EXPOSE 3000 5000
+
+CMD [ "bash", "-c", "npm run backend & npm run dev" ]

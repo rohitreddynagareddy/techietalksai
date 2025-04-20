@@ -1,1 +1,28 @@
-{\n  "name": "step5",\n  "version": "1.0.0",\n  "scripts": {\n    "dev": "next dev -p 3000",\n    "build": "next build",\n    "start": "next start -p 3000",\n    "backend": "ts-node src/backend/server.ts"\n  },\n  "dependencies": {\n    "next": "latest",\n    "react": "latest",\n    "react-dom": "latest",\n    "express": "latest",\n    "cors": "latest",\n    "jsonwebtoken": "latest",\n    "bcryptjs": "latest"\n  },\n  "devDependencies": {\n    "@types/node": "latest",\n    "@types/react": "latest",\n    "@types/express": "latest",\n    "@types/cors": "latest",\n    "@types/jsonwebtoken": "latest",\n    "typescript": "latest",\n    "ts-node": "latest"\n  }\n}
+{
+  "name": "step5",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "backend": "ts-node src/backend/server.ts"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "express": "latest",
+    "cors": "latest",
+    "jsonwebtoken": "latest",
+    "bcryptjs": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/express": "latest",
+    "@types/cors": "latest",
+    "@types/jsonwebtoken": "latest",
+    "typescript": "latest",
+    "ts-node": "latest"
+  }
+}
