@@ -1,1 +1,47 @@
-import express from 'express';\nimport cors from 'cors';\nimport jwt from 'jsonwebtoken';\nimport bcrypt from 'bcryptjs';\nconst app = express();\nconst port = 7000;\nconst JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';\napp.use(cors());\napp.use(express.json());\nconst user = { id: 1, username: 'user', passwordHash: bcrypt.hashSync('pass', 8) };\napp.post('/api/login', (req, res) => {\n  const { username, password } = req.body;\n  if (username !== user.username || !bcrypt.compareSync(password, user.passwordHash)) {\n    return res.status(401).json({ error: 'Invalid credentials' });\n  }\n  const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });\n  res.json({ token });\n});\nfunction authenticateToken(req, res, next) {\n  const authHeader = req.headers['authorization'];\n  const token = authHeader && authHeader.split(' ')[1];\n  if (!token) return res.status(401).json({ error: 'Missing token' });\n  jwt.verify(token, JWT_SECRET, (err, user) => {\n    if (err) return res.status(403).json({ error: 'Invalid token' });\n    req.user = user;\n    next();\n  });\n}\napp.get('/api/protected', authenticateToken, (req, res) => {\n  const userData = req.user || {}\n  res.json({ message:  });\n});\napp.listen(port, () => {\n  console.log('Auth backend listening on port ' + port);\n});
+import express from 'express';
+import cors from 'cors';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+
+const app = express();
+const port = 7000;
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
+
+app.use(cors());
+app.use(express.json());
+
+const user = { 
+  id: 1, 
+  username: 'user', 
+  passwordHash: bcrypt.hashSync('pass', 8) 
+};
+
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
+  if (username !== user.username || !bcrypt.compareSync(password, user.passwordHash)) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+  const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+  res.json({ token });
+});
+
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Missing token' });
+  
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ error: 'Invalid token' });
+    req.user = user;
+    next();
+  });
+}
+
+app.get('/api/protected', authenticateToken, (req, res) => {
+  const userData = req.user || {}
+  res.json({ message: `Hello, ${userData.username}! This is protected data.` });
+});
+
+app.listen(port, () => {
+  console.log('Auth backend listening on port ' + port);
+});

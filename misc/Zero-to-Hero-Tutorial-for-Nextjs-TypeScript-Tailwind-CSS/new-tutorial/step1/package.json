@@ -1,1 +1,19 @@
-{\n  "name": "step1",\n  "version": "1.0.0",\n  "scripts": {\n    "dev": "next dev -p 3000",\n    "build": "next build",\n    "start": "next start -p 3000"\n  },\n  "dependencies": {\n    "next": "latest",\n    "react": "latest",\n    "react-dom": "latest"\n  },\n  "devDependencies": {\n    "typescript": "latest",\n    "@types/node": "latest",\n    "@types/react": "latest"\n  }\n}
+{
+  "name": "step1",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "typescript": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest"
+  }
+}

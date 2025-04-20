@@ -1,1 +1,44 @@
-import express from 'express';\nimport cors from 'cors';\nimport mongoose from 'mongoose';\n\nconst app = express();\nconst port = 6000;\n\napp.use(cors());\napp.use(express.json());\n\nconst mongoUrl = process.env.MONGO_URL || 'mongodb://mongo:27017/notesdb';\nmongoose.connect(mongoUrl).then(() => {\n  console.log('Connected to MongoDB');\n}).catch(err => {\n  console.error('MongoDB connection error:', err);\n});\n\nconst noteSchema = new mongoose.Schema({\n  text: String,\n});\nconst Note = mongoose.model('Note', noteSchema);\n\napp.post('/api/notes', async (req, res) => {\n  try {\n    const note = new Note({ text: req.body.text });\n    await note.save();\n    res.json(note);\n  } catch (err) {\n    res.status(500).json({ error: 'Failed to save note' });\n  }\n});\n\napp.get('/api/notes', async (req, res) => {\n  try {\n    const notes = await Note.find();\n    res.json(notes);\n  } catch (err) {\n    res.status(500).json({ error: 'Failed to fetch notes' });\n  }\n});\n\napp.listen(port, () => {\n  console.log();\n});
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+
+const app = express();
+const port = 6000;
+
+app.use(cors());
+app.use(express.json());
+
+const mongoUrl = process.env.MONGO_URL || 'mongodb://mongo:27017/notesdb';
+mongoose.connect(mongoUrl).then(() => {
+  console.log('Connected to MongoDB');
+}).catch(err => {
+  console.error('MongoDB connection error:', err);
+});
+
+const noteSchema = new mongoose.Schema({
+  text: String,
+});
+const Note = mongoose.model('Note', noteSchema);
+
+app.post('/api/notes', async (req, res) => {
+  try {
+    const note = new Note({ text: req.body.text });
+    await note.save();
+    res.json(note);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to save note' });
+  }
+});
+
+app.get('/api/notes', async (req, res) => {
+  try {
+    const notes = await Note.find();
+    res.json(notes);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch notes' });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Notes server running on port ${port}`);
+});

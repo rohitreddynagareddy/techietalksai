@@ -1,1 +1,14 @@
-import React, { useEffect, useState } from 'react';\n\nexport default function Message() {\n  const [message, setMessage] = useState('Loading...');\n\n  useEffect(() => {\n    fetch('http://localhost:4000/api/message')\n      .then(res => res.json())\n      .then(data => setMessage(data.message))\n      .catch(() => setMessage('Failed to load message'));\n  }, []);\n\n  return <p className="text-lg">{message}</p>;\n}\n
+import React, { useEffect, useState } from 'react';
+
+export default function Message() {
+  const [message, setMessage] = useState('Loading...');
+
+  useEffect(() => {
+    fetch('http://localhost:4000/api/message')
+      .then(res => res.json())
+      .then(data => setMessage(data.message))
+      .catch(() => setMessage('Failed to load message'));
+  }, []);
+
+  return <p className="text-lg">{message}</p>;
+}

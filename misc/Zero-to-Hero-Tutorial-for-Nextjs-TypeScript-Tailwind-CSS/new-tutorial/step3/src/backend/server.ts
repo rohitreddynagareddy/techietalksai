@@ -1,1 +1,19 @@
-import express from 'express';\nimport cors from 'cors';\nconst app = express();\nconst port = 5000;\n\napp.use(cors());\napp.use(express.json());\n\napp.post('/api/echo', (req, res) => {\n  const { text } = req.body;\n  if (!text) {\n    return res.status(400).json({ error: 'Text is required' });\n  }\n  res.json({ echo:  });\n});\n\napp.listen(port, () => {\n  console.log();\n});
+import express from 'express';
+import cors from 'cors';
+const app = express();
+const port = 5000;
+
+app.use(cors());
+app.use(express.json());
+
+app.post('/api/echo', (req, res) => {
+  const { text } = req.body;
+  if (!text) {
+    return res.status(400).json({ error: 'Text is required' });
+  }
+  res.json({ echo: text });
+});
+
+app.listen(port, () => {
+  console.log(`Echo server running on port ${port}`);
+});
