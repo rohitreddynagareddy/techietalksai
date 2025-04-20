@@ -246,6 +246,7 @@ with col1:
     if selected_problem != st.session_state.problem:
         reset_problem(selected_problem)
         st.session_state.history.clear()  # Clear log when new problem selected
+        st.rerun()
 
 
     st.write("---")
@@ -264,7 +265,7 @@ with col1:
     # Display as a table
     st.table(table_data)
 
-    
+
     st.write("---")
     if st.button("Train Step"):
         train_step()
