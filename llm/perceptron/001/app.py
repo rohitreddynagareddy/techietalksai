@@ -32,6 +32,15 @@ problems = {
             ([1, 1], 1),
         ]
     },
+    "XOR Gate": {
+        "inputs": ["Input 1", "Input 2"],
+        "dataset": [
+            ([0, 0], 0),
+            ([0, 1], 1),
+            ([1, 0], 1),
+            ([1, 1], 0),
+        ]
+    },
     "Exercise Decision": {
         "inputs": ["Mother", "Father", "Sister", "Brother", "Teacher"],
         "dataset": [
@@ -374,4 +383,16 @@ draw_perceptron_diagram()
 
     # st.graphviz_chart(g)
 
+st.subheader("Key Ideas")
+st.markdown("**Initialize with random weights and bias.**")
+
+st.markdown("**Training:** Adjust based on mistakes (errors).")
+
+st.markdown("**Activation:** Decide output simply (threshold function).")
+
+st.markdown("**Perceptron** = simple 'decision maker' based on inputs.")
+
+st.markdown("**Real life:** Decisions (like exercising!) can be modeled with such small networks.")
+
+st.write("https://blog.schogini.com/html_files/perceptron.html")
 
