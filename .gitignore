@@ -18,6 +18,8 @@ ENV/
 .venv/
 .virtualenv/
 
+checkpoint*/
+
 # Pipenv
 Pipfile
 Pipfile.lock
