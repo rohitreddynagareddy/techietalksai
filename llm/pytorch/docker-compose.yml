@@ -1,0 +1,114 @@
+
+services:
+  step1:
+    build: .
+    container_name: llm_1
+    volumes:
+      - .:/app
+    tty: true
+    command: ["python", "step1_env_check.py"]
+  step2:
+    build: .
+    container_name: llm_2
+    volumes:
+      - .:/app
+    tty: true
+    command: ["python", "step2_tokenizer.py"]
+  step3:
+    build: .
+    container_name: llm_3
+    volumes:
+      - .:/app
+    tty: true
+    command: ["python", "step3_tiny_transformer.py"]
+  step4:
+    build: .
+    container_name: llm_4
+    volumes:
+      - .:/app
+    tty: true
+    command: ["python", "step4_forward_pass.py"]
+  step5:
+    build: .
+    container_name: llm_5
+    volumes:
+      - .:/app
+    tty: true
+    command: ["python", "step5_train_simple.py"]
+  step6:
+    build: .
+    container_name: llm_6
+    volumes:
+      - .:/app
+    tty: true
+    command: ["python", "step6_simple_inference.py"]
+  step7:
+    build: .
+    container_name: llm_7
+    volumes:
+      - .:/app
+    tty: true
+    command: ["python", "step7_mini_gpt.py"]
+  step8:
+    build: .
+    container_name: llm_8
+    volumes:
+      - .:/app
+    tty: true
+    command: ["python", "step8_bonus_multihead_mini_gpt.py"]
+  step9:
+    build: .
+    container_name: llm_9
+    volumes:
+      - .:/app
+    tty: true
+    command: ["python", "step9_load_and_infer.py"]
+  step10:
+    build: .
+    container_name: llm_10
+    volumes:
+      - .:/app
+    tty: true
+    command: ["python", "step10_upgraded_top-k-sampling-long-context.py"]
+  step11:
+    build: .
+    container_name: llm_11
+    volumes:
+      - .:/app
+    tty: true
+    command: ["python", "step11_temperature.py"]
+  step12:
+    build: .
+    container_name: llm_12
+    volumes:
+      - .:/app
+    tty: true
+    command: ["python", "step12_mini-decoder.py"]
+  step13:
+    build: .
+    container_name: llm_13
+    volumes:
+      - .:/app
+    tty: true
+    command: ["python", "step13_story_finetune_and_generate.py"]
+  step14:
+    build: .
+    container_name: llm_14
+    volumes:
+      - .:/app
+    tty: true
+    command: ["python", "step14_pretrain_gpt2_from_scratch.py"]
+  step15:
+    build: .
+    container_name: llm_15
+    volumes:
+      - .:/app
+    tty: true
+    command: ["python", "step15_tiktoken_pretrain_gpt2_from_scratch.py"]
+  step15b:
+    build: .
+    container_name: llm_15b
+    volumes:
+      - .:/app
+    tty: true
+    command: ["python", "step15b_gen.py"]
