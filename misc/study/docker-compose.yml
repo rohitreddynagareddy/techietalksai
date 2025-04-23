@@ -8,4 +8,14 @@ services:
       - .:/app/app
     env_file:
       - .env
-    command: ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.enableCORS=false"]
+    command: ["streamlit", "run", "streamlit_study_app.py", "--server.port=8501", "--server.enableCORS=false"]
+
+  app-mcp:
+    build: .
+    ports:
+      - "8502:8501"
+    volumes:
+      - .:/app/app
+    env_file:
+      - .env
+    command: ["streamlit", "run", "streamlit_study_mcp_app.py", "--server.port=8501", "--server.enableCORS=false"]
