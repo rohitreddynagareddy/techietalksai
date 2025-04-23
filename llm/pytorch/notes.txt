@@ -1,0 +1,3141 @@
+Tutorial Plan:
+
+Step	Title	Goal
+1	Setting Up Environment	Docker + PyTorch Setup
+2	Tiny Dataset and Tokenizer	Tokenize and prepare input
+3	Build a Tiny Transformer Block	Basic model structure
+4	Forward Pass	Understand model output
+5	Loss and Backpropagation	Training the model
+6	Simple Inference	Generating text
+7	Extend to Mini GPT	Stack layers, improve
+
+llm-tutorial/
+├── docker-compose.yml
+├── Dockerfile
+├── step1_env_check.py
+├── step2_tokenizer.py
+├── step3_tiny_transformer.py
+├── step4_forward_pass.py
+├── step5_train_simple.py
+├── step6_simple_inference.py
+├── step7_mini_gpt.py
+
+
+docker compose up step1 --build
+ ✔ step1                   Built                                                                                                       0.0s 
+ ✔ Container llm_tutorial  Recreated                                                                                                   0.0s 
+Attaching to llm_tutorial
+llm_tutorial  | ✅ PyTorch installation check
+llm_tutorial  | PyTorch version: 2.6.0+cpu
+llm_tutorial  | 🖥️ Machine type: aarch64
+llm_tutorial  | 🍎 Running on Apple Silicon: True
+llm_tutorial  | ⚠️ PyTorch is not using the MPS backend. Falling back to CPU.
+llm_tutorial  | 🔢 Tensor x: tensor([1, 2, 3])
+llm_tutorial  | Longitude of x: torch.Size([3])
+llm_tutorial exited with code 0
+
+
+sh run.sh step1_env_check.py 
+
+✅ PyTorch installation check
+PyTorch version: 2.6.0
+🖥️ Machine type: arm64
+🍎 Running on Apple Silicon: True
+🚀 PyTorch is using the MPS backend for Apple Silicon.
+🔢 Tensor x: tensor([1, 2, 3], device='mps:0')
+Longitude of x: torch.Size([3])
+
+
+docker compose up step2 --build
+Attaching to llm_2
+llm_2  | 
+llm_2  | 🔹 Step 2: Tiny Dataset and Tokenizer 🔹
+llm_2  | 
+llm_2  | 📚 Tiny Corpus: hello world
+llm_2  | 🔤 Vocabulary: [' ', 'd', 'e', 'h', 'l', 'o', 'r', 'w']
+llm_2  | 🔢 char_to_idx: {' ': 0, 'd': 1, 'e': 2, 'h': 3, 'l': 4, 'o': 5, 'r': 6, 'w': 7}
+llm_2  | 🔢 idx_to_char: {0: ' ', 1: 'd', 2: 'e', 3: 'h', 4: 'l', 5: 'o', 6: 'r', 7: 'w'}
+llm_2  | 🧩 Encoded Corpus: tensor([3, 2, 4, 4, 5, 0, 7, 5, 6, 4, 1])
+llm_2  | 🔁 Decoded Corpus: hello world
+
+
+Attaching to llm_3
+llm_3  | 
+llm_3  | 🔹 Step 3: Tiny Transformer 🔹
+llm_3  | 
+llm_3  | 
+llm_3  | 🚀 Random input tokens: tensor([3, 2, 7, 7])
+llm_3  | 
+llm_3  | 📥 Input tokens: tensor([3, 2, 7, 7])
+llm_3  | 🧠 Embedded vectors: tensor([[ 0.4130,  0.0641,  0.3991, -0.8849, -1.2110,  0.9565,  0.1969,  0.2400,
+llm_3  |          -2.0434, -0.1292, -1.6535,  0.7606,  0.5310, -0.7963, -0.7228, -0.9761],
+llm_3  |         [-0.9854, -1.1178,  0.1143, -0.1667,  0.2248,  1.0821,  0.0983,  1.5797,
+llm_3  |           0.5089,  0.8713, -1.3632,  0.2715,  0.5277,  0.3667, -1.5897,  0.0628],
+llm_3  |         [ 0.5551,  0.1885,  1.4335,  0.3703, -1.0305, -1.6570, -0.2520,  0.2333,
+llm_3  |          -0.9171,  0.2734,  0.1997,  0.3076, -0.0543,  0.4795,  0.4366, -1.0728],
+llm_3  |         [ 0.5551,  0.1885,  1.4335,  0.3703, -1.0305, -1.6570, -0.2520,  0.2333,
+llm_3  |          -0.9171,  0.2734,  0.1997,  0.3076, -0.0543,  0.4795,  0.4366, -1.0728]],
+llm_3  |        grad_fn=<EmbeddingBackward0>)
+llm_3  | 📤 Output logits: tensor([[-0.4896,  0.1415,  0.5998, -0.3759,  0.8597, -0.8287, -0.4115,  0.9811],
+llm_3  |         [ 0.2652, -0.0354,  0.1338,  0.3198,  0.0846, -0.1632, -0.0986, -0.1347],
+llm_3  |         [ 0.2101,  0.2103,  0.5398, -0.7927,  0.7957, -0.1625,  0.2482,  0.2129],
+llm_3  |         [ 0.2101,  0.2103,  0.5398, -0.7927,  0.7957, -0.1625,  0.2482,  0.2129]],
+llm_3  |        grad_fn=<AddmmBackward0>)
+llm_3  | 
+llm_3  | 🎯 Output shape: torch.Size([4, 8])
+
+
+Attaching to llm_4
+llm_4  | 
+llm_4  | 🔹 Step 4: Forward Pass with Debugging 🔹
+llm_4  | 
+llm_4  | 🔠 Vocab: [' ', 'd', 'e', 'h', 'l', 'o', 'r', 'w']
+llm_4  | 🔢 Vocab Size: 8
+llm_4  | 📏 Embedding Dimension: 16
+llm_4  | 🗺️ char_to_idx: {' ': 0, 'd': 1, 'e': 2, 'h': 3, 'l': 4, 'o': 5, 'r': 6, 'w': 7}
+llm_4  | 🗺️ idx_to_char: {0: ' ', 1: 'd', 2: 'e', 3: 'h', 4: 'l', 5: 'o', 6: 'r', 7: 'w'}
+llm_4  | 
+llm_4  | 🧩 Encoded input sequence: tensor([3, 2, 4, 4, 5])
+llm_4  | 
+llm_4  | 🚀 Running Forward Pass...
+llm_4  | 
+llm_4  | 
+llm_4  | 📥 [Forward] Input tokens: tensor([3, 2, 4, 4, 5])
+llm_4  | 🔍 [Forward] After Embedding: torch.Size([5, 16])
+llm_4  | tensor([[-0.2176, -0.3299,  0.6378, -0.9579, -0.2945,  0.1124,  0.2140,  0.2470,
+llm_4  |           0.3032, -0.6182,  0.1014, -0.6149, -0.3846, -0.8241,  1.2509, -0.8052],
+llm_4  |         [-0.6893, -1.8625,  0.1673,  1.7826,  1.6136, -0.5476,  0.4728,  0.7230,
+llm_4  |           0.0516, -0.5891,  0.2851,  0.1282, -0.6484, -0.2354,  1.4898,  0.7984],
+llm_4  |         [-0.2040,  0.1475, -0.7743,  0.1406,  1.2313, -0.6561,  1.5741,  0.8972,
+llm_4  |          -0.2847,  1.7171, -0.3540,  0.9444, -0.3731,  0.1698,  1.2305, -0.0627],
+llm_4  |         [-0.2040,  0.1475, -0.7743,  0.1406,  1.2313, -0.6561,  1.5741,  0.8972,
+llm_4  |          -0.2847,  1.7171, -0.3540,  0.9444, -0.3731,  0.1698,  1.2305, -0.0627],
+llm_4  |         [-1.0769,  0.6065,  1.6243, -0.3495,  0.1655, -0.6322,  0.0873, -0.8357,
+llm_4  |          -1.3038, -1.2656, -0.4615,  0.5733, -0.1845,  1.1964,  0.3213, -0.7862]],
+llm_4  |        grad_fn=<EmbeddingBackward0>)
+llm_4  | 🎯 [Forward] After Linear: torch.Size([5, 8])
+llm_4  | tensor([[ 0.2274,  0.2017, -0.0490, -0.3577, -0.1505, -0.1386, -0.1837, -0.4242],
+llm_4  |         [ 0.3893, -0.4868, -0.7005, -1.4190,  1.0064, -0.3253, -0.4790, -0.1671],
+llm_4  |         [ 0.3746,  0.0266, -0.0973,  0.2869,  0.7553, -0.9941,  0.6017,  0.2532],
+llm_4  |         [ 0.3746,  0.0266, -0.0973,  0.2869,  0.7553, -0.9941,  0.6017,  0.2532],
+llm_4  |         [ 0.4142, -1.0381,  0.2362, -0.5968, -0.5036, -0.5421, -0.0408, -0.2716]],
+llm_4  |        grad_fn=<AddmmBackward0>)
+llm_4  | 
+llm_4  | ✅ Forward Pass Done
+llm_4  | 📝 Output Logits shape: torch.Size([5, 8]) [Should be: (input_length, vocab_size)]
+llm_4 exited with code 0
+
+
+Attaching to llm_5
+ ✔ step5            Built                                                                                                              0.0s 
+ ✔ Container llm_5  Recreated                                                                                                          0.0s 
+llm_5  | 
+llm_5  | 🔹 Step 5: Tiny Training Loop with Debugging 🔹
+llm_5  | 
+llm_5  | 🔠 Vocab: [' ', 'd', 'e', 'h', 'l', 'o', 'r', 'w']
+llm_5  | 🔢 Vocab Size: 8
+llm_5  | 📏 Embedding Dimension: 16
+llm_5  | ⚡ Learning Rate: 0.01
+llm_5  | 🔁 Epochs: 100
+llm_5  | 
+llm_5  | 🧩 Encoded input: tensor([3, 2, 4, 4, 5])
+llm_5  | 
+llm_5  | 📝 Inputs (x): tensor([3, 2, 4, 4])
+llm_5  | 🎯 Targets (y): tensor([2, 4, 4, 5])
+llm_5  | 
+llm_5  | 🚀 Starting Training...
+llm_5  | 
+llm_5  | 📅 Epoch [1/100] - Loss: 2.1268
+llm_5  | 📅 Epoch [10/100] - Loss: 1.0517
+llm_5  | 📅 Epoch [20/100] - Loss: 0.5309
+llm_5  | 📅 Epoch [30/100] - Loss: 0.4012
+llm_5  | 📅 Epoch [40/100] - Loss: 0.3704
+llm_5  | 📅 Epoch [50/100] - Loss: 0.3608
+llm_5  | 📅 Epoch [60/100] - Loss: 0.3569
+llm_5  | 📅 Epoch [70/100] - Loss: 0.3547
+llm_5  | 📅 Epoch [80/100] - Loss: 0.3534
+llm_5  | 📅 Epoch [90/100] - Loss: 0.3524
+llm_5  | 📅 Epoch [100/100] - Loss: 0.3517
+llm_5  | 
+llm_5  | ✅ Training Completed!
+llm_5 exited with code 0
+
+
+Attaching to llm_6
+llm_6  | 
+llm_6  | 🔹 Step 6: Inference and Text Generation 🔹
+llm_6  | 
+llm_6  | 
+llm_6  | 🚀 Training Model...
+llm_6  | 
+llm_6  | 📅 Epoch [1/300] - Loss: 2.6728
+llm_6  | 📅 Epoch [50/300] - Loss: 0.3694
+llm_6  | 📅 Epoch [100/300] - Loss: 0.3536
+llm_6  | 📅 Epoch [150/300] - Loss: 0.3505
+llm_6  | 📅 Epoch [200/300] - Loss: 0.3491
+llm_6  | 📅 Epoch [250/300] - Loss: 0.3483
+llm_6  | 📅 Epoch [300/300] - Loss: 0.3479
+llm_6  | 
+llm_6  | ✅ Training Completed!
+llm_6  | 
+llm_6  | 🧠 Starting generation with 'h'...
+llm_6  | 
+llm_6  | 📝 Generated Text: helllllllllllllllllll
+llm_6  | 
+llm_6  | 
+llm_6  | 🧠 Starting generation with 'l'...
+llm_6  | 
+llm_6  | 📝 Generated Text: lllllllllllllllllllll
+llm_6  | 
+llm_6  | 
+llm_6  | 🧠 Starting generation with 'w'...
+llm_6  | 
+llm_6  | 📝 Generated Text: wllllllllllllllllllll
+llm_6  | 
+llm_6 exited with code 0
+
+
+
+
+
+
+Compose can now delegate builds to bake for better performance.
+ To do so, set COMPOSE_BAKE=true.
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [step8 internal] load build definition from Dockerfile
+#1 transferring dockerfile: 250B done
+#1 DONE 0.0s
+
+#2 [step8 internal] load metadata for docker.io/library/python:3.11-slim
+#2 DONE 0.0s
+
+#3 [step8 internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [step8 1/4] FROM docker.io/library/python:3.11-slim
+#4 DONE 0.0s
+
+#5 [step8 internal] load build context
+#5 transferring context: 8.96kB done
+#5 DONE 0.0s
+
+#6 [step8 2/4] RUN pip install torch numpy
+#6 CACHED
+
+#7 [step8 3/4] WORKDIR /app
+#7 CACHED
+
+#8 [step8 4/4] COPY . .
+#8 DONE 0.0s
+
+#9 [step8] exporting to image
+#9 exporting layers done
+#9 writing image sha256:957ed1a4d20af397d9246f4e379e0b7b0c6a664f1b462eea6b19cdc214207aa9 done
+#9 naming to docker.io/library/pytorch-step8 done
+#9 DONE 0.0s
+
+#10 [step8] resolving provenance for metadata file
+#10 DONE 0.0s
+Attaching to llm_8
+llm_8  | 
+llm_8  | 🔹 Step 7: Build Mini-GPT 🔹
+llm_8  | 
+llm_8  | 🔠 Vocab: [' ', 'd', 'e', 'h', 'l', 'o', 'r', 'w']
+llm_8  | 🔢 Vocab Size: 8
+llm_8  | 📏 Embedding Dimension: 32
+llm_8  | ⚡ Learning Rate: 0.001
+llm_8  | 📏 Context Block Size: 8
+llm_8  | 
+llm_8  | 🚀 Training Mini-GPT...
+llm_8  | 
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 📅 Epoch [1/500] - Loss: 2.3014
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 📅 Epoch [50/500] - Loss: 0.3120
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 📅 Epoch [100/500] - Loss: 0.0620
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 📅 Epoch [150/500] - Loss: 0.0309
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 📅 Epoch [200/500] - Loss: 0.0193
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 📅 Epoch [250/500] - Loss: 0.0134
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 📅 Epoch [300/500] - Loss: 0.0099
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 📅 Epoch [350/500] - Loss: 0.0076
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 📅 Epoch [400/500] - Loss: 0.0061
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 📅 Epoch [450/500] - Loss: 0.0050
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 10, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 10, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 10, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 10, 8])
+llm_8  | 📅 Epoch [500/500] - Loss: 0.0041
+llm_8  | 
+llm_8  | ✅ Training Completed!
+llm_8  | 
+llm_8  | 🧠 Starting generation with 'h'...
+llm_8  | 
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 1, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 1, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 1, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 1, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 2, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 2, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 2, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 2, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 3, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 3, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 3, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 3, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 4, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 4, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 4, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 4, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 5, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 5, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 5, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 5, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 6, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 6, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 6, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 6, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 7, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 7, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 7, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 7, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 📝 Generated Text: heolo worreorreorreor
+llm_8  | 
+llm_8  | 
+llm_8  | 🧠 Starting generation with 'w'...
+llm_8  | 
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 1, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 1, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 1, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 1, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 2, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 2, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 2, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 2, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 3, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 3, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 3, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 3, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 4, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 4, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 4, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 4, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 5, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 5, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 5, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 5, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 6, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 6, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 6, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 6, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 7, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 7, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 7, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 7, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 
+llm_8  | 🔍 After Embedding + Positional Encoding: torch.Size([1, 8, 32])
+llm_8  | 🧠 After Self-Attention + Residual: torch.Size([1, 8, 32])
+llm_8  | ⚡ After FeedForward + Residual: torch.Size([1, 8, 32])
+llm_8  | 🎯 Output logits shape: torch.Size([1, 8, 8])
+llm_8  | 📝 Generated Text: wollo ooreeo o wo o o
+llm_8  | 
+
+[Kllm_8 exited with code 0
+
+
+ ✔ step9            Built                                                                                                              0.0s 
+ ✔ Container llm_9  Recreated                                                                                                          0.0s 
+Attaching to llm_9
+llm_9  | 
+llm_9  | ✅ Mini-GPT model loaded!
+llm_9  | 
+llm_9  | 📝 Generated text:
+llm_9  | 
+llm_9  | hello worllo wor
+llm_9 exited with code 0
+
+ ✔ step10            Built                                                                                                             0.0s 
+ ✔ Container llm_10  Created                                                                                                           0.0s 
+Attaching to llm_10
+llm_10  | 
+llm_10  | 🔹 Step 6+: Inference with Top-k Sampling and Long Context 🔹
+llm_10  | 
+llm_10  | 🔠 Vocab: [' ', 'd', 'e', 'h', 'l', 'o', 'r', 'w']
+llm_10  | 🔢 Vocab Size: 8
+llm_10  | 📏 Embedding Dimension: 16
+llm_10  | 📏 Block Size (Context Window): 8
+llm_10  | ⚡ Learning Rate: 0.01
+llm_10  | 🔁 Epochs: 300
+llm_10  | 
+llm_10  | 🚀 Training Tiny Transformer...
+llm_10  | 
+llm_10  | 📅 Epoch [1/300] - Loss: 2.2590
+llm_10  | 📅 Epoch [50/300] - Loss: 0.3604
+llm_10  | 📅 Epoch [100/300] - Loss: 0.3518
+llm_10  | 📅 Epoch [150/300] - Loss: 0.3497
+llm_10  | 📅 Epoch [200/300] - Loss: 0.3486
+llm_10  | 📅 Epoch [250/300] - Loss: 0.3480
+llm_10  | 📅 Epoch [300/300] - Loss: 0.3476
+llm_10  | 
+llm_10  | ✅ Training Completed Successfully!
+llm_10  | 
+llm_10  | 🧠 Starting generation from 'h'...
+llm_10  | 
+llm_10  | 📝 Generated Text:
+llm_10  | helllooooooeloloooloelooooololooooolollooololoolooo
+llm_10  | 
+llm_10  | 
+llm_10  | 🧠 Starting generation from 'l'...
+llm_10  | 
+llm_10  | 📝 Generated Text:
+llm_10  | lllollooooooooooolooooololllolllooooolloellllollloe
+llm_10  | 
+llm_10  | 
+llm_10  | 🧠 Starting generation from 'w'...
+llm_10  | 
+llm_10  | 📝 Generated Text:
+llm_10  | wdoolollllloolloloollloollollooooolollooolllllllloo
+llm_10  | 
+llm_10  | 
+llm_10  | 🔵 Quick Concept Recap:
+llm_10  | - **Top-k Sampling**: Instead of greedy picking the max, randomly sample among top-k options.
+llm_10  | - **Long Context**: Keep only the latest 'block_size' tokens as input during generation.
+llm_10  | - This helps simulate how GPT models maintain manageable context windows while generating.
+llm_10  | 
+llm_10 exited with code 0
+
+
+
+Add Temperature Sampling (control randomness)?
+
+Attaching to llm_11
+llm_11  | 
+llm_11  | 🔹 Step 6++: Inference with Top-k + Temperature Sampling + Long Context 🔹
+llm_11  | 
+llm_11  | 🔠 Vocab: [' ', 'd', 'e', 'h', 'l', 'o', 'r', 'w']
+llm_11  | 🔢 Vocab Size: 8
+llm_11  | 📏 Embedding Dimension: 16
+llm_11  | 📏 Block Size: 8
+llm_11  | ⚡ Learning Rate: 0.01
+llm_11  | 🔁 Epochs: 300
+llm_11  | 
+llm_11  | 🚀 Training Tiny Transformer...
+llm_11  | 
+llm_11  | 📅 Epoch [1/300] - Loss: 2.8681
+llm_11  | 📅 Epoch [50/300] - Loss: 0.3616
+llm_11  | 📅 Epoch [100/300] - Loss: 0.3520
+llm_11  | 📅 Epoch [150/300] - Loss: 0.3498
+llm_11  | 📅 Epoch [200/300] - Loss: 0.3487
+llm_11  | 📅 Epoch [250/300] - Loss: 0.3481
+llm_11  | 📅 Epoch [300/300] - Loss: 0.3477
+llm_11  | 
+llm_11  | ✅ Training Completed Successfully!
+llm_11  | 
+llm_11  | 🧠 Starting generation from 'h' (Top-k=3, Temperature=1.0)...
+llm_11  | 
+llm_11  | 📝 Generated Text:
+llm_11  | helllollo llllolo llo elllowelo o elololowelo o elo
+llm_11  | 
+llm_11  | 
+llm_11  | 🧠 Starting generation from 'h' (Top-k=3, Temperature=0.7)...
+llm_11  | 
+llm_11  | 📝 Generated Text:
+llm_11  | helllllllolo olollolllo llolo lolollo olollo llo lo
+llm_11  | 
+llm_11  | 
+llm_11  | 🧠 Starting generation from 'h' (Top-k=3, Temperature=1.5)...
+llm_11  | 
+llm_11  | 📝 Generated Text:
+llm_11  | helllllllowellllowhello llllolowhello lllo lowhello
+llm_11  | 
+llm_11  | 
+llm_11  | 🔵 Quick Concept Recap:
+llm_11  | - **Top-k Sampling**: Only sample among top-k probable tokens.
+llm_11  | - **Temperature**:
+llm_11  |     - >1.0 → Soften logits → More random choices
+llm_11  |     - <1.0 → Sharpen logits → More confident choices
+llm_11  | - **Sliding Context Window**: Only last N tokens are fed during inference.
+llm_11  | 
+llm_11  | Together, these make your generation more realistic and controllable like real GPT models!
+llm_11  | 
+llm_11 exited with code 0
+
+
+ ✔ step12            Built                                                                                                             0.0s 
+ ✔ Container llm_12  Created                                                                                                           0.0s 
+Attaching to llm_12
+llm_12  | 
+llm_12  | 🔹 Building a Mini Transformer Decoder Block 🔹
+llm_12  | 
+llm_12  | 
+llm_12  | 🔹 After Embedding: torch.Size([2, 5, 16])
+llm_12  | 🔹 After Self-Attention: torch.Size([2, 5, 16])
+llm_12  | 🔹 After Feedforward: torch.Size([2, 5, 16])
+llm_12  | 
+llm_12  | ✅ Final Output Shape: torch.Size([2, 5, 16])
+llm_12 exited with code 0
+
+
+
+sh run.sh step15_tiktoken_pretrain_gpt2_from_scratch.py
+[notice] A new release of pip is available: 23.1.2 -> 25.0.1
+[notice] To update, run: pip install --upgrade pip
+Generating train split: 40000 examples [00:00, 4279465.36 examples/s]
+Map: 100%|█████████████████████████████████████████████████████████████████████████████████| 40000/40000 [00:00<00:00, 158665.10 examples/s]
+  0%|                                                                                                               | 0/429 [00:00<?, ?it/s]`loss_type=None` was set in the config but it is unrecognised.Using the default loss: `ForCausalLMLoss`.
+{'loss': 7.5965, 'grad_norm': 0.8459287881851196, 'learning_rate': 0.00023076923076923076, 'epoch': 0.7}                                    
+{'loss': 6.1868, 'grad_norm': 1.0181341171264648, 'learning_rate': 0.00016083916083916083, 'epoch': 1.4}                                    
+{'loss': 5.7889, 'grad_norm': 0.9320010542869568, 'learning_rate': 9.09090909090909e-05, 'epoch': 2.1}                                      
+ 73%|█████████████████████████████████████████████████████████████████████████▍                           | 312/429 [01:19<00:2
+
+ 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 429/429 [01:48<00:00,  3.96it/s]
+✅ Pretraining completed. Model & tokenizer saved to gpt2-output/
+
+sh run.sh step15b_gen.py
+Device set to use cpu
+Truncation was not explicitly activated but `max_length` is provided a specific value, please use `truncation=True` to explicitly truncate examples to max length. Defaulting to 'longest_first' truncation strategy. If you encode pairs of sequences (GLUE-style) with the tokenizer you can select this strategy more precisely by providing a specific strategy to `truncation`.
+[{'generated_text': "Once upon a time; thou not from's own death; and to me,With me now be you would shall do all you.GLOU thou have, I cannot so, for I am of the grace, to me to thee.I'll be the lord,And I have I, my lord in the world.SIC, and all thee;And be, a queen you to speak:A: the mind:IET:I in his heart.O my good brother,Or"}]
+
+
+docker compose up --build step15b
+Attaching to llm_15b
+llm_15b  | Device set to use cpu
+llm_15b  | Truncation was not explicitly activated but `max_length` is provided a specific value, please use `truncation=True` to explicitly truncate examples to max length. Defaulting to 'longest_first' truncation strategy. If you encode pairs of sequences (GLUE-style) with the tokenizer you can select this strategy more precisely by providing a specific strategy to `truncation`.
+llm_15b  | [{'generated_text': "Once upon a time of mine noble son, let them you not make his people?F should do me--F:And if you shall you would I'll do not now; and thy lord and, my father's heart, sir?BASTY:I in a father's your man I will we'll do well will hear them.RUKE VINCENTIO:A:I:He,And I would a mother, and well, we in my man, and the father"}]
+llm_15b exited with code 0
+
+
