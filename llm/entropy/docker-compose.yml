@@ -1,0 +1,16 @@
+services:
+  cross_entropy_app:
+    build: .
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./:/app
+    command: streamlit run app.py --server.port=8501 --server.address=0.0.0.0
+  softmax_app:
+    build: .
+    ports:
+      - "8502:8501"
+    volumes:
+      - ./:/app
+    command: streamlit run app2.py --server.port=8501 --server.address=0.0.0.0
+

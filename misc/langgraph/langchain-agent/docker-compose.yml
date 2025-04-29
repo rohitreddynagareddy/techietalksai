@@ -1,0 +1,60 @@
+# services:
+#   app:
+#     build: .
+#     ports:
+#       - "8501:8501"
+#     volumes:
+#       - .:/app/app
+#     env_file:
+#       - .env
+#     command: ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.enableCORS=false"]
+
+
+services:
+  langchain-agent:
+    build: .
+    # environment:
+    #   - OPENAI_API_KEY=${OPENAI_API_KEY}
+    # depends_on:
+    #   - redis
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+  # redis:
+  #   image: redis:alpine
+  #   ports:
+  #     - "6379:6379"
+
+  app1:
+    build: ./app1
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./data:/app/data
+
+  app2:
+    build: ./app2
+    # environment:
+    #   - OPENAI_API_KEY=${OPENAI_API_KEY}
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+
+  streamlit:
+    build: ./streamlit-app
+    # environment:
+    #   - OPENAI_API_KEY=${OPENAI_API_KEY}
+    env_file:
+      - .env
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./app1:/app/app1
+      - ./app2:/app/app2
+      - ./streamlit-app:/app
+    depends_on:
+      - app1
+      - app2

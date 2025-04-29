@@ -1,0 +1,72 @@
+sh run.sh step1.py
+
+[notice] A new release of pip is available: 23.1.2 -> 25.0.1
+[notice] To update, run: pip install --upgrade pip
+# Step 1: Install Required Libraries
+pip install torch transformers tiktoken datasets
+# Step 2: Import Necessary Modules
+# Step 3: Initialize Tokenizer
+# Step 4: Load and Prepare Dataset
+README.md: 100%|███████████████████████████████████████████████████████████████████████████████████████| 10.5k/10.5k [00:00<00:00, 8.86MB/s]
+test-00000-of-00001.parquet: 100%|███████████████████████████████████████████████████████████████████████| 733k/733k [00:00<00:00, 5.02MB/s]
+train-00000-of-00001.parquet: 100%|████████████████████████████████████████████████████████████████████| 6.36M/6.36M [00:00<00:00, 7.40MB/s]
+validation-00000-of-00001.parquet: 100%|█████████████████████████████████████████████████████████████████| 657k/657k [00:00<00:00, 6.16MB/s]
+Generating test split: 100%|█████████████████████████████████████████████████████████████████| 4358/4358 [00:00<00:00, 470629.44 examples/s]
+Generating train split: 100%|█████████████████████████████████████████████████████████████| 36718/36718 [00:00<00:00, 1933637.02 examples/s]
+Generating validation split: 100%|██████████████████████████████████████████████████████████| 3760/3760 [00:00<00:00, 1468260.22 examples/s]
+Map: 100%|████████████████████████████████████████████████████████████████████████████████████| 4358/4358 [00:00<00:00, 74774.20 examples/s]
+Map: 100%|██████████████████████████████████████████████████████████████████████████████████| 36718/36718 [00:00<00:00, 80550.89 examples/s]
+Map: 100%|████████████████████████████████████████████████████████████████████████████████████| 3760/3760 [00:00<00:00, 73542.42 examples/s]
+# Step 5: Create PyTorch Dataset
+# Step 6: Initialize Model
+# Step 7: Set Up Training Components
+# Step 8: Training Loop
+`loss_type=None` was set in the config but it is unrecognised.Using the default loss: `ForCausalLMLoss`.
+Epoch 0 | Batch 0 | Loss: 10.8634
+Epoch 0 | Batch 100 | Loss: 8.0962
+Epoch 0 | Batch 200 | Loss: 7.9017
+Epoch 0 | Batch 300 | Loss: 9.6899
+Epoch 0 | Batch 400 | Loss: 6.7608
+Epoch 0 | Batch 500 | Loss: 7.2645
+Epoch 0 | Batch 600 | Loss: 5.7352
+Epoch 0 | Batch 700 | Loss: 6.9842
+Epoch 0 | Batch 800 | Loss: 9.1764
+Epoch 0 | Batch 900 | Loss: 7.3228
+Epoch 0 | Batch 1000 | Loss: 9.4360
+Epoch 0 | Batch 1100 | Loss: 8.8957
+Epoch 0 | Batch 1200 | Loss: 9.5427
+Epoch 0 | Batch 1300 | Loss: 8.7433
+Epoch 0 | Batch 1400 | Loss: 7.2870
+Epoch 0 | Batch 1500 | Loss: 5.9153
+Epoch 0 | Batch 1600 | Loss: 8.0296
+Epoch 0 | Batch 1700 | Loss: 7.1794
+Epoch 0 | Batch 1800 | Loss: 9.5224
+
+
+
+MPS GPU
+
+[notice] A new release of pip is available: 23.1.2 -> 25.0.1
+[notice] To update, run: pip install --upgrade pip
+# Step 1: Install Required Libraries
+pip install torch transformers tiktoken datasets
+# Step 2: Import Necessary Modules
+# Step 3: Initialize Tokenizer
+# Step 4: Load and Prepare Dataset
+# Step 5: Create PyTorch Dataset
+# Step 6: Initialize Model
+🖥️ Machine type: arm64
+🍎 Running on Apple Silicon: True
+🚀 PyTorch is using the MPS backend for Apple Silicon.
+# Step 7: Set Up Training Components
+# Step 8: Training Loop
+`loss_type=None` was set in the config but it is unrecognised.Using the default loss: `ForCausalLMLoss`.
+Epoch 0 | Batch 0 | Loss: 11.2029
+Epoch 0 | Batch 100 | Loss: 8.3614
+Epoch 0 | Batch 200 | Loss: 7.7547
+Epoch 0 | Batch 300 | Loss: 9.6305
+
+
+
+
+

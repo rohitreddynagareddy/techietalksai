@@ -32,7 +32,7 @@ RUN python --version
 RUN python -m venv /app/venv
 
 # Ensure the virtual environment is activated in future commands
-ENV PATH="/app/venv/bin:$PATH"
+ENV PATH="/app/venv/bin:\$PATH"
 
 # Upgrade pip inside the virtual environment
 RUN /app/venv/bin/pip install --upgrade pip setuptools wheel
@@ -47,7 +47,6 @@ COPY requirements.txt .
 # RUN /app/venv/bin/pip install --no-cache-dir -r requirements.txt
 # Install dependencies using uv
 RUN /app/venv/bin/uv pip install --no-cache-dir -r requirements.txt
-
 
 # Copy the rest of the application files
 COPY . .
@@ -67,3 +66,4 @@ WORKDIR /app/app
 # ✅ FIX: Correct ENTRYPOINT and CMD
 # ENTRYPOINT ["python"]
 # CMD ["filesystem.py"]
+

@@ -1,0 +1,22 @@
+# Core Dependencies
+langgraph
+langchain
+openai
+chromadb
+streamlit
+
+# Document Processing
+unstructured[pdf,docx]
+pymupdf  # Alternative PDF parser
+
+# Embedding and Vector Store
+sentence-transformers
+langchain-community
+langchain-openai
+
+# OCR and Image Processing
+pytesseract
+pillow
+
+# Utilities
+python-dotenv
