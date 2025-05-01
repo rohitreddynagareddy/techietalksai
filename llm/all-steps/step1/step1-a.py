@@ -66,6 +66,17 @@ if __name__ == '__main__':
     vocab_size = enc.n_vocab
 
     print("# Step 4: Load and Prepare Dataset")
+    # The script uses the **WikiText-2 “raw” v1** dataset (from Hugging Face’s Datasets library) 
+    # as its training corpus. Specifically, it calls:
+
+    # – **What is WikiText-2 Raw v1?**  
+    #   A language-modeling benchmark comprising full, unprocessed Wikipedia articles (i.e. 
+    #   keeping case, punctuation, numbers), with splits of 36 718 train examples, 3 760 validation examples, and 4 358 test examples.  ([Salesforce/wikitext · Datasets at Hugging Face](https://huggingface.co/datasets/Salesforce/wikitext?utm_source=chatgpt.com))  
+    # – **Why use it?**  
+    #   It’s substantially larger than older benchmarks like PTB, preserves long-range 
+    #   dependencies, and is widely used for causal-LM pretraining and fine-tuning experiments.  
+    #   ([WikiText-2 Dataset - Papers With Code](https://paperswithcode.com/dataset/wikitext-2?utm_source=chatgpt.com))
+
     dataset = load_dataset("wikitext", "wikitext-2-raw-v1")
     block_size = 512
 
